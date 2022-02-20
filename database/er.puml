@@ -1,0 +1,104 @@
+@startuml
+skinparam linetype ortho
+!theme plain
+
+note as EngineNote
+    <i>Considering a NoSQL db engine</i>
+end note
+
+package Game <<Rectangle>> {
+  entity Game {
+    + id: number (PK)
+    --
+    levels: Document[]
+    # levels.id: number (FK)
+  }
+
+  entity Level {
+    + id: number (PK)
+    --
+    * name: string
+    * layer: number
+    --
+    categories: Document[]
+    # categories.id: number (FK)
+  }
+
+  entity Category {
+    + id: number (PK)
+    --
+    * iconUrl: string
+    * name: string
+    * description: string
+    * layer: number
+    --
+    tasks: Document[]
+    # tasks.id: number (FK)
+  }
+
+  entity Task {
+    + id: number (PK)
+    --
+    * name: string
+    * description: string
+    --
+    nodes: Document[]
+    # nodes.id: number (FK)
+  }
+
+  entity Node {
+    + id: number (PK)
+    --
+    * title: string
+    * type: string
+    * data: any
+  }
+
+  entity Box {
+    + id: number (PK)
+    --
+    * try: number
+    --
+    tasks: Document[]
+    # tasks.id: number (FK)
+    * tasks.layer: number
+  }
+
+  Game ||-d-o{ Level
+  Level ||-d-o{ Category
+  Category ||-d-o{ Task
+  Task ||-d-o{ Node
+  Box }o-r-|| Category
+  Box ||-d-o{ Task
+}
+
+package User <<Rectangle>> {
+
+  entity User {
+    + id: number (PK)
+    --
+    * email: string
+    * name: string
+    * sex: number
+    * birthday: string
+    * password: string
+    * tries: number
+    --
+    level: Document
+    # level.id: number (FK)
+    category: Document
+    # category.id: number (FK)
+    box: Document
+    # box.id: number (FK)
+    history: Document[]
+    # history.id (FK)
+  }
+
+  User }o-o| Level
+  User }o-o| Category
+  User ||-o| Box
+  User ||-o{ Box
+
+}
+
+@enduml
