@@ -2,17 +2,7 @@
 skinparam linetype ortho
 !theme plain
 
-note as EngineNote
-    <i>Considering a NoSQL db engine</i>
-end note
-
 package Game <<Rectangle>> {
-  entity Game {
-    + id: number (PK)
-    --
-    levels: Document[]
-    # levels.id: number (FK)
-  }
 
   entity Level {
     + id: number (PK)
@@ -30,7 +20,6 @@ package Game <<Rectangle>> {
     * iconUrl: string
     * name: string
     * description: string
-    * layer: number
     --
     tasks: Document[]
     # tasks.id: number (FK)
@@ -42,16 +31,10 @@ package Game <<Rectangle>> {
     * name: string
     * description: string
     --
-    nodes: Document[]
-    # nodes.id: number (FK)
-  }
-
-  entity Node {
-    + id: number (PK)
-    --
-    * title: string
-    * type: string
-    * data: any
+    * nodes: object[]
+    * nodes.title: string
+    * nodes.type: string
+    * nodes.data: object
   }
 
   entity Box {
@@ -61,16 +44,18 @@ package Game <<Rectangle>> {
     --
     tasks: Document[]
     # tasks.id: number (FK)
-    * tasks.layer: number
+    task.right: boolean
   }
 
-  Game ||-d-o{ Level
   Level ||-d-o{ Category
   Category ||-d-o{ Task
-  Task ||-d-o{ Node
   Box }o-r-|| Category
   Box ||-d-o{ Task
 }
+
+note top of Game
+    <i>Considering a NoSQL db engine</i>
+end note
 
 package User <<Rectangle>> {
 
