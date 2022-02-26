@@ -1,0 +1,99 @@
+@startuml
+printscale weekly
+
+Project starts 2022-01-01
+
+-- Context --
+
+[EduZika] lasts 365 days
+note bottom
+**Abbreviations**
+- **Req. Eng.:** Requirements Engineering
+- **Main.:** Maintenance
+- **Dev.:** Development
+- **Int.:** Integration
+- **Proto.:** Prototype
+end note
+
+-- General Chronogram --
+
+[Req. Eng. 1] as [RE1] lasts 7 weeks
+then [Req. Eng. 2] as [RE2] lasts 4 weeks
+then [Req. Eng. 3] as [RE3] lasts 4 weeks
+then [Req. Eng. 4] as [RE4] lasts 5 weeks
+
+[Dev. Proto.] as [DP] lasts 4 weeks and starts at [RE1]'s end
+then [Dev. 1] as [D1] lasts 4 weeks and starts at [RE2]'s end
+then [Dev. 2] as [D2] lasts 5 weeks and starts at [RE3]'s end
+then [Dev. 3] as [D3] lasts 5 weeks and starts at [RE4]'s end
+
+[Int. 1] lasts 1 weeks and starts at [D1]'s end
+[Main. 1] starts 1 week after [Int. 1]'s end and lasts 5 weeks
+
+
+[Int. 2] lasts 1 weeks and starts at [D2]'s end
+[Main. 2] starts 1 week after [Int. 2]'s end and lasts 5 weeks
+
+[Int. 3] lasts 1 weeks and starts at [D3]'s end
+[Main. 3] starts 1 week after [Int. 3]'s end and ends at 2022-12-31
+[Dev. 4] starts 1 week after [Int. 3]'s end and ends at 2022-12-31
+
+-- <s>Prototype</s> (deprecated) --
+
+[Scope definition] lasts 3 weeks
+then [Req. elicitation] as [ER1] lasts 2 weeks
+then [Diagram class diagrams 1] lasts 2 weeks
+[Diagram use cases] lasts 2 weeks and starts at [ER1]'s end
+
+then [Dev. the functional prototype backend] lasts 2 weeks
+then [Dev. the functional prototype frontend] lasts 2 weeks
+
+-- Base --
+
+[Diagram use cases 2] lasts 1 week and starts at [RE1]'s end
+then [Component diagram] lasts 1 week
+then [Diagram ER] lasts 1 week
+then [Diagram class diagrams 2] lasts 1 week
+
+[Setup DB] as [SDB] lasts 1 week and starts at [DP]'s end
+[Dev. the server backend] lasts 2 weeks and starts at [SDB]'s start
+then [Build unit tests] lasts 2 weeks
+
+[Open the server api address] lasts 1 week and starts at [Int. 1]'s start
+[Test server api] lasts 1 week and starts at [Int. 1]'s start
+
+-- Sequel --
+
+[Gather feedback] starts at [RE3]'s end and lasts 4 weeks
+[Req. elicitation 2] starts at [RE3]'s end and lasts 1 weeks
+then [Diagram use cases 3] lasts 2 weeks
+then [Improve class diagram] lasts 1 week
+
+[Add more task node types]  lasts 2 weeks and starts at [RE3]'s end
+then [Add an admin dashboard] lasts 2 week
+then [Build unit tests 2] lasts 1 weeks
+
+[Gather bug or performance feedbacks and fix them] lasts 4 weeks and starts at [Main. 1]'s start
+[Check for accessibility issues] lasts 4 weeks and starts at [Main. 1]'s start
+
+[Update server] lasts 1 week and starts at [Int. 2]'s start
+[Update client] lasts 1 week and starts at [Int. 2]'s start
+
+-- Extension --
+
+[Improve client design] lasts 3 weeks and starts at [RE4]'s end
+then [Build unit tests 3] lasts 2 weeks
+
+[Gather bug or performance feedbacks and fix them 2] lasts 5 weeks and starts at [Main. 2]'s start
+[Check for accessibility issues 2] lasts 5 weeks and starts at [Main. 2]'s start
+
+[Open the server api address 2] lasts 1 week and starts at [Int. 3]'s start
+[Test server api 2] lasts 1 week and starts at [Int. 3]'s start
+
+-- Improvement --
+
+[Gather bug or performance feedbacks and fix them 3] starts at [Main. 3]'s start and ends at [Main. 3]'s end
+[Add offline support] lasts 2 weeks and starts at [Dev. 4]'s start
+then [Build unit tests 4] lasts 1 weeks
+
+@enduml
