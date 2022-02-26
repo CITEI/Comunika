@@ -1,0 +1,224 @@
+@startuml
+skinparam groupInheritance 2
+
+package Server {
+
+  package Model {
+
+    package Game {
+
+      class Level {
+        - id: string
+        - name: string
+        - layer: number
+      }
+
+      class Category {
+        - id: string
+        - iconUrl: string
+        - name: string
+        - description: string
+        - layer: number
+        + createBox(): Box
+      }
+
+      class Task {
+        - id: string
+        - name: string
+        - description: string
+        + getNext(): Node
+      }
+
+      abstract class Node {
+        - id: string
+        - title: string
+      }
+
+      class ImageNode extends Node {
+        - imgUrl: string
+      }
+
+      class TextNode extends Node {
+        - objective: string
+      }
+
+      class ConfirmationNode extends Node {
+        - description: string
+        - isCompleted: boolean
+      }
+
+      class Box {
+        + calculateScore(): number
+      }
+
+      Level "1" -d- "0..*" Category: categories >
+      Category "1" -d-> "0..*" Task: tasks >
+      Task "1" -d-> "1..*" Node: nodes >
+
+      Category ..> Box: <<creates>>
+      Box "0..*" -> "1" Category: createdBy >
+      Box "1" -d-> "1..*" Task: tasks >
+
+    }
+
+    package User {
+
+      enum Sex {
+        MALE
+        FEMALE
+        NOT_LISTED
+      }
+
+      class User {
+        - id: number
+        - email: string
+        - name: string
+        - sex: Sex
+        - birthday: Date
+        - password: string
+        + comparePassword(password: string): boolean
+      }
+
+      note right of User::password
+        bcrypt hash
+      end note
+
+      class Progress {
+        - level: Level
+        - category: Category
+        - box: Box
+        + update(level: Level, category: Category box: Box)
+        + addToHistory(box: Box)
+      }
+
+      Progress "1" ---> "0..*" Box: history >
+      Progress "1" ---> "1" Box: box >
+      Progress "1" ---> "1" Category: category >
+      Progress "1" ---> "1" Level: level >
+
+      User "1" -d-> "1" Progress: progress >
+
+    }
+
+  }
+
+
+  package Service {
+
+    package Responses {
+
+      interface NodeResponse {
+        + id: number
+        + title: string
+        + type: string
+        + data: any
+      }
+
+      interface TaskResponse {
+        + id: number
+        + name: string
+        + type: string
+      }
+
+      interface BoxResponse {
+        + id: number
+      }
+
+      interface CategoryResponse {
+        + id: number
+        + name: string
+      }
+
+      interface LevelResponse {
+        + id: number
+        + name: string
+      }
+
+      interface UserResponse {
+        + id: number
+        + name: string
+        + email: string
+        + token: string
+      }
+
+      LevelResponse "1" -> "0..*" CategoryResponse: categories
+      BoxResponse "1" -> "1..*" TaskResponse: tasks
+      TaskResponse "1" -> "1..*" NodeResponse: nodes
+
+    }
+
+    package Controllers {
+
+      class GameController {
+        .. Create ..
+        + createLevel(name: string, layer: number)
+        + swapLevel(layerA: number, layerB: number)
+        + createCategory(levelId: number, name: string,\n\ticonUrl: string, description: string,\n\tlayer: number)
+        + swapCategory(layerA: number, layerB: number)
+        + createTask(categoryId: number, name: string,\n\tnodes: )
+        .. Delete ..
+        + deleteLevel(levelId: number): boolean
+        + deleteCategory(categoryId: number): boolean
+        + deleteTask(taskId: number): boolean
+        .. Retrieve ..
+        + getLevels(): Array<LevelResponse>
+        + getBox(categoryId: number): BoxResponse
+        - evaluate(box: Box): boolean
+        - getNext(level: Level): Level?
+        - getNext(category: Category): Category?
+        + getNext(box: Box): BoxResponse?
+      }
+
+      class UserController {
+        ~ initializeUser(userId: number)
+        + evaluate(userId: number, boxId: number,\n\tanswers: {[key: number], boolean}): Box?
+      }
+
+      class AuthenticationController {
+        + login(email: string, password: string): UserResponse?
+        + register(email: string, password: string, \n\tDate birthday, Sex sex): UserResponse?
+        + resetPassword(email: string)
+      }
+
+      AuthenticationController ..> UserController: "<<uses>>"
+      GameController "1..1" -> "0..*" LevelResponse: levels
+
+    }
+
+    Controllers ...> Responses: <<uses>>
+
+  }
+
+  Controllers ....> Model: <<uses>>
+
+  package Transport {
+
+    class Routes {
+      + {static} login(req: Request, res: Response)
+      + {static} register(req: Request, res: Response)
+      + {static} resetPassword(req: Request, res: Response)
+      ..
+      + {static} createLevel(req: Request, res: Response)
+      + {static} createCategory(req: Request, res: Response)
+      + {static} createTask(req: Request, res: Response)
+      ..
+      + {static} swapLevels(req: Request, res: Response)
+      + {static} swapCategories(req: Request, res: Response) 
+      ..
+      + {static} deleteLevel(req: Request, res: Response)
+      + {static} deleteCategory(req: Request, res: Response)
+      + {static} deleteTask(req: Request, res: Response)
+      ..
+      + {static} getLevels(req: Request, res: Response)
+      + {static} getBox(req: Request, res: Response)
+      + {static} evaluate(req: Request, res: Response)
+    }
+
+
+  }
+
+  Transport ..> Service: <<uses>>
+
+}
+
+@enduml
