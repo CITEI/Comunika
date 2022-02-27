@@ -45,8 +45,8 @@ then [Req. elicitation] as [ER1] lasts 2 weeks
 then [Diagram class diagrams 1] lasts 2 weeks
 [Diagram use cases] lasts 2 weeks and starts at [ER1]'s end
 
-then [Dev. the functional prototype backend] lasts 2 weeks
-then [Dev. the functional prototype frontend] lasts 2 weeks
+then [Dev. the server backend] lasts 2 weeks
+then [Build unit tests] lasts 2 weeks
 
 -- Base --
 
@@ -56,8 +56,10 @@ then [Diagram ER] lasts 1 week
 then [Diagram class diagrams 2] lasts 1 week
 
 [Setup DB] as [SDB] lasts 1 week and starts at [DP]'s end
-[Dev. the server backend] lasts 2 weeks and starts at [SDB]'s start
-then [Build unit tests] lasts 2 weeks
+
+[Dev. the functional prototype backend] lasts 2 weeks and starts at [D1]'s start
+then [Dev. the functional prototype frontend] lasts 2 weeks
+
 
 [Open the server api address] lasts 1 week and starts at [Int. 1]'s start
 [Test server api] lasts 1 week and starts at [Int. 1]'s start
