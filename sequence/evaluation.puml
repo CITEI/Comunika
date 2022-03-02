@@ -1,0 +1,64 @@
+@startuml
+autoactivate on
+
+actor Client
+boundary "**POST** game/evaluate"
+control UserController
+database User
+database Box
+control GameController
+database Category
+
+Client -> "**POST** game/evaluate": userId, boxId, answers
+
+    "**POST** game/evaluate" -> UserController: evaluate(userId, boxId, answers)
+
+        UserController -> User: getUser()
+        return user
+
+        UserController -> Box: getBox()
+        return box
+
+        UserController -> Box: calc_grade(answers)
+        return grade
+
+        alt #lightgreen grade >= 0.7
+
+            UserController -> GameController: getNext(box)
+
+                GameController -> Box: getCategory()
+                return category
+
+                GameController -> GameController: getNext(category)
+                return category
+
+                GameController -> Category: createBox()
+                return newBox
+
+            return newBox
+
+        else #pink grade < 0.7
+
+            UserController -> GameController: getSame(box)
+
+                GameController -> Box: getCategory()
+                return category
+                
+                GameController -> Category: createBox()
+                return newBox
+
+            return newBox
+
+        end
+
+        UserController -> Box: updateAnswers(answers)
+        return
+
+        UserController -> User: addToHistory(newBox)
+        return 
+
+    return newBox
+
+return newBox
+
+@enduml
