@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import path from 'path';
 import helmet from 'helmet';
+import cors from 'cors';
 
 import express, { Request, Response } from 'express';
 import 'express-async-errors';
@@ -21,6 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(cors());
 
 // Show routes called in console during development
 if (process.env.NODE_ENV === 'development') {
