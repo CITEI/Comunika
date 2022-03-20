@@ -10,8 +10,7 @@ package Game <<Rectangle>> {
     * name: string
     * layer: number
     --
-    categories: Document[]
-    # categories.id: number (FK)
+    # categories: Document<Category>[]
   }
 
   entity Category {
@@ -21,8 +20,7 @@ package Game <<Rectangle>> {
     * name: string
     * description: string
     --
-    tasks: Document[]
-    # tasks.id: number (FK)
+    # tasks: Document<Task>[] (FK)
   }
 
   entity Task {
@@ -30,11 +28,26 @@ package Game <<Rectangle>> {
     --
     * name: string
     * description: string
+    * question_count: number
     --
-    * nodes: object[]
-    * nodes.title: string
-    * nodes.type: string
-    * nodes.data: object
+    * nodes: Subdocument<Node>[]
+  }
+
+  entity Node {
+    * title: string
+  }
+
+  entity ImageNode extends Node {
+    * imageUrl: string
+    * imageAlt: string
+  }
+
+  entity TextNode extends Node {
+    * text: string
+  }
+
+  entity AnswerNode extends Node {
+    * question: string
   }
 
   entity Box {
@@ -42,15 +55,21 @@ package Game <<Rectangle>> {
     --
     * try: number
     --
-    tasks: Document[]
-    # tasks.id: number (FK)
-    task.right: boolean
+    # category: Document<Category> (FK)
+    * tasks: Subdocument<BoxTask>[]
   }
 
-  Level ||-d-o{ Category
-  Category ||-d-o{ Task
+  entity BoxTask {
+    # task: Document<Task> (FK)
+    * task.answer
+  }
+
+  Level ||--o{ Category
+  Category ||---o{ Task
   Box }o-r-|| Category
-  Box ||-d-o{ Task
+  Box ||---|{ BoxTask
+  BoxTask ||---|| Task
+  Task ||-d-|{ Node
 }
 
 note top of Game
@@ -69,14 +88,10 @@ package User <<Rectangle>> {
     * password: string
     * tries: number
     --
-    level: Document
-    # level.id: number (FK)
-    category: Document
-    # category.id: number (FK)
-    box: Document
-    # box.id: number (FK)
-    history: Document[]
-    # history.id (FK)
+    # level: Document<Level> (FK)
+    # category: Document<Category> (FK)
+    # box: Document<Box> (FK)
+    # history: Document<Box>[] (FK)
   }
 
   User }o-o| Level
