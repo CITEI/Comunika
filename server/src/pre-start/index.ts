@@ -25,3 +25,4 @@ import commandLineArgs from 'command-line-args';
 
 
 import './mongoose'
+import './passport'
