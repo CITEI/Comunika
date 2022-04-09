@@ -1,17 +1,16 @@
 import cookieParser from "cookie-parser";
-import morgan from "morgan";
-import path from "path";
-import helmet from "helmet";
 import cors from "cors";
-
 import express, { Router } from "express";
 import "express-async-errors";
-
-import authRouter from "./route/authentication";
+import helmet from "helmet";
+import morgan from "morgan";
+import path from "path";
+import swaggerUi from "swagger-ui-express";
 import custom_errors from "./middleware/errors";
-import * as celebrate from "celebrate";
+import { BASE_PATH } from "./pre-start/constants";
 import passport from "./pre-start/passport";
-import { API_VERSION } from "./pre-start/constants";
+import swaggerDocs from "./pre-start/swagger";
+import authRouter from "./route/authentication";
 
 // Constants
 const app = express();
@@ -45,14 +44,14 @@ if (process.env.NODE_ENV === "production") {
  **********************************************************************************/
 
 // Adds api router
-const apiRouter = Router()
+const apiRouter = Router();
 
-apiRouter.use('/auth', authRouter)
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use(`/api/${API_VERSION}`, apiRouter);
+app.use(BASE_PATH, apiRouter);
 
 // Errors
-app.use(celebrate.errors()); // validation errors
 app.use(custom_errors()); // app-only errors
 
 /***********************************************************************************
