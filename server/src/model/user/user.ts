@@ -1,24 +1,16 @@
 import mongoose from "mongoose";
 import isEmail from "validator/lib/isEmail";
-import isAlphanumeric from "validator/lib/isAlphanumeric";
-import bcrypt from "bcrypt";
+import { passwordsMatch, hashPassword } from "../utils";
 
-// constants
-const SALT_ROUNDS = 10;
 
-// functions
-function bcryptHash(pass: string): string {
-  return bcrypt.hashSync(pass, SALT_ROUNDS);
-}
-
-// model
+/** Interface for creating a new user */
 export interface IUser {
   email: string;
   password: string;
   name: string;
 }
 
-const schema = new mongoose.Schema<IUser>({
+export const userSchema = new mongoose.Schema({
   email: {
     type: "string",
     required: true,
@@ -37,15 +29,21 @@ const schema = new mongoose.Schema<IUser>({
   name: { type: "string", required: true, minlength: 2 },
 });
 
-// middlewares
-schema.pre("save", function (next) {
-  this.password = bcryptHash(this.password);
+// Hashes password before saving to db
+userSchema.pre("save", async function (next) {
+  this.password = await hashPassword(this.password);
   next();
 });
 
-// methods
-schema.methods.comparePasswords = function (pass: string): boolean {
-  return this.password == bcryptHash(pass);
+// Hashes password and compares with the saved hash
+userSchema.methods.passwordMatches =
+async function (pass: string): Promise<boolean> {
+  return passwordsMatch(pass, this.password);
 };
 
-export const User = mongoose.model<IUser>("User", schema);
+/** Interface for retrieving user registers */
+export interface IUserDocument extends mongoose.Document, IUser {
+  passwordMatches(pass: string): Promise<boolean>;
+}
+
+export const User = mongoose.model<IUserDocument>("User", userSchema);

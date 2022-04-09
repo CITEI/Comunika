@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
+import {
+  DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USER
+} from "./constants";
 
 export const config = {
-  HOST: process.env.DB_HOST,
-  PORT: process.env.DB_PORT,
-  DATABASE: process.env.DB_NAME,
-  USER: process.env.DB_USER,
-  PASSWORD: process.env.DB_PASSWORD,
+  HOST: DB_HOST,
+  PORT: DB_PORT,
+  DATABASE: DB_DATABASE,
+  USER: DB_USER,
+  PASSWORD: DB_PASSWORD,
 };
 
 export const uri = `mongodb://${config.HOST}:${config.PORT}`;
