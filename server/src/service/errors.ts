@@ -5,10 +5,29 @@ import { StatusCodes } from "http-status-codes";
  */
 export class ServerError extends Error {
   statusCode: number;
+  extra?: object;
 
-  constructor(statusCode: number, msg: string) {
-    super(msg);
-    this.statusCode = statusCode;
+  constructor(params: {
+    name: string;
+    statusCode: number;
+    message: string;
+    extra?: object;
+  }) {
+    super(params.message);
+    this.name = params.name;
+    this.statusCode = params.statusCode;
+    this.extra = params.extra;
+  }
+
+  get body(): { [key: string]: any } {
+    let body: { [key: string]: any } = {
+      name: this.name,
+      message: this.message,
+    };
+
+    if (this.extra != undefined) body["extra"] = this.extra;
+
+    return body;
   }
 }
 
@@ -17,8 +36,11 @@ export class ServerError extends Error {
  */
 export class DuplicatedError extends ServerError {
   constructor(schema: string, field: string) {
-    super(StatusCodes.CONFLICT, `${schema} ${field} already registered`);
-    this.name = "DuplicatedError";
+    super({
+      name: "Conflict",
+      statusCode: StatusCodes.CONFLICT,
+      message: `${schema} ${field} already registered`,
+    });
   }
 }
 
@@ -26,9 +48,12 @@ export class DuplicatedError extends ServerError {
  * Thrown when a resource is not found
  */
 export class NotFoundError extends ServerError {
-  constructor(schema: string, field: string) {
-    super(StatusCodes.NOT_FOUND, `No matching ${field} in ${schema}`);
-    this.name = "NotFoundError";
+  constructor({ schema, field }: { schema: string; field: string }) {
+    super({
+      name: "NotFound",
+      statusCode: StatusCodes.NOT_FOUND,
+      message: `No matching ${field} in ${schema}`,
+    });
   }
 }
 
@@ -37,19 +62,37 @@ export class NotFoundError extends ServerError {
  */
 export class UserNotFoundError extends NotFoundError {
   constructor() {
-    super('User', 'email')
+    super({ schema: "User", field: "email" });
   }
+}
+
+interface InvalidField {
+  name: string;
+  problem: "missing" | "extra" | "invalid";
 }
 
 /**
  * Thrown when a request is malformed
  */
 export class BadRequestError extends ServerError {
-  constructor(interf?: object) {
-    if (interf)
-      super(StatusCodes.BAD_REQUEST, `Request malformed, required ${interf}`);
-    else super(StatusCodes.BAD_REQUEST, "Request malformed");
-    this.name = "BadRequest";
+  constructor(params?: { fields?: Array<InvalidField> }) {
+    super({
+      name: "BadRequest",
+      message: "Request malformed",
+      statusCode: StatusCodes.BAD_REQUEST,
+      extra: params?.fields,
+    });
+  }
+}
+
+export class ValidationError extends ServerError {
+  constructor({ fields }: { fields: Array<InvalidField> }) {
+    super({
+      name: "InvalidRequest",
+      message: "Invalid fields are present",
+      statusCode: StatusCodes.BAD_REQUEST,
+      extra: fields,
+    });
   }
 }
 
@@ -58,8 +101,11 @@ export class BadRequestError extends ServerError {
  */
 export class UnauthorizedError extends ServerError {
   constructor() {
-    super(StatusCodes.UNAUTHORIZED, "User doesn't have privileges to continue");
-    this.name = "Unauthorized";
+    super({
+      name: "Unauthorized",
+      message: "User doesn't have privileges to continue",
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
   }
 }
 
@@ -68,8 +114,23 @@ export class UnauthorizedError extends ServerError {
  */
 export class InvalidCredentials extends ServerError {
   constructor() {
-    super(StatusCodes.UNAUTHORIZED,
-          "The credentials you've provided are not correct or expired");
-    this.name = "InvalidCredentials";
+    super({
+      name: "InvalidCredentials",
+      message: "The credentials you've provided are not correct or expired",
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
+  }
+}
+
+/**
+ * Thrown when there's no such handler for an error
+ */
+export class InternalServerError extends ServerError {
+  constructor() {
+    super({
+      name: "InternalServerError",
+      message: "The server had trouble processing this request",
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    });
   }
 }

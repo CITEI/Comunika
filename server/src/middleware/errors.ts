@@ -1,25 +1,58 @@
-import { StatusCodes } from "http-status-codes";
 import { NextFunction, Request, Response } from "express";
-import { ServerError } from "@service/errors";
+import { BadRequestError, InternalServerError, ServerError, ValidationError } from "../service/errors";
+import mongoose from "mongoose";
+import { CelebrateError } from "celebrate";
+
+
+/**
+ * Standardizes frameworks errors and libraries errors
+ */
+function parseError(err: Error): ServerError
+{
+  if (err instanceof ServerError)
+    return err
+
+  if (err instanceof mongoose.Error.CastError)
+    return new ValidationError({
+      fields: [{name: err.path, problem: "invalid"}]
+    })
+
+  else if (err instanceof mongoose.Error.ValidatorError)
+    return new ValidationError({
+      fields: [{name: err.properties.path!, problem: "invalid"}]
+    })
+
+  else if (err instanceof mongoose.Error.ValidationError)
+    return parseError(err.errors[Object.keys(err.errors)[0]])
+
+  else if (err instanceof CelebrateError)
+  {
+    const detail = err.details.get('body')!.details[0]
+    const name = detail.path[0].toString()
+    const problem = detail.type == 'object.unknown' ? "extra" : "missing"
+    return new BadRequestError({fields: [{name, problem}]})
+  }
+
+  return new InternalServerError();
+}
 
 /**
  * Answers a request that resulted in an error
  */
-function sendError(code: number, err: Error, res: Response) {
-  res.status(code).json({ type: err.name, message: err.message });
+function sendError(err: ServerError, res: Response) {
+  res.status(err.statusCode).json(err.body);
 }
 
-/** Process app scope errors and other non caught errors */
+/**
+ * Processes app scope errors and other non caught errors
+ */
 function middleware(
   err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  if (err instanceof ServerError)
-    sendError(err.statusCode, err, res)
-  else
-    sendError(StatusCodes.INTERNAL_SERVER_ERROR, err, res);
+  sendError(parseError(err), res)
 }
 
 export default () => middleware
