@@ -1,4 +1,8 @@
 # EducaZika
+
+[![Build Server](https://github.com/CITEI/EducaZika/actions/workflows/build_server.yml/badge.svg)](https://github.com/CITEI/EducaZika/actions/workflows/build_server.yml)
+[![codecov](https://codecov.io/gh/CITEI/EducaZika/branch/main/graph/badge.svg?token=K48Q8VXTY2)](https://codecov.io/gh/CITEI/EducaZika)
+
 An app to support teaching children with microcephaly due to the Zika virus disease
 
 # Repository structure
