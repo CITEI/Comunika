@@ -20,6 +20,10 @@ jobs:
       matrix:
         node-version: [14.x]
 
+    defaults:
+      run:
+        working-directory: ./server
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -32,7 +36,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install dependencies
-      run: cd server && npm ci
+      run: npm ci
 
     - name: Run the tests
       run: npm test
