@@ -11,6 +11,7 @@ const config: Config.InitialOptions = {
   collectCoverage: true,
   collectCoverageFrom: [
     '**/src/**/*.ts'
-  ]
+  ],
+  forceExit: true,
 };
 export default config;
