@@ -48,3 +48,4 @@ jobs:
         files: ./server/coverage/clover.xml
         verbose: true
         fail_ci_if_error: true
+        flags: server
