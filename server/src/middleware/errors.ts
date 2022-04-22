@@ -52,6 +52,7 @@ function middleware(
   res: Response,
   next: NextFunction
 ) {
+  //console.error(err);
   sendError(parseError(err), res)
 }
 

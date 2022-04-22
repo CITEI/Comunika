@@ -6,8 +6,8 @@
     "lint": "eslint . --ext .ts",
     "start": "node -r module-alias/register ./dist --env=production",
     "start:dev": "nodemon",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --runInBand",
+    "test:watch": "npm test -- --watch"
   },
   "nodemonConfig": {
     "watch": [

@@ -11,6 +11,7 @@ import { BASE_PATH } from "./pre-start/constants";
 import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/authentication";
+import levelRouter from "./route/level";
 
 // Constants
 const app = express();
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === "production") {
 const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
+apiRouter.use("/level", levelRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(BASE_PATH, apiRouter);

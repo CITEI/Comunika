@@ -1,23 +1,21 @@
 import mongoose from "mongoose";
 import {
-  DB_DATABASE, DB_HOST, DB_PASSWORD, DB_PORT, DB_USER
+  DB_DATABASE,
+  DB_HOST,
+  DB_PASSWORD,
+  DB_PORT,
+  DB_USER,
+  DB_REPLICA_SET,
 } from "./constants";
 
-export const config = {
-  HOST: DB_HOST,
-  PORT: DB_PORT,
-  DATABASE: DB_DATABASE,
-  USER: DB_USER,
-  PASSWORD: DB_PASSWORD,
-};
-
-export const uri = `mongodb://${config.HOST}:${config.PORT}`;
+export const uri = `mongodb://${DB_HOST}:${DB_PORT}`;
 
 mongoose
   .connect(uri, {
-    dbName: config.DATABASE,
-    user: config.USER,
-    pass: config.PASSWORD,
+    dbName: DB_DATABASE,
+    user: DB_USER,
+    pass: DB_PASSWORD,
+    replicaSet: DB_REPLICA_SET,
   })
   .then(() => {
     console.log("DB Connected");
