@@ -1,10 +1,4 @@
-import {
-  createLevel,
-  deleteLevel,
-  findLevels,
-  findNext,
-  swapLevels,
-} from "../service/level";
+import { levelService } from "../service/level";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
@@ -12,7 +6,7 @@ import { ReasonPhrases, StatusCodes } from "http-status-codes";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  res.status(StatusCodes.OK).json(await findLevels());
+  res.status(StatusCodes.OK).json(await levelService.findAll());
 });
 
 router.post(
@@ -23,7 +17,7 @@ router.post(
     },
   }),
   async (req: Request, res: Response) => {
-    await createLevel({ name: req.body.name });
+    await levelService.create({ name: req.body.name });
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
@@ -36,7 +30,7 @@ router.get(
     },
   }),
   async (req: Request, res: Response) => {
-    const next = await findNext({ id: req.params.id });
+    const next = await levelService.findNext({ id: req.params.id });
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
   }
@@ -50,7 +44,7 @@ router.delete(
     },
   }),
   async (req: Request, res: Response) => {
-    await deleteLevel({ id: req.params.id });
+    await levelService.delete({ id: req.params.id });
     res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   }
 );
@@ -64,7 +58,7 @@ router.put(
     },
   }),
   async (req: Request, res: Response) => {
-    await swapLevels({ from: req.body.from, to: req.body.to });
+    await levelService.swap({ from: req.body.from, to: req.body.to });
     res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   }
 );

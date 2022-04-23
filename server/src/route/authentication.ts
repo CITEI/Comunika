@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import passport from "passport";
 import { IUser, IUserDocument } from "src/model/user/user";
-import { loginUser, registerUser } from "../service/authentication";
+import { authenticationService } from "../service/authentication";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.post(
     },
   }),
   async (req: Request, res: Response) => {
-    await registerUser(req.body as IUser);
+    await authenticationService.registerUser(req.body as IUser);
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
@@ -33,7 +33,10 @@ router.post(
   passport.authenticate("local", { session: false }),
   async (req: Request, res: Response) => {
     const user = req.user as IUserDocument;
-    const token = await loginUser({ id: user._id, email: user.email });
+    const token = await authenticationService.loginUser({
+      id: user._id,
+      email: user.email,
+    });
     res.status(StatusCodes.OK).json({ token });
   }
 );
