@@ -34,6 +34,13 @@ export async function cleanDb() {
   await mongoose.connection.db.dropDatabase();
 }
 
+/**
+ * Generates a fake mongodb objectid as string
+ */
+export function generateFakeMongoUUID(): string {
+  return (new mongoose.Types.ObjectId()).toString()
+}
+
 // Extending jest
 //
 export type RouteTest = {

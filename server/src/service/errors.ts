@@ -48,10 +48,26 @@ export class DuplicatedError extends ServerError {
  * Thrown when a resource is not found
  */
 export class NotFoundError extends ServerError {
-  constructor({ schema, field }: { schema: string; field: string }) {
+  constructor({ message }: { message: string }) {
     super({
       name: "NotFound",
+      message: message,
       statusCode: StatusCodes.NOT_FOUND,
+    });
+  }
+}
+
+export class ObjectNotFoundError extends NotFoundError {
+  constructor({ schema }: { schema: string }) {
+    super({
+      message: `${schema} not found`,
+    });
+  }
+}
+
+export class AttributeNotFoundError extends NotFoundError {
+  constructor({ schema, field }: { schema: string; field: string }) {
+    super({
       message: `No matching ${field} in ${schema}`,
     });
   }
@@ -60,7 +76,7 @@ export class NotFoundError extends ServerError {
 /**
  * Thrown when an user is not found
  */
-export class UserNotFoundError extends NotFoundError {
+export class UserNotFoundError extends AttributeNotFoundError {
   constructor() {
     super({ schema: "User", field: "email" });
   }

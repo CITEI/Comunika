@@ -14,4 +14,5 @@ const config: Config.InitialOptions = {
   ],
   forceExit: true,
 };
+
 export default config;
