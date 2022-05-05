@@ -3,6 +3,7 @@ export const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const JWT_ALGORITHM = "HS256";
 export const API_VERSION = process.env.API_VERSION || "v1";
 export const BASE_PATH = `/api/${API_VERSION}`;
+export const DB_VERSION = process.env.DB_VERSION || '5.0.0';
 export const DB_HOST = process.env.DB_HOST;
 export const DB_PORT = process.env.DB_PORT;
 export const DB_DATABASE = process.env.DB_NAME;

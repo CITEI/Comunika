@@ -2,18 +2,15 @@ import { ObjectNotFoundError } from "../errors";
 import mongoose from "mongoose";
 import Service from "./service";
 
-export default class BasicService<
-  I,
-  M extends I & mongoose.Document
-> extends Service {
-  protected model: mongoose.Model<M>;
+export class BasicService<D extends mongoose.Document> extends Service {
+  protected model: mongoose.Model<D>;
   protected select: string;
 
   constructor({
     model,
     select,
   }: {
-    model: mongoose.Model<M>;
+    model: mongoose.Model<D>;
     select?: string;
   }) {
     super();
@@ -24,23 +21,23 @@ export default class BasicService<
   /**
    * Obtains all stored documents
    */
-  findAll(): Promise<Array<M>> {
+  findAll(): Promise<Array<D>> {
     return this.model.find({}).select(this.select).exec();
   }
 
   /**
    * Returns a specific document
    */
-  find({ id }: { id: string }): Promise<M | null> {
+  find({ id }: { id: string }): Promise<D | null> {
     const doc = this.model.findById(id).select(this.select).exec();
     if (doc) return doc;
-    else throw new ObjectNotFoundError({ schema: this.model.name });
+    else throw new ObjectNotFoundError({ schema: this.model });
   }
 
   /**
    * Creates a new document
    */
-  async create(input: I): Promise<M> {
+  async create(input: any): Promise<D> {
     const doc = new this.model(input);
     await doc.save();
     return doc;

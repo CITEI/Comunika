@@ -12,6 +12,7 @@ import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/authentication";
 import levelRouter from "./route/level";
+import categoryRouter from "./route/category";
 
 // Constants
 const app = express();
@@ -49,6 +50,7 @@ const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/level", levelRouter);
+apiRouter.use("/category", categoryRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(BASE_PATH, apiRouter);

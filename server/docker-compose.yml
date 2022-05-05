@@ -1,12 +1,42 @@
-version: '3.1'
+version: '3'
 
 services:
-
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: admin
+  mongo1:
+    image: "mongo-start"
+    build: ./.docker/mongodb/setup-start
+    env_file: "./src/pre-start/env/${ENV-development}.env"
     ports:
-      - 27017:27017
+      - "${DB_PORT:-27017}:${DB_PORT:-27017}"
+    volumes:
+      - ./.docker/mongodb/mongo1/data:/data/db
+    depends_on:
+      - "mongo2"
+      - "mongo3"
+    container_name: mongo1
+
+  mongo2:
+    image: "mongo:${DB_VERSION:-5.0.0}"
+    command: --replSet rs0
+    ports:
+      - "27018:${DB_PORT:-27017}"
+    volumes:
+      - ./.docker/mongodb/mongo2/data:/data/db
+    container_name: mongo2
+    env_file: "./src/pre-start/env/${ENV-development}.env"
+
+  mongo3:
+    image: "mongo:${DB_VERSION:-5.0.0}"
+    command: --replSet rs0
+    ports:
+      - "27019:${DB_PORT:-27017}"
+    volumes:
+      - ./.docker/mongodb/mongo3/data:/data/db
+    container_name: mongo3
+    env_file: "./src/pre-start/env/${ENV-development}.env"
+
+  setup-replica-set:
+    image: "setup-replica-set"
+    build: ./.docker/mongodb/setup-replica-set
+    restart: "no"
+    depends_on:
+      - "mongo1"

@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import mongoose from "mongoose";
 
 /**
  * Error containing HttpCode response
@@ -58,7 +59,10 @@ export class NotFoundError extends ServerError {
 }
 
 export class ObjectNotFoundError extends NotFoundError {
-  constructor({ schema }: { schema: string }) {
+  constructor({ schema }: { schema: String | mongoose.Model<any> }) {
+    if (!(schema instanceof String))
+      schema = (schema as mongoose.Model<any>).collection.collectionName
+
     super({
       message: `${schema} not found`,
     });

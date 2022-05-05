@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { ICategoryDocument } from "./category";
+import { CategoryDocument } from "./category";
 
-export interface ILevel {
+export interface LevelInput {
   name: string;
-  next?: mongoose.PopulatedDoc<ILevelDocument>;
+  next?: mongoose.PopulatedDoc<LevelDocument>;
 }
 
 export const LevelSchema = new mongoose.Schema({
@@ -14,18 +14,23 @@ export const LevelSchema = new mongoose.Schema({
     index: true, // required to avoid doubly linked list
     ref: "Level",
   },
-  categories: [
-    {
-      type: mongoose.Types.ObjectId,
-      ref: "Category",
-      required: true,
-      default: [],
-    },
-  ],
+  children_head: {
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
+    required: false,
+    default: null,
+  },
+  children_tail: {
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
+    required: false,
+    default: null,
+  },
 });
 
-export interface ILevelDocument extends mongoose.Document, ILevel {
-  categories: mongoose.PopulatedDoc<ICategoryDocument>[];
+export interface LevelDocument extends mongoose.Document, LevelInput {
+  children_head: mongoose.PopulatedDoc<CategoryDocument> | null;
+  children_tail: mongoose.PopulatedDoc<CategoryDocument> | null;
 }
 
-export const Level = mongoose.model<ILevelDocument>("Level", LevelSchema);
+export const Level = mongoose.model<LevelDocument>("Level", LevelSchema);

@@ -1,9 +1,15 @@
-import { ILevel, ILevelDocument, Level } from "../model/game/level";
+import { Game, GameDocument } from "src/model/game/game";
+import { LevelDocument, Level } from "../model/game/level";
 import { LinkedListService } from "./utils/linkedlist";
 
-export default class LevelService extends LinkedListService<ILevel, ILevelDocument> {
+export default class LevelService extends LinkedListService<LevelDocument, GameDocument> {
   constructor() {
-    super({ model: Level, select: "name categories" });
+    super({
+      model: Level,
+      select: "name categories",
+      meta_model: Game,
+      create_meta: true,
+    });
   }
 }
 
