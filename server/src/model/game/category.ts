@@ -1,23 +1,40 @@
 import mongoose from "mongoose";
-import { ILevel } from "./level";
-import { ITask } from "./task";
+import { LevelDocument } from "./level";
+import { ITaskDocument } from "./task";
 
-export interface ICategory extends mongoose.Document {
+export interface CategoryInput {
   name: string;
   description: string;
   iconUrl: string;
-  layer: number;
-  tasks: mongoose.PopulatedDoc<ITask>[];
-  level: mongoose.PopulatedDoc<ILevel>;
+  level: mongoose.PopulatedDoc<LevelDocument>;
+  next?: mongoose.PopulatedDoc<CategoryDocument>;
 }
 
-export const CategorySchema = new mongoose.Schema<ICategory>({
+export const CategorySchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 2 },
   description: { type: String, required: false },
   iconUrl: { type: String, required: true },
-  layer: { type: Number, required: true, index: true, unique: true },
   tasks: [{ type: mongoose.Types.ObjectId, ref: "Task", required: true }],
-  level: { type: mongoose.Types.ObjectId, ref: "Level", required: true },
+  level: {
+    type: mongoose.Types.ObjectId,
+    ref: "Level",
+    required: true,
+    index: true,
+  },
+  next: {
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
+    index: true,
+    required: false,
+    default: null,
+  },
 });
 
-export const Category = mongoose.model("Category", CategorySchema);
+export interface CategoryDocument extends mongoose.Document, CategoryInput {
+  tasks: mongoose.PopulatedDoc<ITaskDocument>[];
+}
+
+export const Category = mongoose.model<CategoryDocument>(
+  "Category",
+  CategorySchema
+);
