@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { BadRequestError, InternalServerError, ServerError, ValidationError } from "../service/errors";
 import mongoose from "mongoose";
 import { CelebrateError } from "celebrate";
+import winston from "../pre-start/winston";
+import { StatusCodes } from "http-status-codes";
 
 
 /**
@@ -52,8 +54,15 @@ function middleware(
   res: Response,
   next: NextFunction
 ) {
-  console.error(err);
-  sendError(parseError(err), res)
+  const parsedError = parseError(err)
+
+  // logging
+  if (parsedError.statusCode == StatusCodes.INTERNAL_SERVER_ERROR)
+    winston.error(err);
+  else
+    winston.info(err);
+
+  sendError(parsedError, res)
 }
 
 export default () => middleware

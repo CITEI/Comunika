@@ -10,3 +10,4 @@ export const DB_DATABASE = process.env.DB_NAME;
 export const DB_USER = process.env.DB_USER;
 export const DB_PASSWORD = process.env.DB_PASSWORD;
 export const DB_REPLICA_SET = process.env.DB_REPLICASET || "rs0";
+export const LOG_FOLDER = 'logs'
