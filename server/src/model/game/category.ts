@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
 import { LevelDocument } from "./level";
-import { ITaskDocument } from "./task";
+import { TaskDocument } from "./task";
 
 export interface CategoryInput {
   name: string;
   description: string;
   iconUrl: string;
   level: mongoose.PopulatedDoc<LevelDocument>;
-  next?: mongoose.PopulatedDoc<CategoryDocument>;
 }
 
 export const CategorySchema = new mongoose.Schema({
@@ -31,7 +30,8 @@ export const CategorySchema = new mongoose.Schema({
 });
 
 export interface CategoryDocument extends mongoose.Document, CategoryInput {
-  tasks: mongoose.PopulatedDoc<ITaskDocument>[];
+  tasks: mongoose.PopulatedDoc<TaskDocument>[];
+  next: mongoose.PopulatedDoc<CategoryDocument> | null;
 }
 
 export const Category = mongoose.model<CategoryDocument>(
