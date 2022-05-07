@@ -3,7 +3,6 @@ import { CategoryDocument } from "./category";
 
 export interface LevelInput {
   name: string;
-  next?: mongoose.PopulatedDoc<LevelDocument>;
 }
 
 export const LevelSchema = new mongoose.Schema({
@@ -31,6 +30,7 @@ export const LevelSchema = new mongoose.Schema({
 export interface LevelDocument extends mongoose.Document, LevelInput {
   children_head: mongoose.PopulatedDoc<CategoryDocument> | null;
   children_tail: mongoose.PopulatedDoc<CategoryDocument> | null;
+  next: mongoose.PopulatedDoc<LevelDocument> | null;
 }
 
 export const Level = mongoose.model<LevelDocument>("Level", LevelSchema);

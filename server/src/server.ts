@@ -13,6 +13,8 @@ import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/authentication";
 import levelRouter from "./route/level";
 import categoryRouter from "./route/category";
+import winston from "./pre-start/winston";
+
 
 // Constants
 const app = express();

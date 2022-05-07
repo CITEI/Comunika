@@ -1,4 +1,4 @@
-import { Game, GameDocument } from "src/model/game/game";
+import { Game, GameDocument } from "../model/game/game";
 import { LevelDocument, Level } from "../model/game/level";
 import { LinkedListService } from "./utils/linkedlist";
 

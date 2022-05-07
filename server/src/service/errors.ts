@@ -59,7 +59,7 @@ export class NotFoundError extends ServerError {
 }
 
 export class ObjectNotFoundError extends NotFoundError {
-  constructor({ schema }: { schema: String | mongoose.Model<any> }) {
+  constructor({ schema }: { schema: string | mongoose.Model<any> }) {
     if (!(schema instanceof String))
       schema = (schema as mongoose.Model<any>).collection.collectionName
 

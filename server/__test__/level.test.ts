@@ -3,11 +3,10 @@ import request from "supertest";
 import app from "../src/server";
 import { StatusCodes } from "http-status-codes";
 import { expect } from "@jest/globals";
-import { randomUUID } from "crypto";
-import mongoose from "mongoose";
 
 const LEVEL_POST_ROUTE = parseRoute("/level");
 const SUCCESSFUL_CREATE_LEVEL_BODY = { name: "test" };
+const LEVEL_GET_ROUTE = parseRoute("/level");
 
 describe("POST /level", () => {
   beforeAll(async () => {
@@ -50,8 +49,6 @@ describe("POST /level", () => {
       .expect(StatusCodes.BAD_REQUEST);
   });
 });
-
-const LEVEL_GET_ROUTE = parseRoute("/level");
 
 describe("GET /level", () => {
   beforeAll(async () => {
@@ -205,7 +202,7 @@ describe("DELETE /level", () => {
     await request(app)
       .get(levelNextRoute(id))
       .send()
-      .expect(StatusCodes.NO_CONTENT)
+      .expect(StatusCodes.NO_CONTENT);
   });
 });
 
