@@ -7,35 +7,35 @@ interface LinkedList extends mongoose.Document {
 }
 
 interface Meta<D extends LinkedList> extends mongoose.Document {
-  children_head: mongoose.PopulatedDoc<D> | null;
-  children_tail: mongoose.PopulatedDoc<D> | null;
+  childrenHead: mongoose.PopulatedDoc<D> | null;
+  childrenTail: mongoose.PopulatedDoc<D> | null;
 }
 
 export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends BasicService<D> {
-  protected meta_model: mongoose.Model<M>;
-  protected create_meta: boolean;
+  protected metaModel: mongoose.Model<M>;
+  protected createMeta: boolean;
 
   constructor({
     model,
     select,
-    meta_model,
-    create_meta,
+    metaModel,
+    createMeta,
   }: {
     model: mongoose.Model<D>;
     select?: string;
-    meta_model: mongoose.Model<M>;
-    create_meta?: boolean;
+    metaModel: mongoose.Model<M>;
+    createMeta?: boolean;
   }) {
     super({ model, select });
-    this.meta_model = meta_model;
-    this.create_meta = create_meta || false;
+    this.metaModel = metaModel;
+    this.createMeta = createMeta || false;
   }
 
   /**
    * Creates the metadata document
    */
   protected async initMeta(): Promise<M> {
-    const meta = new this.meta_model({ head: null, tail: null });
+    const meta = new this.metaModel({ head: null, tail: null });
     await meta.save();
     return meta;
   }
@@ -44,7 +44,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
    * Returns the metadata document from the db
    */
   protected async findMeta(input?: any): Promise<M | null> {
-    return this.meta_model.findOne().exec();
+    return this.metaModel.findOne().exec();
   }
 
   /**
@@ -53,24 +53,31 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
   protected async getMeta(input?: any): Promise<M> {
     const meta = await this.findMeta(input);
     if (meta) return meta;
-    else if (this.create_meta) return await this.initMeta();
-    else throw new ObjectNotFoundError({ schema: this.meta_model });
+    else if (this.createMeta) return await this.initMeta();
+    else throw new ObjectNotFoundError({ schema: this.metaModel });
   }
 
   /**
    * Obtains the first element of a linked list
    */
   protected async getHead(meta: M): Promise<D | null> {
-    if (!meta.populated("children_head")) await meta.populate("children_head");
-    return meta.children_head || null;
+    if (!meta.populated("childrenHead")) await meta.populate("childrenHead");
+    return meta.childrenHead || null;
   }
 
   /**
    * Obtains the last element of the linked list
    */
   protected async getTail(meta: M): Promise<D | null> {
-    if (!meta.populated("children_tail")) await meta.populate("children_tail");
-    return meta.children_tail || null;
+    if (!meta.populated("childrenTail")) await meta.populate("childrenTail");
+    return meta.childrenTail || null;
+  }
+
+  /**
+   * Returns the first element of a linked list
+   */
+  async findHead(input?: any): Promise<D | null> {
+    return await this.getTail(await this.getMeta(input))
   }
 
   /**
@@ -90,12 +97,12 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
       await doc.save({ session });
 
       // updates meta and linked list itself
-      meta.children_tail = doc;
-      if (meta.children_head) {
+      meta.childrenTail = doc;
+      if (meta.childrenHead) {
         last!.next = doc;
         await last!.save({ session });
       } else
-        meta.children_head = doc;
+        meta.childrenHead = doc;
       await meta.save({ session });
 
       await session.commitTransaction();
@@ -127,18 +134,18 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
         if (parent != null) {
           // it is not the first
           parent.next = current.next;
-          if (current._id.equals(meta.children_tail)) {
+          if (current._id.equals(meta.childrenTail)) {
             // it is the last element of the linked list
-            meta.children_tail = parent;
+            meta.childrenTail = parent;
             await meta.save({ session });
           }
           await parent.save({ session });
         } else {
           // it is the first element
-          meta.children_head = current.next;
-          if (meta.children_head == null)
+          meta.childrenHead = current.next;
+          if (meta.childrenHead == null)
             // only one element in the list
-            meta.children_tail = null;
+            meta.childrenTail = null;
           await meta.save({ session });
         }
 
@@ -225,20 +232,20 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
 
       // if first, update meta
       const meta = await this.getMeta();
-      if (b._id.equals(meta.children_head)) {
-        meta.children_head = d;
+      if (b._id.equals(meta.childrenHead)) {
+        meta.childrenHead = d;
         toupdate.push(meta);
-      } else if (d._id.equals(meta.children_head)) {
-        meta.children_head = b;
+      } else if (d._id.equals(meta.childrenHead)) {
+        meta.childrenHead = b;
         toupdate.push(meta);
       }
 
       // if last, update meta
-      if (b._id.equals(meta.children_tail)) {
-        meta.children_tail = d;
+      if (b._id.equals(meta.childrenTail)) {
+        meta.childrenTail = d;
         toupdate.push(meta);
-      } else if (d._id.equals(meta.children_tail)) {
-        meta.children_tail = b;
+      } else if (d._id.equals(meta.childrenTail)) {
+        meta.childrenTail = b;
         toupdate.push(meta);
       }
 

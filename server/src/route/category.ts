@@ -2,35 +2,19 @@ import { categoryService } from "../service/category";
 import { celebrate, Joi } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { Task } from "src/model/game/task";
-import {
-  NodeDiscriminators,
-  QuestionNodeDiscriminators,
-} from "../model/game/node";
+import { categoryTaskRouter } from "./task";
+import { CustomJoi } from "./utils/custom_joi";
 
+/**
+ * Category only routes
+ */
 const router = Router();
-
-router.post(
-  "/",
-  celebrate({
-    body: {
-      name: Joi.string().required(),
-      description: Joi.string().required(),
-      iconUrl: Joi.string().required(),
-      level: Joi.string().required(),
-    },
-  }),
-  async (req: Request, res: Response) => {
-    await categoryService.create(req.body);
-    res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
-  }
-);
 
 router.get(
   "/:id/next",
   celebrate({
     params: {
-      id: Joi.string().required(),
+      id: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -44,7 +28,7 @@ router.delete(
   "/:id",
   celebrate({
     params: {
-      id: Joi.string().required(),
+      id: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -57,8 +41,8 @@ router.put(
   "/swap",
   celebrate({
     body: {
-      from: Joi.string().required(),
-      to: Joi.string().required(),
+      from: CustomJoi.ObjectId().required(),
+      to: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -67,42 +51,36 @@ router.put(
   }
 );
 
-router.post(
-  "/task",
+router.use(
+  "/:category/task",
+  celebrate({ params: { category: CustomJoi.ObjectId().required() } }),
+  categoryTaskRouter
+);
+
+export default router;
+
+/**
+ * Required level id routes
+ */
+export const levelCategoryRouter = Router({ mergeParams: true });
+
+levelCategoryRouter.post(
+  "/",
   celebrate({
     body: {
-      category: Joi.string().required(),
       name: Joi.string().required(),
       description: Joi.string().required(),
-      nodes: Joi.array()
-        .items(
-          Joi.object({
-            type: Joi.string()
-              .valid(...Object.keys(NodeDiscriminators))
-              .required(),
-            title: Joi.string().required(),
-          }).unknown(true)
-        )
-        .min(1)
-        .required(),
-      question_nodes: Joi.array()
-        .items(
-          Joi.object({
-            type: Joi.string()
-              .valid(...Object.keys(QuestionNodeDiscriminators))
-              .required(),
-            title: Joi.string().required(),
-            question: Joi.string().required()
-          }).unknown(true)
-        )
-        .min(1)
-        .required(),
+      iconUrl: Joi.string().required(),
     },
   }),
   async (req: Request, res: Response) => {
-    await categoryService.add_task(req.body);
+    await categoryService.create({ ...req.body, ...req.params });
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
 
-export default router;
+levelCategoryRouter.get("/", async (req: Request, res: Response) => {
+  res
+    .status(StatusCodes.OK)
+    .send(await categoryService.findAll(req.params as any));
+});

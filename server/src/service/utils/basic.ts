@@ -21,17 +21,27 @@ export class BasicService<D extends mongoose.Document> extends Service {
   /**
    * Obtains all stored documents
    */
-  findAll(): Promise<Array<D>> {
+  findAll(input?: any): Promise<Array<D>> {
     return this.model.find({}).select(this.select).exec();
   }
 
   /**
    * Returns a specific document
    */
-  find({ id }: { id: string }): Promise<D | null> {
-    const doc = this.model.findById(id).select(this.select).exec();
+  async find({ id, select }: { id: string; select?: string }): Promise<D> {
+    const doc = await this.model
+      .findById(id)
+      .select(select || this.select)
+      .exec();
     if (doc) return doc;
     else throw new ObjectNotFoundError({ schema: this.model });
+  }
+
+  /**
+   * Checks if a specific document exists
+   */
+  async exists({ id }: { id: string }): Promise<boolean> {
+    return (await this.model.exists({ _id: id }).exec()) == null ? false : true;
   }
 
   /**
