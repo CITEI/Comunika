@@ -4,13 +4,13 @@ import { LevelDocument } from "./level";
 export interface InputGame {}
 
 export const GameSchema = new mongoose.Schema({
-  children_head: {
+  childrenHead: {
     type: mongoose.Types.ObjectId,
     ref: "Level",
     default: null,
     required: false,
   },
-  children_tail: {
+  childrenTail: {
     type: mongoose.Types.ObjectId,
     ref: "Level",
     default: null,
@@ -19,8 +19,8 @@ export const GameSchema = new mongoose.Schema({
 });
 
 export interface GameDocument extends mongoose.Document, InputGame {
-  children_head: mongoose.PopulatedDoc<LevelDocument> | null;
-  children_tail: mongoose.PopulatedDoc<LevelDocument> | null;
+  childrenHead: mongoose.PopulatedDoc<LevelDocument> | null;
+  childrenTail: mongoose.PopulatedDoc<LevelDocument> | null;
 }
 
 export const Game = mongoose.model<GameDocument>("Game", GameSchema);

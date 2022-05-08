@@ -13,13 +13,13 @@ export const LevelSchema = new mongoose.Schema({
     index: true, // required to avoid doubly linked list
     ref: "Level",
   },
-  children_head: {
+  childrenHead: {
     type: mongoose.Types.ObjectId,
     ref: "Category",
     required: false,
     default: null,
   },
-  children_tail: {
+  childrenTail: {
     type: mongoose.Types.ObjectId,
     ref: "Category",
     required: false,
@@ -28,8 +28,8 @@ export const LevelSchema = new mongoose.Schema({
 });
 
 export interface LevelDocument extends mongoose.Document, LevelInput {
-  children_head: mongoose.PopulatedDoc<CategoryDocument> | null;
-  children_tail: mongoose.PopulatedDoc<CategoryDocument> | null;
+  childrenHead: mongoose.PopulatedDoc<CategoryDocument> | null;
+  childrenTail: mongoose.PopulatedDoc<CategoryDocument> | null;
   next: mongoose.PopulatedDoc<LevelDocument> | null;
 }
 

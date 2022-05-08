@@ -13,6 +13,7 @@ import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/authentication";
 import levelRouter from "./route/level";
 import categoryRouter from "./route/category";
+import userRouter from "./route/user"
 import winston from "./pre-start/winston";
 
 
@@ -53,6 +54,7 @@ const apiRouter = Router();
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/level", levelRouter);
 apiRouter.use("/category", categoryRouter);
+apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(BASE_PATH, apiRouter);
