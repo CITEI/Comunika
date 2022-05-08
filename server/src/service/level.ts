@@ -7,8 +7,8 @@ export default class LevelService extends LinkedListService<LevelDocument, GameD
     super({
       model: Level,
       select: "name categories",
-      meta_model: Game,
-      create_meta: true,
+      metaModel: Game,
+      createMeta: true,
     });
   }
 }

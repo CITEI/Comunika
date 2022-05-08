@@ -2,6 +2,8 @@ import { levelService } from "../service/level";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { levelCategoryRouter } from "./category";
+import { CustomJoi } from "./utils/custom_joi";
 
 const router = Router();
 
@@ -26,7 +28,7 @@ router.get(
   "/:id/next",
   celebrate({
     params: {
-      id: Joi.string().required(),
+      id: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -40,7 +42,7 @@ router.delete(
   "/:id",
   celebrate({
     params: {
-      id: Joi.string().required(),
+      id: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -53,14 +55,20 @@ router.put(
   "/swap",
   celebrate({
     body: {
-      from: Joi.string().required(),
-      to: Joi.string().required(),
+      from: CustomJoi.ObjectId().required(),
+      to: CustomJoi.ObjectId().required(),
     },
   }),
   async (req: Request, res: Response) => {
     await levelService.swap({ from: req.body.from, to: req.body.to });
     res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   }
+);
+
+router.use(
+  "/:level/category",
+  celebrate({ params: { level: CustomJoi.ObjectId().required() } }),
+  levelCategoryRouter
 );
 
 export default router;

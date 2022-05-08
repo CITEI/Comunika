@@ -1,33 +1,45 @@
 import mongoose from "mongoose";
-import { IBox } from "../game/box";
-import { ICategory } from "../game/category";
-import { ILevel } from "../game/level";
+import { BoxDocument, BoxSchema } from "./box";
+import { CategoryDocument } from "../game/category";
+import { LevelDocument } from "../game/level";
 
-export interface IProgress {
-  level: mongoose.PopulatedDoc<ILevel>;
-  category: mongoose.PopulatedDoc<ICategory>;
-  box: mongoose.PopulatedDoc<IBox>;
-  history: mongoose.PopulatedDoc<IBox>[];
+export interface ProgressInput {
+  level: mongoose.PopulatedDoc<LevelDocument>;
+  category: mongoose.PopulatedDoc<CategoryDocument>;
+  box: BoxDocument;
+  history: BoxDocument[];
 }
 
-export const ProgressSchema = new mongoose.Schema<IProgress>({
-  level: {
-    type: mongoose.Types.ObjectId,
-    ref: "Level",
-    required: true,
-    default: null,
+export const ProgressSchema = new mongoose.Schema(
+  {
+    level: {
+      type: mongoose.Types.ObjectId,
+      ref: "Level",
+      required: true,
+      default: null,
+    },
+    category: {
+      type: mongoose.Types.ObjectId,
+      ref: "Category",
+      required: true,
+      default: null,
+    },
+    box: {
+      type: BoxSchema,
+      ref: "Box",
+      required: true,
+      default: null,
+    },
+    history: [
+      {
+        type: BoxSchema,
+        ref: "Box",
+        required: true,
+        default: [],
+      },
+    ],
   },
-  category: {
-    type: mongoose.Types.ObjectId,
-    ref: "Category",
-    required: true,
-    default: null,
-  },
-  box: {
-    type: mongoose.Types.ObjectId,
-    ref: "Box",
-    required: true,
-    default: null,
-  },
-  history: [{ type: mongoose.Types.ObjectId, ref: "Box", required: true }],
-});
+  { _id: false }
+);
+
+export interface ProgressDocument extends ProgressInput {}

@@ -5,7 +5,7 @@ import {
   StrategyOptions as JwtOptions,
 } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
-import { IUserDocument, User } from "../model/user/user";
+import { UserDocument, User } from "../model/user/user";
 import {
   BadRequestError,
   InvalidCredentials,
@@ -21,7 +21,7 @@ const opts: JwtOptions = {
 
 passport.use(
   new JwtStrategy(opts, (payload, done) => {
-    User.findById(payload.sub, (err: Error, user: IUserDocument) => {
+    User.findById(payload.sub, (err: Error, user: UserDocument) => {
       if (err) return done(new BadRequestError(), false);
       if (!user) return done(new InvalidCredentials(), false);
       else return done(null, user);
@@ -33,7 +33,7 @@ passport.use(
   new LocalStrategy(
     { usernameField: "email" },
     (email: string, password: string, done: Function) => {
-      User.findOne({ email }, async (err: Error, user: IUserDocument) => {
+      User.findOne({ email }, async (err: Error, user: UserDocument) => {
         if (err) return done(new BadRequestError(), false);
         if (!user) return done(new UserNotFoundError(), false);
         if (!(await user.passwordMatches(password)))
