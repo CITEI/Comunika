@@ -17,7 +17,7 @@ export default class CategoryService extends LinkedListService<
   constructor() {
     super({
       model: Category,
-      select: "name description iconUrl level",
+      select: "name description iconUrl level next",
       metaModel: Level,
       createMeta: false,
     });

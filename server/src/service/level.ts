@@ -6,7 +6,7 @@ export default class LevelService extends LinkedListService<LevelDocument, GameD
   constructor() {
     super({
       model: Level,
-      select: "name categories",
+      select: "name categories next",
       metaModel: Game,
       createMeta: true,
     });

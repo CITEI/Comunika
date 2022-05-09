@@ -77,7 +77,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
    * Returns the first element of a linked list
    */
   async findHead(input?: any): Promise<D | null> {
-    return await this.getTail(await this.getMeta(input))
+    return await this.getHead(await this.getMeta(input))
   }
 
   /**

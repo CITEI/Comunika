@@ -5,6 +5,7 @@ import {
   StrategyOptions as JwtOptions,
 } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
+import { select } from "underscore";
 import { UserDocument, User } from "../model/user/user";
 import {
   BadRequestError,
@@ -21,11 +22,11 @@ const opts: JwtOptions = {
 
 passport.use(
   new JwtStrategy(opts, (payload, done) => {
-    User.findById(payload.sub, (err: Error, user: UserDocument) => {
+    User.findById(payload.id, (err: Error, user: UserDocument) => {
       if (err) return done(new BadRequestError(), false);
       if (!user) return done(new InvalidCredentials(), false);
       else return done(null, user);
-    });
+    }).select("email");
   })
 );
 
@@ -39,7 +40,7 @@ passport.use(
         if (!(await user.passwordMatches(password)))
           return done(new InvalidCredentials(), false);
         else return done(null, user);
-      });
+      }).select("email password");
     }
   )
 );

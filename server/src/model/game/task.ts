@@ -20,7 +20,13 @@ export const TaskSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: 2 },
   description: { type: String, required: true },
   nodes: [{ type: NodeSchema, required: true, minlength: 1 }],
+  questionCount: { type: Number, default: 0 },
   questionNodes: [{ type: QuestionNodeSchema, required: true, minlength: 1 }],
+});
+
+TaskSchema.pre("save", async function (next) {
+  this.questionCount = this.questionNodes.length
+  next();
 });
 
 /*
@@ -31,6 +37,8 @@ const Nodes = TaskSchema.path<mongoose.Schema.Types.Subdocument>("nodes");
 for (const [name, schema] of Object.entries(NodeDiscriminators))
   Nodes.discriminator(name, schema);
 
-export interface TaskDocument extends mongoose.Document, TaskInput {}
+export interface TaskDocument extends mongoose.Document, TaskInput {
+  questionCount: number;
+}
 
 export const Task = mongoose.model<TaskDocument>("Task", TaskSchema);

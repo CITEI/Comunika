@@ -3,7 +3,7 @@ import { CategoryDocument } from "../game/category";
 import { TaskDocument } from "../game/task";
 
 interface BoxTaskInput {
-  answer: boolean;
+  hits: number;
   task: mongoose.PopulatedDoc<TaskDocument>;
 }
 
@@ -21,7 +21,7 @@ export const BoxSchema = new mongoose.Schema(
     },
     tasks: [
       {
-        answer: { type: Boolean, required: true, default: false },
+        hits: { type: Number, required: true, default: 0 },
         task: { type: mongoose.Types.ObjectId, required: true },
       },
     ],

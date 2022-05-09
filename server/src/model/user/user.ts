@@ -45,31 +45,32 @@ UserSchema.methods.passwordMatches = async function (
   return passwordsMatch(pass, this.password);
 };
 
+/*
 /**
  * Calculates the percentage of correctly answered box questions
  */
-UserSchema.methods.calculateScore = function (): number {
+/*UserSchema.methods.calculateScore = function (): number {
   // trues / total
   const box = (this as UserDocument).progress.box;
   return (
     box.tasks.reduce((sum: number, el) => sum + Number(el.answer), 0) /
     box.tasks.length
   );
-};
+};*/
 
 /**
  * Checks if a user achieved the minimum requirements to advance
  */
-UserSchema.methods.isApproved = function (): boolean {
+/*UserSchema.methods.isApproved = function (): boolean {
   return this.calculateScore() > 0.7;
-};
+};*/
 
 /** Interface for retrieving user registers */
 export interface UserDocument extends mongoose.Document, UserInput {
   progress: ProgressDocument;
   passwordMatches(pass: string): Promise<boolean>;
-  calculateScore(): number;
-  isApproved(): boolean;
+  //calculateScore(): number;
+  //isApproved(): boolean;
 }
 
 export const User = mongoose.model<UserDocument>("User", UserSchema);

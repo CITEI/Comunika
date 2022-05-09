@@ -1,10 +1,14 @@
 import { BoxDocument, BoxInput } from "../model/user/box";
-import { GAME_TASK_SAMPLE_QUANTITY } from "../pre-start/constants";
+import {
+  GAME_MIN_GRADE_PCT,
+  GAME_TASK_SAMPLE_QUANTITY,
+} from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/user/user";
 import { categoryService } from "./category";
-import { ObjectNotFoundError, ValidationError } from "./errors";
+import { InternalServerError, ObjectNotFoundError, ValidationError } from "./errors";
 import { levelService } from "./level";
 import { BasicService } from "./utils/basic";
+import { Task } from "src/model/game/task";
 
 export enum EvaluationStatus {
   Approved,
@@ -84,7 +88,7 @@ class UserService extends BasicService<UserDocument> {
           id: category,
           quantity: GAME_TASK_SAMPLE_QUANTITY,
         })
-      ).map((el: any) => ({ task: el, answer: false })),
+      ).map((el: any) => ({ task: el, hits: 0 })),
     };
 
     return box;
@@ -99,63 +103,84 @@ class UserService extends BasicService<UserDocument> {
     answers,
   }: {
     id: string;
-    answers: Array<boolean>;
+    answers: Array<number>;
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
       select: "progress.box progress.category progress.level",
     });
 
+    let grade = 0;
     // update box answers
-    if (user.progress.box.tasks.length == answers.length)
-      user.progress.box.tasks = user.progress.box.tasks.map((el, i) => ({
-        task: el.task,
-        answer: answers[i],
-      }));
-    else
+    if (user.progress.box.tasks.length == answers.length) {
+      // get total answers
+      await user.populate({
+        path: "progress.box.tasks.task",
+        select: "questionCount",
+        model: "Task",
+      });
+      let total = 0;
+      let hits = 0;
+      answers.forEach((el, i) => {
+        let count = user.progress.box.tasks[i].task.questionCount;
+        if (el <= count && el >= 0) {
+          user.progress.box.tasks[i].hits = el;
+          total += count;
+          hits += el;
+        } else
+          throw new ValidationError({
+            fields: [{ name: "answers", problem: "invalid" }],
+          });
+      });
+      grade = hits / total;
+    } else
       throw new ValidationError({
         fields: [{ name: "answers", problem: "missing" }],
       });
 
-    if (user.isApproved()) {
+    if (grade >= GAME_MIN_GRADE_PCT) {
       let nextLevel = user.progress.level;
       let nextCategory = await categoryService.findNext({
         id: user.progress.category,
       });
 
-      if (!nextCategory)
+      if (!nextCategory) {
         // reached the last category of a level
         nextLevel = await levelService.findNext({ id: nextLevel });
-      if (!nextLevel) {
-        // if no level, reached the end of the game
+        if (!nextLevel) {
+          // if no level, reached the end of the game
+          await User.findByIdAndUpdate(id, {
+            $set: {
+              "progress.level": user.progress.level,
+              "progress.category": null,
+              "progress.box": null,
+            },
+            $push: {
+              "progress.history": user.progress.box,
+            },
+          });
+          return EvaluationStatus.NoContent;
+        } else
+          nextCategory = await categoryService.findHead({ level: nextLevel });
+      }
+
+      if (nextCategory) {
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.level": user.progress.level,
-            "progress.category": null,
-            "progress.box": null,
+            "progress.level": nextLevel,
+            "progress.category": nextCategory,
+            "progress.box": await this.createBox({
+              category: nextCategory._id,
+            }),
           },
           $push: {
             "progress.history": user.progress.box,
           },
         });
-        return EvaluationStatus.NoContent;
-      }
-
-      nextCategory = await categoryService.findHead({ level: nextLevel });
-
-      await User.findByIdAndUpdate(id, {
-        $set: {
-          "progress.level": nextLevel,
-          "progress.category": nextCategory,
-          "progress.box": await this.createBox({
-            category: user.progress.category,
-          }),
-        },
-        $push: {
-          "progress.history": user.progress.box,
-        },
-      });
-      return EvaluationStatus.Approved;
+        return EvaluationStatus.Approved;
+      } else
+        // level without categories
+        throw new InternalServerError()
     } else {
       await User.findByIdAndUpdate(id, {
         $set: {
@@ -193,6 +218,10 @@ class UserService extends BasicService<UserDocument> {
         });
       }
     }
+    if (box) {
+      await user.populate({ path: "progress.box.tasks.task", model: Task });
+      return user.progress.box;
+    }
     return box;
   }
 
@@ -204,7 +233,7 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    Array<{ category: string; tasks: Array<{ answer: boolean; name: string }> }>
+    Array<{ category: string; tasks: Array<{ hits: number; name: string }> }>
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.category", "name");
@@ -216,7 +245,7 @@ class UserService extends BasicService<UserDocument> {
     return user.progress.history.map((box) => ({
       category: box.category.name,
       tasks: box.tasks.map((task) => ({
-        answer: task.answer,
+        hits: task.hits,
         name: task.task.name,
       })),
     }));
@@ -225,10 +254,12 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Retrieves non-sensitive userdata
    */
-  async findUserData({id}: {id: string}) {
-    return await this.find({id, select: "email name"})
+  async findUserData({ id }: { id: string }): Promise<UserDocument> {
+    return await this.find({
+      id,
+      select: "email name progress.category progress.level",
+    });
   }
-
 }
 
 export const userService = new UserService();

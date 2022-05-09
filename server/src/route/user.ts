@@ -27,7 +27,7 @@ router.post(
       id: CustomJoi.ObjectId().required(),
     },
     body: {
-      answers: Joi.array().items(Joi.boolean().required()).required(),
+      answers: Joi.array().items(Joi.number().required().min(0)).required(),
     },
   }),
   async (req: Request, res: Response) => {

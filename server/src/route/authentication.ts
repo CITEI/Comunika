@@ -37,7 +37,20 @@ router.post(
       id: user._id,
       email: user.email,
     });
-    res.status(StatusCodes.OK).json({ token });
+    res.status(StatusCodes.OK).send(token);
+  }
+);
+
+router.get(
+  "/",
+  passport.authenticate("jwt", { session: false }),
+  async (req: Request, res: Response) => {
+    const user = req.user as UserDocument;
+    const token = await authenticationService.loginUser({
+      id: user._id,
+      email: user.email,
+    });
+    res.status(StatusCodes.OK).send(token);
   }
 );
 
