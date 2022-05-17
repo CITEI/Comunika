@@ -10,14 +10,15 @@ import {
 
 export const uri = `mongodb://${DB_HOST}:${DB_PORT}`;
 
-mongoose
+let mongo = mongoose
   .connect(uri, {
     dbName: DB_DATABASE,
     user: DB_USER,
     pass: DB_PASSWORD,
     replicaSet: DB_REPLICA_SET,
   })
-  .then(() => {
+
+  mongo.then(() => {
     console.log("DB Connected");
   })
   .catch((err) => {

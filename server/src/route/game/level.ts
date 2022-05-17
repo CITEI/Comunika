@@ -1,9 +1,9 @@
-import { levelService } from "../service/level";
+import { levelService } from "../../service/level";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { levelCategoryRouter } from "./category";
-import { CustomJoi } from "./utils/custom_joi";
+import { CustomJoi } from "../utils/custom_joi";
 
 const router = Router();
 

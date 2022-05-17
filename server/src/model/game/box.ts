@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { CategoryDocument } from "../game/category";
-import { TaskDocument } from "../game/task";
+import { CategoryDocument } from "./category";
+import { TaskDocument } from "./task";
 
 interface BoxTaskInput {
   hits: number;

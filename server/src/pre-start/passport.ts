@@ -6,7 +6,7 @@ import {
 } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { select } from "underscore";
-import { UserDocument, User } from "../model/user/user";
+import { UserDocument, User } from "../model/game/user";
 import {
   BadRequestError,
   InvalidCredentials,

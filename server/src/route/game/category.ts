@@ -1,9 +1,9 @@
-import { categoryService } from "../service/category";
+import { categoryService } from "../../service/category";
 import { celebrate, Joi } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { categoryTaskRouter } from "./task";
-import { CustomJoi } from "./utils/custom_joi";
+import { CustomJoi } from "../utils/custom_joi";
 
 /**
  * Category only routes

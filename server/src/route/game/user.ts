@@ -1,9 +1,9 @@
-import { EvaluationStatus, userService } from "../service/user";
+import { EvaluationStatus, userService } from "../../service/user";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
-import { CustomJoi } from "./utils/custom_joi";
+import { CustomJoi } from "../utils/custom_joi";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { InternalServerError } from "../service/errors";
+import { InternalServerError } from "../../service/errors";
 
 const router = Router();
 

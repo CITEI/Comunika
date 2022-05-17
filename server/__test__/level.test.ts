@@ -3,10 +3,17 @@ import request from "supertest";
 import app from "../src/server";
 import { StatusCodes } from "http-status-codes";
 import { expect } from "@jest/globals";
+import { Application } from "express";
 
-const LEVEL_POST_ROUTE = parseRoute("/level");
-const SUCCESSFUL_CREATE_LEVEL_BODY = { name: "test" };
-const LEVEL_GET_ROUTE = parseRoute("/level");
+export const LEVEL_POST_ROUTE = parseRoute("/level");
+export const SUCCESSFUL_CREATE_LEVEL_BODY = { name: "test" };
+export const LEVEL_GET_ROUTE = parseRoute("/level");
+
+export async function createLevel(app: Application): Promise<Map<string, any>> {
+  await request(app).post(LEVEL_POST_ROUTE).send(SUCCESSFUL_CREATE_LEVEL_BODY);
+  const res = await request(app).get(LEVEL_GET_ROUTE).send();
+  return new Map((res.body as Array<any>).map((el) => [el._id, el]));
+}
 
 describe("POST /level", () => {
   beforeAll(async () => {

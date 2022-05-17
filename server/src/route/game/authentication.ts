@@ -2,8 +2,8 @@ import { celebrate, Joi } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { UserInput, UserDocument } from "../model/user/user";
-import { authenticationService } from "../service/authentication";
+import { UserInput, UserDocument } from "../../model/game/user";
+import { authenticationService } from "../../service/authentication";
 
 const router = Router();
 

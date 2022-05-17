@@ -10,11 +10,12 @@ import custom_errors from "./middleware/errors";
 import { BASE_PATH } from "./pre-start/constants";
 import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
-import authRouter from "./route/authentication";
-import levelRouter from "./route/level";
-import categoryRouter from "./route/category";
-import userRouter from "./route/user"
+import authRouter from "./route/game/authentication";
+import levelRouter from "./route/game/level";
+import categoryRouter from "./route/game/category";
+import userRouter from "./route/game/user"
 import winston from "./pre-start/winston";
+import adminjs from "./pre-start/adminjs";
 
 
 // Constants
@@ -56,6 +57,7 @@ apiRouter.use("/level", levelRouter);
 apiRouter.use("/category", categoryRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+apiRouter.use("/admin", adminjs({route: `${BASE_PATH}/admin`}))
 
 app.use(BASE_PATH, apiRouter);
 

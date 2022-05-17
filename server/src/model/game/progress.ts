@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { BoxDocument, BoxSchema } from "./box";
-import { CategoryDocument } from "../game/category";
-import { LevelDocument } from "../game/level";
+import { BoxDocument, BoxSchema } from "../user/box";
+import { CategoryDocument } from "./category";
+import { LevelDocument } from "./level";
 
 export interface ProgressInput {
   level: mongoose.PopulatedDoc<LevelDocument>;

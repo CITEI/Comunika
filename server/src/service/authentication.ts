@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { UserInput, UserDocument } from "../model/user/user";
+import { UserInput, UserDocument } from "../model/game/user";
 import {
   JWT_ALGORITHM,
   JWT_EXPIRATION,

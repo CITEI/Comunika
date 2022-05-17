@@ -1,9 +1,9 @@
-import { categoryService } from "../service/category";
+import { categoryService } from "../../service/category";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { NodeDiscriminators } from "../model/game/node";
-import { CustomJoi } from "./utils/custom_joi";
+import { NodeDiscriminators } from "../../model/game/node";
+import { CustomJoi } from "../utils/custom_joi";
 
 const router = Router();
 

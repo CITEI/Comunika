@@ -1,9 +1,9 @@
-import { BoxDocument, BoxInput } from "../model/user/box";
+import { BoxDocument, BoxInput } from "../model/game/box";
 import {
   GAME_MIN_GRADE_PCT,
   GAME_TASK_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
-import { User, UserDocument, UserInput } from "../model/user/user";
+import { User, UserDocument, UserInput } from "../model/game/user";
 import { categoryService } from "./category";
 import { InternalServerError, ObjectNotFoundError, ValidationError } from "./errors";
 import { levelService } from "./level";

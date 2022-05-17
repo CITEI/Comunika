@@ -14,3 +14,4 @@ export const DB_REPLICA_SET = process.env.DB_REPLICASET || "rs0";
 export const LOG_FOLDER = 'logs'
 export const GAME_TASK_SAMPLE_QUANTITY = 10
 export const GAME_MIN_GRADE_PCT = 0.7
+export const APP_NAME = 'EducaZika'
