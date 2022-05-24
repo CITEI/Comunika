@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { BoxDocument, BoxSchema } from "../user/box";
+import { BoxDocument, BoxSchema } from "./box";
 import { CategoryDocument } from "./category";
 import { LevelDocument } from "./level";
 
