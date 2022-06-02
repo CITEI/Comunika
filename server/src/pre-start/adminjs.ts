@@ -8,14 +8,15 @@ import { Level } from "../model/game/level";
 import levelOptions from "../route/admin/level";
 import { Task } from "../model/game/task";
 import categoryOptions from "../route/admin/category";
-import { Category } from "../model/game/category"
+import { Category } from "../model/game/category";
+import taskOptions from "src/route/admin/task";
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
 const manageNavigation: ResourceOptions["navigation"] = {
-  name: 'Manage',
-  icon: ''
-}
+  name: "Manage",
+  icon: "",
+};
 
 const adminJs = new AdminJS({
   resources: [
@@ -23,29 +24,30 @@ const adminJs = new AdminJS({
       resource: User,
       options: {
         navigation: manageNavigation,
-        ...userOptions
+        ...userOptions,
       },
     },
     {
       resource: Level,
       options: {
         navigation: manageNavigation,
-        ...levelOptions
-      }
+        ...levelOptions,
+      },
     },
     {
       resource: Category,
       options: {
         navigation: manageNavigation,
-        ...categoryOptions
-      }
+        ...categoryOptions,
+      },
     },
     {
       resource: Task,
       options: {
         navigation: manageNavigation,
-      }
-    }
+        ...taskOptions,
+      },
+    },
   ] as Array<ResourceWithOptions>,
   branding: {
     companyName: APP_NAME,

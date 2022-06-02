@@ -4,7 +4,7 @@ import { linkedListProperties } from "./utils/linkedlist";
 import {
   buildValidator,
   Messages,
-  redirectToResource,
+  buildResponse,
 } from "./utils/functions";
 import Joi from "joi";
 
@@ -14,7 +14,7 @@ const levelOptions: ResourceOptions = {
   },
   actions: {
     bulkDelete: {
-      isVisible: false,
+      isAccessible: false,
     },
     new: {
       before: buildValidator({
@@ -22,7 +22,7 @@ const levelOptions: ResourceOptions = {
       }),
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const level = await levelService.create(req.payload);
-        return redirectToResource({
+        return buildResponse({
           con,
           result: "success",
           message: Messages.Created,
@@ -35,13 +35,13 @@ const levelOptions: ResourceOptions = {
         const id = req.params.recordId;
         if (id && con.record) {
           await levelService.delete({ id });
-          return redirectToResource({
+          return buildResponse({
             con,
             result: "success",
             message: Messages.Deleted,
           });
         } else
-          return redirectToResource({
+          return buildResponse({
             con,
             result: "error",
             message: Messages.BadRequest,

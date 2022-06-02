@@ -2,9 +2,13 @@ import {
   ActionContext,
   ActionRequest,
   ActionResponse,
+  PropertyOptions,
+  PropertyType,
   ValidationError,
 } from "adminjs";
 import Joi from "joi";
+import { unflatten } from "flat";
+import AdminJS from "adminjs";
 
 export enum Messages {
   Created = "successfullyCreated",
@@ -16,7 +20,7 @@ export enum Messages {
 /**
  * Redirects an action back to the main resource page
  */
-export function redirectToResource({
+export function buildResponse({
   con,
   result,
   message,
@@ -53,23 +57,54 @@ export function redirectToResource({
 export function buildValidator(
   schema: Joi.PartialSchemaMap
 ): (req: ActionRequest) => Promise<ActionRequest> {
+  const validator = Joi.object(schema);
   return async (req: ActionRequest) => {
-    const { error, value } = Joi.object({
-      ...schema,
-    }).validate(
-      {
-        ...req.payload,
-        ...req.params,
-      },
-      { allowUnknown: true }
-    );
-    if (error)
-      throw new ValidationError(
-        {},
+    if (req.method == "post") {
+      const { error, value } = validator.validate(
         {
-          message: error.message,
-        }
+          ...req.payload,
+          ...req.params,
+        },
+        { allowUnknown: true }
       );
+      if (error) throw new ValidationError({}, { message: error.message });
+    }
     return req;
+  };
+}
+
+/**
+ * Unflattens a flattened request params and payload
+ */
+export async function unflattenRequest(
+  req: ActionRequest
+): Promise<ActionRequest> {
+  req.params = unflatten(req.params);
+  req.payload = unflatten(req.payload);
+  return req;
+}
+
+/**
+ * Creates a conditional property object for resource options property
+ */
+export function buildConditionalProperty({
+  dependency,
+  isin,
+  type,
+}: {
+  type: PropertyType;
+  dependency: string;
+  isin: string[];
+}): PropertyOptions {
+  return {
+    components: {
+      edit: AdminJS.bundle("../../../view/admin/conditional_property"),
+      show: AdminJS.bundle("../../../view/admin/conditional_property"),
+    },
+    type,
+    custom: {
+      dependency,
+      isin,
+    },
   };
 }

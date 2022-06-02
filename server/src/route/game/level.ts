@@ -11,19 +11,6 @@ router.get("/", async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json(await levelService.findAll());
 });
 
-router.post(
-  "/",
-  celebrate({
-    body: {
-      name: Joi.string().required(),
-    },
-  }),
-  async (req: Request, res: Response) => {
-    await levelService.create({ name: req.body.name });
-    res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
-  }
-);
-
 router.get(
   "/:id/next",
   celebrate({
@@ -35,19 +22,6 @@ router.get(
     const next = await levelService.findNext({ id: req.params.id });
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
-  }
-);
-
-router.delete(
-  "/:id",
-  celebrate({
-    params: {
-      id: CustomJoi.ObjectId().required(),
-    },
-  }),
-  async (req: Request, res: Response) => {
-    await levelService.delete({ id: req.params.id });
-    res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   }
 );
 

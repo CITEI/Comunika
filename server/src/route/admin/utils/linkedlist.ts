@@ -9,6 +9,6 @@ export const linkedListProperties: ResourceOptions["properties"] = {
     isVisible: {edit: false, filter: false, list: false, show: false}
   },
   next: {
-    isVisible: {edit: false, filter: false, list: false, show: false}
+    isVisible: {edit: false, filter: true, list: true, show: true}
   },
 }

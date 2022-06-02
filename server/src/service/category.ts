@@ -4,7 +4,7 @@ import {
   CategoryDocument,
 } from "../model/game/category";
 import { Level, LevelDocument } from "../model/game/level";
-import { Task, TaskInput } from "../model/game/task";
+import { Task, TaskDocument, TaskInput } from "../model/game/task";
 import { ObjectNotFoundError } from "./errors";
 import { taskService } from "./task";
 import { LinkedListService } from "./utils/linkedlist";
@@ -43,13 +43,14 @@ export default class CategoryService extends LinkedListService<
   /**
    * Adds a task to a category
    */
-  async addTask(payload: TaskInput & { category: string }) {
+  async addTask(payload: TaskInput & { category: string }): Promise<TaskDocument> {
     if (await Category.exists({ _id: payload.category }).exec()) {
       const task = await taskService.create(payload);
       await Category.updateOne(
         { _id: payload.category },
         { $push: { tasks: task } }
       );
+      return task
     } else throw new ObjectNotFoundError({ schema: Category });
   }
 

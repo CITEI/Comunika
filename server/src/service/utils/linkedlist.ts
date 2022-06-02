@@ -124,7 +124,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
 
     if (current) {
       const parent = await this.model.findOne({ next: { $eq: id } }).exec();
-      const meta = await this.getMeta();
+      const meta = await this.getMeta(current);
 
       // Changes must be sync
       const session = await mongoose.connection.startSession();
