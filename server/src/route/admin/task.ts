@@ -7,14 +7,53 @@ import {
 } from "./utils/functions";
 import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
-import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
+import {
+  ActionContext,
+  ActionRequest,
+  ActionResponse,
+  Before,
+  ResourceOptions,
+} from "adminjs";
 import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
-import AdminJS from "adminjs";
 import { capitalize } from "underscore.string";
+import { TaskSchema } from "src/model/game/task";
 
-const baseNodeCreateJoi = {
-  title: Joi.string().required(),
+const baseNodeCreateSchema = {
+  title: Joi.string().required().min(3),
+};
+
+/** Base validator input for Joi */
+const taskValidatorSchema = {
+  name: CustomJoi.RequiredString(),
+  description: CustomJoi.RequiredString(),
+  nodes: Joi.array()
+    .items(
+      Joi.alternatives().try(
+        Joi.object({
+          ...baseNodeCreateSchema,
+          type: Joi.string().required().valid("text"),
+          text: CustomJoi.RequiredString(),
+        }),
+        Joi.object({
+          ...baseNodeCreateSchema,
+          type: Joi.string().required().valid("image"),
+          imageUrl: CustomJoi.RequiredString(),
+          imageAlt: CustomJoi.RequiredString(),
+        })
+      )
+    )
+    .min(1)
+    .required(),
+  questionNodes: Joi.array()
+    .items(
+      Joi.object({
+        title: CustomJoi.RequiredString(),
+        question: CustomJoi.RequiredString(),
+      })
+    )
+    .min(1)
+    .required(),
 };
 
 const taskOptions: ResourceOptions = {
@@ -63,35 +102,7 @@ const taskOptions: ResourceOptions = {
       before: [
         unflattenRequest,
         buildValidator({
-          name: Joi.string().required(),
-          description: Joi.string().required(),
-          nodes: Joi.array()
-            .items(
-              Joi.alternatives().try(
-                Joi.object({
-                  ...baseNodeCreateJoi,
-                  type: Joi.string().required().valid("text"),
-                  text: Joi.string().required(),
-                }),
-                Joi.object({
-                  ...baseNodeCreateJoi,
-                  type: Joi.string().required().valid("image"),
-                  imageUrl: Joi.string().required(),
-                  imageAlt: Joi.string().required(),
-                })
-              )
-            )
-            .min(1)
-            .required(),
-          questionNodes: Joi.array()
-            .items(
-              Joi.object({
-                title: Joi.string().required(),
-                question: Joi.string().required(),
-              }).unknown(true)
-            )
-            .min(1)
-            .required(),
+          ...taskValidatorSchema,
           category: CustomJoi.ObjectId().required(),
         }),
       ],
@@ -107,9 +118,9 @@ const taskOptions: ResourceOptions = {
     },
     delete: {
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
-        /*const id = req.params.recordId;
+        const id = req.params.recordId;
         if (id && con.record) {
-          await categoryService.deleteTask({ id });
+          await categoryService.deleteTask({ task: id });
           return buildResponse({
             con,
             result: "success",
@@ -120,14 +131,14 @@ const taskOptions: ResourceOptions = {
             con,
             result: "error",
             message: Messages.BadRequest,
-          });*/
-        return res;
+          });
       },
     },
     edit: {
-      before: buildValidator({
-        name: Joi.string().min(3).required(),
-      }),
+      before: [unflattenRequest, buildValidator(taskValidatorSchema)],
+      layout: Object.keys(TaskSchema.paths).filter(
+        (key) => !["_id", "__v", "questionCount"].includes(key)
+      ),
     },
   },
 };

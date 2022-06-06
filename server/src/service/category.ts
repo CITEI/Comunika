@@ -43,29 +43,51 @@ export default class CategoryService extends LinkedListService<
   /**
    * Adds a task to a category
    */
-  async addTask(payload: TaskInput & { category: string }): Promise<TaskDocument> {
+  async addTask(
+    payload: TaskInput & { category: string }
+  ): Promise<TaskDocument> {
     if (await Category.exists({ _id: payload.category }).exec()) {
       const task = await taskService.create(payload);
       await Category.updateOne(
         { _id: payload.category },
         { $push: { tasks: task } }
       );
-      return task
+      return task;
     } else throw new ObjectNotFoundError({ schema: Category });
+  }
+
+  /**
+   * Finds a category by a task
+   */
+  async findByTask({
+    task,
+    select,
+  }: {
+    task: string;
+    select?: string;
+  }): Promise<CategoryDocument | null> {
+    return await Category.findOne({ tasks: { $in: [task] } })
+      .select(select || "")
+      .exec();
   }
 
   /**
    * Removes a task from a category
    */
-  async deleteTask({ category, task }: { category: string; task: string }) {
-    if (await Category.exists({ _id: category }).exec()) {
-      if (await Task.exists({ _id: task }).exec()) {
-        await Category.findByIdAndUpdate(category, {
-          $pull: { tasks: task },
-        }).exec();
-        await Task.findByIdAndDelete(task);
-      } else throw new ObjectNotFoundError({ schema: Task });
-    } else throw new ObjectNotFoundError({ schema: Category });
+  async deleteTask({ category, task }: { category?: string; task: string }) {
+    if (!(await Task.exists({ _id: task }).exec()))
+      throw new ObjectNotFoundError({ schema: Task });
+
+    if (!category) {
+      category = (await this.findByTask({ task, select: "_id" }))?._id;
+      if (!category) throw new ObjectNotFoundError({ schema: Category });
+    } else if (!(await Category.exists({ _id: category }).exec()))
+      throw new ObjectNotFoundError({ schema: Category });
+
+    await Category.findByIdAndUpdate(category, {
+      $pull: { tasks: task },
+    }).exec();
+    await Task.findByIdAndDelete(task);
   }
 
   /**

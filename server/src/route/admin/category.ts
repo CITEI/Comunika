@@ -21,8 +21,8 @@ const categoryOptions: ResourceOptions = {
     bulkDelete: { isAccessible: false },
     new: {
       before: buildValidator({
-        name: Joi.string().min(3).required(),
-        description: Joi.string().min(3).required(),
+        name: CustomJoi.RequiredString(),
+        description: CustomJoi.RequiredString(),
         iconUrl: Joi.string().required(),
         level: CustomJoi.ObjectId().required(),
       }),
@@ -63,6 +63,10 @@ const categoryOptions: ResourceOptions = {
       },
     },
   },
+};
+
+categoryOptions!.actions!.edit = {
+  before: categoryOptions.actions!.new!.before,
 };
 
 export default categoryOptions;

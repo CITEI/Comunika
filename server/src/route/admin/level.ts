@@ -1,12 +1,9 @@
 import { levelService } from "../../service/level";
 import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { linkedListProperties } from "./utils/linkedlist";
-import {
-  buildValidator,
-  Messages,
-  buildResponse,
-} from "./utils/functions";
+import { buildValidator, Messages, buildResponse } from "./utils/functions";
 import Joi from "joi";
+import { CustomJoi } from "../utils/custom_joi";
 
 const levelOptions: ResourceOptions = {
   properties: {
@@ -18,7 +15,7 @@ const levelOptions: ResourceOptions = {
     },
     new: {
       before: buildValidator({
-        name: Joi.string().min(3).required(),
+        name: CustomJoi.RequiredString(),
       }),
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const level = await levelService.create(req.payload);
@@ -55,5 +52,7 @@ const levelOptions: ResourceOptions = {
     },
   },
 };
+
+levelOptions!.actions!.edit = { before: levelOptions.actions!.new!.before };
 
 export default levelOptions;
