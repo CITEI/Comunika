@@ -1,7 +1,7 @@
 import AdminJS, { ResourceOptions, ResourceWithOptions } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSMongoose from "@adminjs/mongoose";
-import { API_VERSION, APP_NAME } from "./constants";
+import { ADMIN_SECRET, API_VERSION, APP_NAME } from "./constants";
 import { User } from "../model/game/user";
 import userOptions from "../route/admin/user";
 import { Level } from "../model/game/level";
@@ -10,6 +10,9 @@ import { Task } from "../model/game/task";
 import categoryOptions from "../route/admin/category";
 import { Category } from "../model/game/category";
 import taskOptions from "src/route/admin/task";
+import { Admin } from "src/model/admin/admin";
+import { adminOptions } from "src/route/admin/admin";
+import { adminAuthenticationService, adminService } from "@service/admin";
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
@@ -20,6 +23,13 @@ const manageNavigation: ResourceOptions["navigation"] = {
 
 const adminJs = new AdminJS({
   resources: [
+    {
+      resource: Admin,
+      options: {
+        navigation: manageNavigation,
+        ...adminOptions,
+      },
+    },
     {
       resource: User,
       options: {
@@ -61,5 +71,16 @@ const adminJs = new AdminJS({
 
 export default (options: { route: string }) => {
   adminJs.options.rootPath = options.route;
-  return AdminJSExpress.buildRouter(adminJs);
+  adminJs.options.loginPath = `${options.route}/login`;
+  adminJs.options.logoutPath = `${options.route}/logout`;
+  return AdminJSExpress.buildAuthenticatedRouter(adminJs, {
+    authenticate: async (email, password) => {
+      try {
+        return await adminAuthenticationService.login({ email, password });
+      } catch (e) {
+        return false;
+      }
+    },
+    cookiePassword: ADMIN_SECRET,
+  });
 };

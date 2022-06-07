@@ -18,7 +18,7 @@ const levelOptions: ResourceOptions = {
         name: CustomJoi.RequiredString(),
       }),
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
-        const level = await levelService.create(req.payload);
+        const level = await levelService.create(req.payload as object);
         return buildResponse({
           con,
           result: "success",

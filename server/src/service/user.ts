@@ -5,10 +5,15 @@ import {
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/game/user";
 import { categoryService } from "./category";
-import { InternalServerError, ObjectNotFoundError, ValidationError } from "./errors";
+import {
+  InternalServerError,
+  ObjectNotFoundError,
+  ValidationError,
+} from "./errors";
 import { levelService } from "./level";
 import { BasicService } from "./utils/basic";
 import { Task } from "src/model/game/task";
+import { AuthenticationService } from "./utils/authentication";
 
 export enum EvaluationStatus {
   Approved,
@@ -50,7 +55,7 @@ class UserService extends BasicService<UserDocument> {
     select?: string;
   }): Promise<UserDocument> {
     let user;
-    if (id) user = await super.find({ id, select: select || this.select });
+    if (id) user = await super.find({ by: id, select: select || this.select });
     else
       user = await User.findOne({ email })
         .select(select || this.select)
@@ -178,9 +183,9 @@ class UserService extends BasicService<UserDocument> {
           },
         });
         return EvaluationStatus.Approved;
-      } else
-        // level without categories
-        throw new InternalServerError()
+      }
+      // level without categories
+      else throw new InternalServerError();
     } else {
       await User.findByIdAndUpdate(id, {
         $set: {
@@ -263,3 +268,14 @@ class UserService extends BasicService<UserDocument> {
 }
 
 export const userService = new UserService();
+
+class UserAuthenticationService extends AuthenticationService<
+  UserDocument,
+  UserInput
+> {
+  constructor() {
+    super({ service: userService });
+  }
+}
+
+export const userAuthenticationService = new UserAuthenticationService();

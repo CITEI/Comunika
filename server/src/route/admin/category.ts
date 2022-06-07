@@ -31,7 +31,7 @@ const categoryOptions: ResourceOptions = {
         res: any,
         con: ActionContext
       ): Promise<ActionResponse> => {
-        const category = await categoryService.create(req.payload);
+        const category = await categoryService.create(req.payload as object);
         return buildResponse({
           con,
           result: "success",

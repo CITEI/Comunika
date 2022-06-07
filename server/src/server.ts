@@ -13,13 +13,18 @@ import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
 import levelRouter from "./route/game/level";
 import categoryRouter from "./route/game/category";
-import userRouter from "./route/game/user"
+import userRouter from "./route/game/user";
 import winston from "./pre-start/winston";
 import adminjs from "./pre-start/adminjs";
 
-
 // Constants
 const app = express();
+
+/***********************************************************************************
+ *                                  Admin Panel
+ **********************************************************************************/
+
+app.use(`${BASE_PATH}/admin`, adminjs({ route: `${BASE_PATH}/admin` }));
 
 /***********************************************************************************
  *                                  Middlewares
@@ -57,7 +62,6 @@ apiRouter.use("/level", levelRouter);
 apiRouter.use("/category", categoryRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-apiRouter.use("/admin", adminjs({route: `${BASE_PATH}/admin`}))
 
 app.use(BASE_PATH, apiRouter);
 

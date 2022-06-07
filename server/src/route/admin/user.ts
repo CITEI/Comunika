@@ -1,14 +1,11 @@
-import { ResourceOptions } from "adminjs"
-
+import { ResourceOptions } from "adminjs";
 
 const userOptions: ResourceOptions = {
   actions: {
     new: {
-      handler: async (req, res, con) => {
-        return res
-      }
-    }
-  }
-}
+      isAccessible: false,
+    },
+  },
+};
 
-export default userOptions
+export default userOptions;

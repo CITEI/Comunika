@@ -11,7 +11,11 @@ interface Meta<D extends LinkedList> extends mongoose.Document {
   childrenTail: mongoose.PopulatedDoc<D> | null;
 }
 
-export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends BasicService<D> {
+export class LinkedListService<
+  D extends LinkedList & I,
+  M extends Meta<D>,
+  I = object
+> extends BasicService<D, I> {
   protected metaModel: mongoose.Model<M>;
   protected createMeta: boolean;
 
@@ -43,14 +47,14 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
   /**
    * Returns the metadata document from the db
    */
-  protected async findMeta(input?: any): Promise<M | null> {
+  protected async findMeta(input?: I): Promise<M | null> {
     return this.metaModel.findOne().exec();
   }
 
   /**
    * Obtains the linked list metadata document
    */
-  protected async getMeta(input?: any): Promise<M> {
+  protected async getMeta(input?: I): Promise<M> {
     const meta = await this.findMeta(input);
     if (meta) return meta;
     else if (this.createMeta) return await this.initMeta();
@@ -76,14 +80,14 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
   /**
    * Returns the first element of a linked list
    */
-  async findHead(input?: any): Promise<D | null> {
-    return await this.getHead(await this.getMeta(input))
+  async findHead(input?: I): Promise<D | null> {
+    return await this.getHead(await this.getMeta(input));
   }
 
   /**
    * Creates a new linked list object and appends it to the end
    */
-  async create(input: any): Promise<D> {
+  async create(input: I): Promise<D> {
     const meta = await this.getMeta(input);
     const last = await this.getTail(meta);
 
@@ -101,8 +105,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
       if (meta.childrenHead) {
         last!.next = doc;
         await last!.save({ session });
-      } else
-        meta.childrenHead = doc;
+      } else meta.childrenHead = doc;
       await meta.save({ session });
 
       await session.commitTransaction();
@@ -164,7 +167,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
   /**
    * Returns the first element of a linked list
    */
-  async findFirst(input?: any): Promise<D | null> {
+  async findFirst(input?: I): Promise<D | null> {
     return await this.getHead(await this.getMeta(input));
   }
 
@@ -253,8 +256,7 @@ export class LinkedListService<D extends LinkedList, M extends Meta<D>> extends 
       session.startTransaction();
 
       try {
-        for(let doc of toupdate)
-          await doc.save({session}) // avoided Promise.all in order to reduce transient transaction errors
+        for (let doc of toupdate) await doc.save({ session }); // avoided Promise.all in order to reduce transient transaction errors
         await session.commitTransaction();
         await session.endSession();
       } catch (e) /* istanbul ignore next */ {

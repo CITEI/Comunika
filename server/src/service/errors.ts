@@ -61,7 +61,7 @@ export class NotFoundError extends ServerError {
 export class ObjectNotFoundError extends NotFoundError {
   constructor({ schema }: { schema: string | mongoose.Model<any> }) {
     if (!(schema instanceof String))
-      schema = (schema as mongoose.Model<any>).collection.collectionName
+      schema = (schema as mongoose.Model<any>).collection.collectionName;
 
     super({
       message: `${schema} not found`,
@@ -152,5 +152,27 @@ export class InternalServerError extends ServerError {
       message: "The server had trouble processing this request",
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     });
+  }
+}
+
+/**
+ * Thrown whenever a user is not allowed to go forward
+ */
+export class Unauthorized extends ServerError {
+  constructor({ message }: { message: string }) {
+    super({
+      name: "Unauthorized",
+      message: message,
+      statusCode: StatusCodes.UNAUTHORIZED,
+    });
+  }
+}
+
+/**
+ * Thrown whenever a user provided a password that doesn't match the stored
+ */
+export class WrongPassword extends Unauthorized {
+  constructor() {
+    super({ message: "Passwords doesn't match" });
   }
 }
