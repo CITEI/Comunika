@@ -16,15 +16,19 @@ export const GAME_TASK_SAMPLE_QUANTITY = 10;
 export const GAME_MIN_GRADE_PCT = 0.7;
 export const APP_NAME = "EducaZika";
 export const ADMIN_SECRET = process.env.ADMIN_SECRET || "secret";
+export const MIN_PASSWORD_LENGTH = Number(process.env.MIN_PASSWORD_LENGTH || 8)
+export const MAX_PASSWORD_LENGTH = Number(
+  // arbitrary max to differentiate encrypted from raw
+  Math.min(Number(process.env.MAX_PASSWORD_LENGTH || 32), 48)
+);
+export const MIN_STRING_LENGTH = 3
 
-export const ROOT_NAME = 'root'
-export const ROOT_EMAIL = 'root@root.com'
+export const ROOT_NAME = "root";
+export const ROOT_EMAIL = "root@root.com";
 
-let temp_root_password = process.env.ROOT_PASSWORD
+let temp_root_password = process.env.ROOT_PASSWORD;
 if (!temp_root_password)
-  if (ENV != 'production')
-    temp_root_password = '12345678'
-  else
-    throw new Error('Root password must be set for production')
+  if (ENV != "production") temp_root_password = "12345678";
+  else throw new Error("Root password must be set for production");
 
-export const ROOT_PASSWORD = temp_root_password
+export const ROOT_PASSWORD = temp_root_password;

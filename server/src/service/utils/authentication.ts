@@ -5,7 +5,7 @@ import {
   JWT_EXPIRATION,
   JWT_SECRET,
 } from "../../pre-start/constants";
-import { DuplicatedError, UserNotFoundError, WrongPassword } from "../errors";
+import { DuplicatedError, UserNotFoundError, WrongPasswordError } from "../errors";
 import { BasicService } from "./basic";
 import Service from "./service";
 
@@ -67,6 +67,6 @@ export class AuthenticationService<
     if (await user.passwordMatches(payload.password))
       return user;
     else
-      throw new WrongPassword()
+      throw new WrongPasswordError()
   }
 }

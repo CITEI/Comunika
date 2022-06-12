@@ -120,10 +120,10 @@ export class ValidationError extends ServerError {
  * Thrown when an user cannot access some route
  */
 export class UnauthorizedError extends ServerError {
-  constructor() {
+  constructor(args?: {message?: string}) {
     super({
       name: "Unauthorized",
-      message: "User doesn't have privileges to continue",
+      message: args?.message || "User doesn't have privileges to continue",
       statusCode: StatusCodes.UNAUTHORIZED,
     });
   }
@@ -156,22 +156,9 @@ export class InternalServerError extends ServerError {
 }
 
 /**
- * Thrown whenever a user is not allowed to go forward
- */
-export class Unauthorized extends ServerError {
-  constructor({ message }: { message: string }) {
-    super({
-      name: "Unauthorized",
-      message: message,
-      statusCode: StatusCodes.UNAUTHORIZED,
-    });
-  }
-}
-
-/**
  * Thrown whenever a user provided a password that doesn't match the stored
  */
-export class WrongPassword extends Unauthorized {
+export class WrongPasswordError extends UnauthorizedError {
   constructor() {
     super({ message: "Passwords doesn't match" });
   }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { MIN_STRING_LENGTH } from "src/pre-start/constants";
 
 /*
 Creating regular nodes
@@ -11,7 +12,7 @@ export interface NodeInput {
 }
 
 export const NodeSchemaInit = {
-  title: { type: String, required: true, minlength: 2 },
+  title: { type: String, required: true, minlength: MIN_STRING_LENGTH },
 };
 
 const NO_ID = { _id: false };
@@ -52,7 +53,7 @@ export interface QuestionNodeInput extends NodeInput {
 
 export const QuestionNodeSchemaInit = {
   ...NodeSchemaInit,
-  question: { type: String, required: true, minlength: 3 },
+  question: { type: String, required: true, minlength: MIN_STRING_LENGTH },
 };
 
 export const QuestionNodeSchema = new mongoose.Schema(

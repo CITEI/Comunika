@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MIN_STRING_LENGTH } from "src/pre-start/constants";
 import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "../utils";
 import { ProgressDocument, ProgressSchema } from "./progress";
@@ -24,9 +25,10 @@ export const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
+    minlength: MIN_PASSWORD_LENGTH,
+    maxlength: MAX_PASSWORD_LENGTH
   },
-  name: { type: String, required: true, minlength: 2 },
+  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   progress: { type: ProgressSchema, required: true, default: () => ({}) },
 });
 

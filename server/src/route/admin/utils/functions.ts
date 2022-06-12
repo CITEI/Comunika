@@ -18,6 +18,19 @@ export enum Messages {
 }
 
 /**
+ * Creates a response that redirects to main resource page
+ */
+export function redirectToResource(
+  con: ActionContext,
+  res: ActionResponse
+): ActionResponse {
+  return {
+    ...res,
+    redirectUrl: con.h.resourceUrl({ resourceId: con.resource.id() }),
+  };
+}
+
+/**
  * Redirects an action back to the main resource page
  */
 export function buildResponse({

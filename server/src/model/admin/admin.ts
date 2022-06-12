@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MIN_STRING_LENGTH } from "src/pre-start/constants";
 import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "../utils";
 
@@ -7,7 +8,7 @@ export interface AdminInput {
   email: string;
   password: string;
   name: string;
-  invitedBy: string;
+  invitedBy: string | null;
 }
 
 export const AdminSchema = new mongoose.Schema({
@@ -24,17 +25,23 @@ export const AdminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
+    minlength: MIN_PASSWORD_LENGTH,
+    maxlength: MAX_PASSWORD_LENGTH,
   },
-  name: { type: String, required: true, minlength: 2 },
-  invitedBy: { type: mongoose.Types.ObjectId, ref: "Admin", required: false },
+  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  invitedBy: {
+    type: mongoose.Types.ObjectId,
+    ref: "Admin",
+    required: false,
+  },
 });
 
 /**
  * Hashes password before saving to db
  */
 AdminSchema.pre("save", async function (next) {
-  this.password = await hashPassword(this.password);
+  if (this.password.length <= MAX_PASSWORD_LENGTH) // not encrypted
+    this.password = await hashPassword(this.password);
   next();
 });
 

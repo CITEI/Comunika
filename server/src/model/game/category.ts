@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { MIN_STRING_LENGTH } from "src/pre-start/constants";
 import { LevelDocument } from "./level";
 import { TaskDocument } from "./task";
 
@@ -10,7 +11,7 @@ export interface CategoryInput {
 }
 
 export const CategorySchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 2 },
+  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: false },
   iconUrl: { type: String, required: true },
   tasks: [{ type: mongoose.Types.ObjectId, ref: "Task", required: true }],

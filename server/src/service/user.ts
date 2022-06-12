@@ -55,7 +55,11 @@ class UserService extends BasicService<UserDocument> {
     select?: string;
   }): Promise<UserDocument> {
     let user;
-    if (id) user = await super.find({ by: id, select: select || this.select });
+    if (id)
+      user = await super.find({
+        by: { _id: id },
+        select: select || this.select,
+      });
     else
       user = await User.findOne({ email })
         .select(select || this.select)
@@ -74,7 +78,7 @@ class UserService extends BasicService<UserDocument> {
     id?: string;
     email?: string;
   }): Promise<boolean> {
-    if (id) return super.exists({ id });
+    if (id) return super.exists({ _id: id });
     else return (await User.exists({ email }).exec()) == null ? false : true;
   }
 

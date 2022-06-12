@@ -6,6 +6,7 @@ import {
   NodeDiscriminators,
 } from "./node";
 import mongoose from "mongoose";
+import { MIN_STRING_LENGTH } from "src/pre-start/constants";
 
 export interface TaskInput {
   name: string;
@@ -17,7 +18,7 @@ export interface TaskInput {
 }
 
 export const TaskSchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 2 },
+  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: true },
   nodes: [{ type: NodeSchema, required: true, minlength: 1 }],
   questionCount: { type: Number, default: 0 },

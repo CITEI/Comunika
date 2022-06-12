@@ -47,7 +47,7 @@ const levelOptions: ResourceOptions = {
     },
     edit: {
       before: buildValidator({
-        name: Joi.string().min(3).required(),
+        name: CustomJoi.RequiredString(),
       }),
     },
   },

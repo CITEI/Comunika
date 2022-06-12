@@ -2,6 +2,11 @@ import { ObjectNotFoundError } from "../errors";
 import mongoose from "mongoose";
 import Service from "./service";
 
+interface isinQuery {
+  _id?: string;
+  [key: string]: any;
+}
+
 export class BasicService<
   D extends mongoose.Document & I,
   I = object
@@ -31,15 +36,11 @@ export class BasicService<
   /**
    * Returns a specific document
    */
-  async find(args: {
-    by: { [key: string]: any } | string;
-    select?: string;
-  }): Promise<D> {
-    const query =
-      typeof args.by == "string"
-        ? this.model.findById(args.by)
-        : this.model.findOne(args.by as any);
-    const doc = await query.select(args.select || this.select).exec();
+  async find(args: { by: isinQuery; select?: string }): Promise<D> {
+    const doc = await this.model
+      .findOne(args.by)
+      .select(args.select || this.select)
+      .exec();
     if (doc) return doc;
     else throw new ObjectNotFoundError({ schema: this.model });
   }
@@ -47,12 +48,8 @@ export class BasicService<
   /**
    * Checks if a specific document exists
    */
-  async exists(by: string | { [key: string]: any }): Promise<boolean> {
-    let exist = null;
-    if (typeof by == "string")
-      exist = await this.model.exists({ _id: by }).exec();
-    else exist = await this.model.exists(by as any).exec();
-    return exist == null;
+  async exists(by: isinQuery): Promise<boolean> {
+    return (await this.model.exists(by).exec()) != null;
   }
 
   /**
@@ -62,5 +59,13 @@ export class BasicService<
     const doc = new this.model(input);
     await doc.save();
     return doc;
+  }
+
+  /**
+   * Deletes a document
+   */
+  async delete(by: isinQuery) {
+    if (await this.exists(by)) await this.model.deleteOne(by);
+    else throw new ObjectNotFoundError({ schema: this.model });
   }
 }

@@ -10,8 +10,6 @@ import { CustomJoi } from "../utils/custom_joi";
 import {
   ActionContext,
   ActionRequest,
-  ActionResponse,
-  Before,
   ResourceOptions,
 } from "adminjs";
 import { categoryService } from "../../service/category";
@@ -20,7 +18,7 @@ import { capitalize } from "underscore.string";
 import { TaskSchema } from "src/model/game/task";
 
 const baseNodeCreateSchema = {
-  title: Joi.string().required().min(3),
+  title: CustomJoi.RequiredString(),
 };
 
 /** Base validator input for Joi */

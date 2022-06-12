@@ -100,7 +100,7 @@ export default class CategoryService extends LinkedListService<
     id: string;
     quantity: number;
   }): Promise<Array<string>> {
-    const category = await this.find({ by: id, select: "tasks" });
+    const category = await this.find({ by: { _id: id }, select: "tasks" });
     if (category) return underscore.sample(category.tasks, quantity);
     else return [];
   }

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { MIN_STRING_LENGTH } from "src/pre-start/constants";
 import { CategoryDocument } from "./category";
 
 export interface LevelInput {
@@ -6,7 +7,7 @@ export interface LevelInput {
 }
 
 export const LevelSchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 2 },
+  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   next: {
     type: mongoose.Types.ObjectId,
     default: null,
