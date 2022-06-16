@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MIN_STRING_LENGTH } from "src/pre-start/constants";
+import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 import { LevelDocument } from "./level";
 import { TaskDocument } from "./task";
 

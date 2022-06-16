@@ -15,7 +15,7 @@ import {
 import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
-import { TaskSchema } from "src/model/game/task";
+import { TaskSchema } from "../../model/game/task";
 
 const baseNodeCreateSchema = {
   title: CustomJoi.RequiredString(),

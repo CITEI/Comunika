@@ -1,13 +1,19 @@
 import mongoose from "mongoose";
-import { MIN_STRING_LENGTH } from "src/pre-start/constants";
+import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 import { CategoryDocument } from "./category";
 
 export interface LevelInput {
   name: string;
+  description: string;
+  image: string;
+  imageAlt: string;
 }
 
 export const LevelSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  description: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
+  imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   next: {
     type: mongoose.Types.ObjectId,
     default: null,

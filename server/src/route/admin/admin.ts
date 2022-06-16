@@ -1,4 +1,4 @@
-import { adminService } from "@service/admin";
+import { adminService } from "../../service/admin";
 import {
   ActionContext,
   ActionRequest,
@@ -10,7 +10,7 @@ import {
   MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
   ROOT_EMAIL,
-} from "src/pre-start/constants";
+} from "../../pre-start/constants";
 import { CustomJoi } from "../utils/custom_joi";
 import { buildResponse, buildValidator, Messages } from "./utils/functions";
 

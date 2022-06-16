@@ -1,3 +1,5 @@
+import {dirname, join} from "path";
+
 export const JWT_EXPIRATION = process.env.JWT_EXPIRATION_TIME || "14d";
 export const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const JWT_ALGORITHM = "HS256";
@@ -32,3 +34,5 @@ if (!temp_root_password)
   else throw new Error("Root password must be set for production");
 
 export const ROOT_PASSWORD = temp_root_password;
+export const PROJECT_PATH = dirname(dirname(__dirname))
+export const PUBLIC_PATH = join(PROJECT_PATH, 'public')

@@ -4,10 +4,9 @@ import express, { Router } from "express";
 import "express-async-errors";
 import helmet from "helmet";
 import morgan from "morgan";
-import path from "path";
 import swaggerUi from "swagger-ui-express";
 import custom_errors from "./middleware/errors";
-import { BASE_PATH } from "./pre-start/constants";
+import { BASE_PATH, PUBLIC_PATH } from "./pre-start/constants";
 import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
@@ -73,8 +72,7 @@ app.use(custom_errors()); // app-only errors
  **********************************************************************************/
 
 // Set static dir
-const staticDir = path.join(__dirname, "public");
-app.use(express.static(staticDir));
+app.use('/public', express.static(PUBLIC_PATH));
 
 // Export here and start in a diff file (for testing).
 export default app;

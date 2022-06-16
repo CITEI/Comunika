@@ -116,6 +116,18 @@ export class ValidationError extends ServerError {
   }
 }
 
+/** Thrown whenever a user uploads an unsupported file */
+export class InvalidExtensionError extends ServerError {
+  constructor({ fields }: { fields: Array<string> }) {
+    super({
+      name: "InvalidExtension",
+      message: `fields '${fields}' received a file of invalid extension`,
+      statusCode: StatusCodes.BAD_REQUEST,
+      extra: fields,
+    });
+  }
+}
+
 /**
  * Thrown when an user cannot access some route
  */

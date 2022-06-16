@@ -12,7 +12,7 @@ import {
 } from "./errors";
 import { levelService } from "./level";
 import { BasicService } from "./utils/basic";
-import { Task } from "src/model/game/task";
+import { Task } from "../model/game/task";
 import { AuthenticationService } from "./utils/authentication";
 
 export enum EvaluationStatus {

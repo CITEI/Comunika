@@ -5,14 +5,14 @@ import { ADMIN_SECRET, API_VERSION, APP_NAME } from "./constants";
 import { User } from "../model/game/user";
 import userOptions from "../route/admin/user";
 import { Level } from "../model/game/level";
-import levelOptions from "../route/admin/level";
+import levelOptions, { levelFeatures } from "../route/admin/level";
 import { Task } from "../model/game/task";
 import categoryOptions from "../route/admin/category";
 import { Category } from "../model/game/category";
-import taskOptions from "src/route/admin/task";
-import { Admin } from "src/model/admin/admin";
-import { adminOptions } from "src/route/admin/admin";
-import { adminAuthenticationService, adminService } from "@service/admin";
+import taskOptions from "../route/admin/task";
+import { Admin } from "../model/admin/admin";
+import { adminOptions } from "../route/admin/admin";
+import { adminAuthenticationService } from "../service/admin";
 
 AdminJS.registerAdapter(AdminJSMongoose);
 

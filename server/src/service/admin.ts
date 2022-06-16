@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { Admin, AdminDocument, AdminInput } from "src/model/admin/admin";
-import { ROOT_PASSWORD, ROOT_EMAIL, ROOT_NAME } from "src/pre-start/constants";
+import { Admin, AdminDocument, AdminInput } from "../model/admin/admin";
+import { ROOT_PASSWORD, ROOT_EMAIL, ROOT_NAME } from "../pre-start/constants";
 import {
   BadRequestError,
   ObjectNotFoundError,

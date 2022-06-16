@@ -6,7 +6,7 @@ import {
   NodeDiscriminators,
 } from "./node";
 import mongoose from "mongoose";
-import { MIN_STRING_LENGTH } from "src/pre-start/constants";
+import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 
 export interface TaskInput {
   name: string;
