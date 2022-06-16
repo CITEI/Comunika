@@ -6,14 +6,16 @@ import { TaskDocument } from "./task";
 export interface CategoryInput {
   name: string;
   description: string;
-  iconUrl: string;
+  image: string;
+  imageAlt: string;
   level: mongoose.PopulatedDoc<LevelDocument>;
 }
 
 export const CategorySchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  description: { type: String, required: false },
-  iconUrl: { type: String, required: true },
+  description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
+  image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
+  imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   tasks: [{ type: mongoose.Types.ObjectId, ref: "Task", required: true }],
   level: {
     type: mongoose.Types.ObjectId,

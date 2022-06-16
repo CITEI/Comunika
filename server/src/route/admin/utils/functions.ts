@@ -3,10 +3,10 @@ import {
   ActionRequest,
   ActionResponse,
   After,
+  BaseRecord,
   Before,
   PropertyOptions,
   PropertyType,
-  RecordActionResponse,
   ValidationError,
 } from "adminjs";
 import Joi from "joi";
@@ -16,6 +16,7 @@ import path from "path";
 import fs from "fs";
 import { InvalidExtensionError } from "../../../service/errors";
 import { PROJECT_PATH } from "../../../pre-start/constants";
+import mongoose from "mongoose";
 
 export enum Messages {
   Created = "successfullyCreated",
@@ -49,9 +50,14 @@ export function buildResponse({
   con: ActionContext;
   result: "success" | "error";
   message: Messages;
-  record?: object;
+  record?: mongoose.Document;
 }): ActionResponse {
-  if (!record) record = con.record!.toJSON(con.currentAdmin);
+  let res_record;
+  if (!record) res_record = con.record!.toJSON(con.currentAdmin);
+  else {
+    res_record = new BaseRecord(record.toObject(), con.resource);
+    con.record = res_record;
+  }
   return {
     redirectUrl: con.h.resourceUrl({ resourceId: con.resource.id() }),
     notice:
@@ -67,16 +73,14 @@ export function buildResponse({
               con.resource.id()
             ),
           },
-    record: record,
+    record: res_record,
   };
 }
 
 /**
  * Creates a handler that validates an ActionRequest using Joi
  */
-export function buildValidator(
-  schema: Joi.PartialSchemaMap
-): (req: ActionRequest) => Promise<ActionRequest> {
+export function buildValidator(schema: Joi.PartialSchemaMap): Before {
   const validator = Joi.object(schema);
   return async (req: ActionRequest) => {
     if (req.method == "post") {
@@ -132,11 +136,12 @@ export function buildConditionalProperty({
 interface RequestFile {
   name: string;
   path: fs.PathLike;
+  type: string;
 }
 
 /** Checks if an object is a file section from a request */
 function isRequestFile(obj: any): boolean {
-  return obj?.path && obj?.name;
+  return obj?.path && obj?.name && obj?.type;
 }
 
 /**
@@ -206,13 +211,15 @@ export function buildFileUploadBefore({
     if (req.method === "post") {
       let validParams = req.payload;
 
-      const file: RequestFile | undefined = validParams?.[attribute];
-      if (file && isRequestFile(file)) {
-        const extension = path.extname(file.name);
-        if (validExtensions.has(extension)) {
-          con[`upload_${attribute}`] = file;
-          validParams![attribute] = UploadFlags.waiting;
-        } else validParams![attribute] = UploadFlags.invalid;
+      if (validParams) {
+        const file: RequestFile | undefined = validParams?.[attribute];
+        if (file && isRequestFile(file)) {
+          const extension = path.extname(file.name);
+          if (validExtensions.has(extension)) {
+            con[`upload_${attribute}`] = file;
+            validParams[attribute] = UploadFlags.waiting;
+          } else validParams[attribute] = UploadFlags.invalid;
+        }
       }
 
       return {
