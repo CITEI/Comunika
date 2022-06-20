@@ -12,6 +12,7 @@ import {
   buildDeleteFileAfter,
   buildFileUploadAfter,
   buildFileUploadBefore,
+  buildFileUploadProperty,
   buildResponse,
   buildValidator,
   bundleFromView,
@@ -23,17 +24,7 @@ import { PUBLIC_PATH } from "../../pre-start/constants";
 const categoryOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
-    image: {
-      components: {
-        edit: bundleFromView("upload_image_edit"),
-        list: bundleFromView("upload_image_list"),
-        show: bundleFromView("upload_image_list"),
-      },
-      custom: {
-        extensions: ["png"],
-      },
-      isVisible: { filter: false, show: true, edit: true, list: true },
-    },
+    image: buildFileUploadProperty({ extensions: ["png"] }),
     tasks: {
       isVisible: { edit: false, filter: false, list: true, show: true },
     },

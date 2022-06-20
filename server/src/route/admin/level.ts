@@ -16,6 +16,7 @@ import {
   buildFileUploadAfter,
   bundleFromView,
   buildDeleteFileAfter,
+  buildFileUploadProperty,
 } from "./utils/functions";
 import { CustomJoi } from "../utils/custom_joi";
 import { PUBLIC_PATH } from "../../pre-start/constants";
@@ -23,17 +24,7 @@ import { PUBLIC_PATH } from "../../pre-start/constants";
 const levelOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
-    image: {
-      components: {
-        edit: bundleFromView("upload_image_edit"),
-        list: bundleFromView("upload_image_list"),
-        show: bundleFromView("upload_image_list"),
-      },
-      custom: {
-        extensions: ["png"],
-      },
-      isVisible: { filter: false, show: true, edit: true, list: true },
-    },
+    image: buildFileUploadProperty({ extensions: ["png"] }),
   },
   actions: {
     bulkDelete: {

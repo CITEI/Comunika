@@ -264,3 +264,25 @@ export function bundleFromView(...paths: string[]): string {
     path.join(...[PROJECT_PATH, "src", "view", "admin", ...paths])
   );
 }
+
+/**
+ * Creates a file upload property (dropzone of files)
+ */
+export function buildFileUploadProperty({
+  extensions,
+}: {
+  /** Used to hint allowed file extensions. example: ['png', 'jpg'] */
+  extensions: string[];
+}): PropertyOptions {
+  return {
+    components: {
+      edit: bundleFromView("upload_image_edit"),
+      list: bundleFromView("upload_image_list"),
+      show: bundleFromView("upload_image_list"),
+    },
+    custom: {
+      extensions,
+    },
+    isVisible: { filter: false, show: true, edit: true, list: true },
+  };
+}
