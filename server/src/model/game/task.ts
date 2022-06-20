@@ -6,7 +6,11 @@ import {
   NodeDiscriminators,
 } from "./node";
 import mongoose from "mongoose";
-import { MIN_STRING_LENGTH } from "../../pre-start/constants";
+import {
+  MIN_NODES,
+  MIN_QUESTION_NODES,
+  MIN_STRING_LENGTH,
+} from "../../pre-start/constants";
 
 export interface TaskInput {
   name: string;
@@ -20,13 +24,15 @@ export interface TaskInput {
 export const TaskSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: true },
-  nodes: [{ type: NodeSchema, required: true, minlength: 1 }],
+  nodes: [{ type: NodeSchema, required: true, minlength: MIN_NODES }],
   questionCount: { type: Number, default: 0 },
-  questionNodes: [{ type: QuestionNodeSchema, required: true, minlength: 1 }],
+  questionNodes: [
+    { type: QuestionNodeSchema, required: true, minlength: MIN_QUESTION_NODES },
+  ],
 });
 
 TaskSchema.pre("save", async function (next) {
-  this.questionCount = this.questionNodes.length
+  this.questionCount = this.questionNodes.length;
   next();
 });
 
