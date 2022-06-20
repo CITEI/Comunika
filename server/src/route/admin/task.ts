@@ -7,15 +7,12 @@ import {
 } from "./utils/functions";
 import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
-import {
-  ActionContext,
-  ActionRequest,
-  ResourceOptions,
-} from "adminjs";
+import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
 import { TaskSchema } from "../../model/game/task";
+import { MIN_NODES, MIN_QUESTION_NODES } from "../../pre-start/constants";
 
 const baseNodeCreateSchema = {
   title: CustomJoi.RequiredString(),
@@ -30,18 +27,40 @@ const taskValidatorSchema = {
       Joi.alternatives().try(
         Joi.object({
           ...baseNodeCreateSchema,
-          type: Joi.string().required().valid("text"),
+          type: CustomJoi.RequiredString().valid("text"),
           text: CustomJoi.RequiredString(),
+          image: CustomJoi.UploadStatus().required(),
+          imageAlt: CustomJoi.RequiredString(),
         }),
         Joi.object({
           ...baseNodeCreateSchema,
-          type: Joi.string().required().valid("image"),
-          imageUrl: CustomJoi.RequiredString(),
-          imageAlt: CustomJoi.RequiredString(),
+          type: CustomJoi.RequiredString().valid("carrousel"),
+          images: Joi.array()
+            .items(
+              Joi.object({
+                image: CustomJoi.UploadStatus().required(),
+                imageAlt: CustomJoi.RequiredString(),
+              })
+            )
+            .min(1),
+        }),
+        Joi.object({
+          ...baseNodeCreateSchema,
+          type: CustomJoi.RequiredString().valid("audible_mosaic"),
+          text: CustomJoi.RequiredString(),
+          mosaic: Joi.array()
+            .items(
+              Joi.object({
+                image: CustomJoi.UploadStatus().required(),
+                imageAlt: CustomJoi.RequiredString(),
+                audio: CustomJoi.UploadStatus().required(),
+              })
+            )
+            .min(1),
         })
       )
     )
-    .min(1)
+    .min(MIN_NODES)
     .required(),
   questionNodes: Joi.array()
     .items(
@@ -50,7 +69,7 @@ const taskValidatorSchema = {
         question: CustomJoi.RequiredString(),
       })
     )
-    .min(1)
+    .min(MIN_QUESTION_NODES)
     .required(),
 };
 
@@ -73,22 +92,22 @@ const taskOptions: ResourceOptions = {
       type: "string",
       availableValues: Object.keys(NodeDiscriminators).map((el) => ({
         value: el,
-        label: capitalize(el),
+        label: capitalize(el.split("_").join(" ")),
       })),
     },
     "nodes.text": buildConditionalProperty({
       dependency: "nodes.$0.type",
-      isin: ["text"],
+      isin: ["text", "audible_mosaic"],
       type: "string",
     }),
-    "nodes.imageUrl": buildConditionalProperty({
+    "nodes.image": buildConditionalProperty({
       dependency: "nodes.$0.type",
-      isin: ["image"],
+      isin: ["text"],
       type: "string",
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$0.type",
-      isin: ["image"],
+      isin: ["text"],
       type: "string",
     }),
   },

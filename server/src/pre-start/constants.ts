@@ -36,3 +36,6 @@ if (!temp_root_password)
 export const ROOT_PASSWORD = temp_root_password;
 export const PROJECT_PATH = dirname(dirname(__dirname))
 export const PUBLIC_PATH = join(PROJECT_PATH, 'public')
+
+export const MIN_NODES = Number(process.env.MIN_NODES || 1)
+export const MIN_QUESTION_NODES = Number(process.env.MIN_QUESTION_NODES || 1)
