@@ -14,9 +14,10 @@ import { unflatten } from "flat";
 import AdminJS from "adminjs";
 import path from "path";
 import fs from "fs";
-import { InvalidExtensionError } from "../../../service/errors";
+import { v4 as uuid4 } from "uuid";
 import { PROJECT_PATH } from "../../../pre-start/constants";
 import mongoose from "mongoose";
+import _ from "underscore";
 
 export enum Messages {
   Created = "successfullyCreated",
@@ -115,10 +116,12 @@ export function buildConditionalProperty({
   dependency,
   isin,
   type,
+  isArray,
 }: {
   type: PropertyType;
   dependency: string;
   isin: string[];
+  isArray?: boolean;
 }): PropertyOptions {
   return {
     components: {
@@ -130,6 +133,7 @@ export function buildConditionalProperty({
       dependency,
       isin,
     },
+    isArray: isArray || false,
   };
 }
 
@@ -144,46 +148,63 @@ function isRequestFile(obj: any): boolean {
   return obj?.path && obj?.name && obj?.type;
 }
 
+interface Upload {
+  file: RequestFile;
+  attribute: string;
+  key: string;
+}
+
+type UploadActionContext = ActionContext & {
+  uploads?: Upload[];
+};
+
+type UploadActionRequest = ActionRequest & {
+  files?: { [key: string]: RequestFile };
+};
+
 /**
  * Saves a file with the record name
  */
-export function buildFileUploadAfter({
-  attribute,
-  staticFolderEndpoint,
-  staticFolderPath,
-  subPath,
-}: {
-  /** db attribute for storing `subPath + fileName` */
-  attribute: string;
-  /** url subpath after domain to access public files */
-  staticFolderEndpoint: string;
-  /** path to the folder containing the files */
-  staticFolderPath: string;
-  /** subpath to store the file. it is physically located in `staticFolder` */
-  subPath: string;
-}) {
+export function buildFileUploadAfter(
+  destinations: Record<
+    string,
+    {
+      /** url subpath after domain to access public files */
+      staticFolderEndpoint: string;
+      /** path to the folder containing the files */
+      staticFolderPath: string;
+      /** subpath to store the file. it is physically located in `staticFolder` */
+      subPath: string;
+      /** identifier to match a tag passed in `buildFileUploadBefore` */
+    }
+  >
+) {
   const hook: After<any> = async (
     res: ActionResponse,
     _req: ActionRequest,
-    con: ActionContext
+    con: UploadActionContext
   ) => {
     const { record } = con;
-    const file: RequestFile | undefined = con[`upload_${attribute}`];
+    const uploads = con.uploads;
 
-    if (record?.isValid() && file && isRequestFile(file)) {
-      const extension = path.extname(file.name);
-      const fileName = `${record.id().toString()}${extension}`;
-
-      const diskPath = path.join(staticFolderPath, subPath, fileName);
-      const staticPath = path.posix.join(
-        staticFolderEndpoint,
-        subPath,
-        fileName
-      );
-
-      await fs.promises.rename(file.path, diskPath);
-      await record.update({ [attribute]: staticPath });
+    if (uploads && record && record.isValid()) {
+      for (const { file, key, attribute } of uploads) {
+        const { staticFolderPath, staticFolderEndpoint, subPath } =
+          destinations[attribute];
+        const extension = path.extname(file.name);
+        const fileName = `${uuid4()}${extension}`;
+        const diskPath = path.join(staticFolderPath, subPath, fileName);
+        const uriPath = path.posix.join(
+          staticFolderEndpoint,
+          subPath,
+          fileName
+        );
+        await fs.promises.rename(file.path, diskPath);
+        record.params[key] = uriPath;
+      }
+      await record.save();
     }
+
     return res;
   };
   return hook;
@@ -197,34 +218,51 @@ export enum UploadFlags {
 /**
  * Moves a file from payload to files when uploading something
  */
-export function buildFileUploadBefore({
-  attribute,
-  extensions,
-}: {
-  /** db attribute for storing `subPath + fileName` */
-  attribute: string;
-  /** array of file extensions. example: `['png', 'jpg']` */
-  extensions: string[];
-}): Before {
-  const validExtensions = new Set(extensions.map((el) => `.${el}`));
-  const hook: Before = async (req: ActionRequest, con: ActionContext) => {
-    if (req.method === "post") {
-      let validParams = req.payload;
+export function buildFileUploadBefore(
+  properties: Array<{
+    /** path to record attribute e.g. text.image */
+    attribute: string;
+    /** array of file extensions. example: `['png', 'jpg']` */
+    extensions: string[];
+  }>
+): Before {
+  const regexps = properties.map(
+    (el) => `^${el.attribute.replace(/[$]/g, "\\d+")}\$`
+  );
+  const hook: Before = async (
+    req: UploadActionRequest,
+    con: UploadActionContext
+  ) => {
+    if (req.method == "post") {
+      con.uploads = [];
+      const { payload, files } = req;
 
-      if (validParams) {
-        const file: RequestFile | undefined = validParams?.[attribute];
-        if (file && isRequestFile(file)) {
-          const extension = path.extname(file.name);
-          if (validExtensions.has(extension)) {
-            con[`upload_${attribute}`] = file;
-            validParams[attribute] = UploadFlags.waiting;
-          } else validParams[attribute] = UploadFlags.invalid;
+      if (payload && files) {
+        for (const key of Object.keys(files)) {
+          const index = regexps.findIndex((regex) =>
+            new RegExp(regex).test(key)
+          );
+          if (index > -1) {
+            const property = properties[index];
+            const file = files[key];
+            if (file && isRequestFile(file)) {
+              const extension = path.extname(file.name).replace(".", "");
+              if (property.extensions.includes(extension)) {
+                delete files[key];
+                con.uploads.push({
+                  file: file,
+                  attribute: property.attribute,
+                  key: key,
+                });
+                payload[key] = UploadFlags.waiting;
+              } else payload[key] = UploadFlags.invalid;
+            }
+          }
         }
       }
-
       return {
         ...req,
-        payload: validParams,
+        payload: payload,
       };
     }
     return req;
@@ -232,24 +270,30 @@ export function buildFileUploadBefore({
   return hook;
 }
 
-export function buildDeleteFileAfter({
-  attribute,
-  staticFolderPath,
-  staticFolderEndpoint,
-}: {
-  /** db attribute for storing `subPath + fileName` */
-  attribute: string;
-  /** url subpath after domain to access public files */
-  staticFolderPath: string;
-  /** url subpath after domain to access public files */
-  staticFolderEndpoint: string;
-}) {
+export function buildFileDeleteAfter(
+  destinations: Record<
+    string,
+    {
+      /** url subpath after domain to access public files */
+      staticFolderPath: string;
+      /** url subpath after domain to access public files */
+      staticFolderEndpoint: string;
+    }
+  >
+) {
   const hook: After<ActionResponse> = async (res, _req, con) => {
-    const fileEndpoint: string = con?.record?.params?.[attribute];
-    if (fileEndpoint) {
-      const fileSuffix = fileEndpoint.split(staticFolderEndpoint)[1];
-      const filePath = path.join(staticFolderPath, fileSuffix);
-      await fs.promises.rm(filePath);
+    if (con?.record?.params) {
+      for (let key of Object.keys(con.record.params)) {
+        const attribute = key.replace(/\.\d+\./g, ".$.");
+        if (attribute in destinations) {
+          const { staticFolderEndpoint, staticFolderPath } =
+            destinations[attribute];
+          const fileEndpoint: string = con.record.params[key];
+          const fileSuffix = fileEndpoint.split(staticFolderEndpoint)[1];
+          const filePath = path.join(staticFolderPath, fileSuffix);
+          await fs.promises.rm(filePath);
+        }
+      }
     }
     return res;
   };
@@ -270,9 +314,13 @@ export function bundleFromView(...paths: string[]): string {
  */
 export function buildFileUploadProperty({
   extensions,
+  dependency,
+  isin,
 }: {
   /** Used to hint allowed file extensions. example: ['png', 'jpg'] */
   extensions: string[];
+  dependency?: string;
+  isin?: string[];
 }): PropertyOptions {
   return {
     components: {
@@ -282,6 +330,8 @@ export function buildFileUploadProperty({
     },
     custom: {
       extensions,
+      dependency,
+      isin,
     },
     isVisible: { filter: false, show: true, edit: true, list: true },
   };

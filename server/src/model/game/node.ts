@@ -42,15 +42,13 @@ const CarrouselNodeSchema = new mongoose.Schema(
     images: {
       type: [
         {
-          type: {
-            text: { type: String, required: true },
-            image: { type: String, required: true },
-            imageAlt: { type: String, required: true },
-          },
-          required: true,
-          minlength: 1,
+          text: { type: String, required: true },
+          image: { type: String, required: true },
+          imageAlt: { type: String, required: true },
         },
       ],
+      required: true,
+      minlength: 1,
     },
   },
   NO_ID
@@ -62,17 +60,17 @@ const CarrouselNodeSchema = new mongoose.Schema(
 const AudibleMosaicNodeSchema = new mongoose.Schema(
   {
     text: { type: String, required: true },
-    images: [
-      {
-        type: {
+    images: {
+      type: [
+        {
           image: { type: String, required: true },
           imageAlt: { type: String, required: true },
           audio: { type: String, required: true },
         },
-        required: true,
-        minlength: 1,
-      },
-    ],
+      ],
+      required: true,
+      minlength: 1,
+    },
   },
   NO_ID
 );

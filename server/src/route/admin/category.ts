@@ -9,13 +9,12 @@ import {
 } from "adminjs";
 import { linkedListProperties } from "./utils/linkedlist";
 import {
-  buildDeleteFileAfter,
+  buildFileDeleteAfter,
   buildFileUploadAfter,
   buildFileUploadBefore,
   buildFileUploadProperty,
   buildResponse,
   buildValidator,
-  bundleFromView,
   Messages,
 } from "./utils/functions";
 import { CustomJoi } from "../utils/custom_joi";
@@ -33,7 +32,7 @@ const categoryOptions: ResourceOptions = {
     bulkDelete: { isAccessible: false },
     new: {
       before: [
-        buildFileUploadBefore({ attribute: "image", extensions: ["png"] }),
+        buildFileUploadBefore([{ attribute: "image", extensions: ["png"] }]),
         buildValidator({
           name: CustomJoi.RequiredString(),
           description: CustomJoi.RequiredString(),
@@ -44,10 +43,11 @@ const categoryOptions: ResourceOptions = {
       ],
       after: [
         buildFileUploadAfter({
-          attribute: "image",
-          staticFolderEndpoint: "public",
-          staticFolderPath: PUBLIC_PATH,
-          subPath: "category",
+          image: {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "category",
+          },
         }),
       ],
       handler: async (
@@ -65,10 +65,11 @@ const categoryOptions: ResourceOptions = {
       },
     },
     delete: {
-      after: buildDeleteFileAfter({
-        attribute: "image",
-        staticFolderEndpoint: "public",
-        staticFolderPath: PUBLIC_PATH,
+      after: buildFileDeleteAfter({
+        image: {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
       }),
       handler: async (
         req: ActionRequest,

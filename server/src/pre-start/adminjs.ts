@@ -5,7 +5,7 @@ import { ADMIN_SECRET, API_VERSION, APP_NAME } from "./constants";
 import { User } from "../model/game/user";
 import userOptions from "../route/admin/user";
 import { Level } from "../model/game/level";
-import levelOptions, { levelFeatures } from "../route/admin/level";
+import levelOptions from "../route/admin/level";
 import { Task } from "../model/game/task";
 import categoryOptions from "../route/admin/category";
 import { Category } from "../model/game/category";

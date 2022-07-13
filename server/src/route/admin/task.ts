@@ -4,6 +4,10 @@ import {
   buildResponse,
   unflattenRequest,
   buildConditionalProperty,
+  buildFileUploadProperty,
+  buildFileUploadBefore,
+  buildFileUploadAfter,
+  buildFileDeleteAfter,
 } from "./utils/functions";
 import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
@@ -12,7 +16,11 @@ import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
 import { TaskSchema } from "../../model/game/task";
-import { MIN_NODES, MIN_QUESTION_NODES } from "../../pre-start/constants";
+import {
+  MIN_NODES,
+  MIN_QUESTION_NODES,
+  PUBLIC_PATH,
+} from "../../pre-start/constants";
 
 const baseNodeCreateSchema = {
   title: CustomJoi.RequiredString(),
@@ -96,19 +104,45 @@ const taskOptions: ResourceOptions = {
       })),
     },
     "nodes.text": buildConditionalProperty({
-      dependency: "nodes.$0.type",
+      dependency: "nodes.$.type",
       isin: ["text", "audible_mosaic"],
-      type: "string",
+      type: "textarea",
     }),
-    "nodes.image": buildConditionalProperty({
-      dependency: "nodes.$0.type",
+    "nodes.image": buildFileUploadProperty({
+      dependency: "nodes.$.type",
       isin: ["text"],
-      type: "string",
+      extensions: ["png"],
     }),
     "nodes.imageAlt": buildConditionalProperty({
-      dependency: "nodes.$0.type",
+      dependency: "nodes.$.type",
       isin: ["text"],
       type: "string",
+    }),
+    "nodes.images": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel", "audible_mosaic"],
+      type: "mixed",
+      isArray: true,
+    }),
+    "nodes.images.image": buildFileUploadProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel", "audible_mosaic"],
+      extensions: ["png"],
+    }),
+    "nodes.images.imageAlt": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel", "audible_mosaic"],
+      type: "string",
+    }),
+    "nodes.images.text": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel", "audible_mosaic"],
+      type: "textarea",
+    }),
+    "nodes.images.audio": buildFileUploadProperty({
+      dependency: "nodes.$.type",
+      isin: ["audible_mosaic"],
+      extensions: ["ogg"],
     }),
   },
   actions: {
@@ -117,10 +151,34 @@ const taskOptions: ResourceOptions = {
     },
     new: {
       before: [
+        buildFileUploadBefore([
+          { attribute: "nodes.$.image", extensions: ["png"] },
+          { attribute: "nodes.$.images.$.image", extensions: ["png"] },
+          { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
+        ]),
         unflattenRequest,
         buildValidator({
           ...taskValidatorSchema,
           category: CustomJoi.ObjectId().required(),
+        }),
+      ],
+      after: [
+        buildFileUploadAfter({
+          "nodes.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "task",
+          },
+          "nodes.$.images.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "task",
+          },
+          "nodes.$.images.$.audio": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "task",
+          },
         }),
       ],
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
@@ -129,11 +187,25 @@ const taskOptions: ResourceOptions = {
           con,
           result: "success",
           message: Messages.Created,
-          record: { name: task.name, id: task._id, errors: {} },
+          record: task,
         });
       },
     },
     delete: {
+      after: buildFileDeleteAfter({
+        "nodes.$.image": {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
+        "nodes.$.images.$.image": {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
+        "nodes.$.images.$.audio": {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
+      }),
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const id = req.params.recordId;
         if (id && con.record) {

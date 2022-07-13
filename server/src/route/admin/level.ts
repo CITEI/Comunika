@@ -15,7 +15,7 @@ import {
   buildFileUploadBefore,
   buildFileUploadAfter,
   bundleFromView,
-  buildDeleteFileAfter,
+  buildFileDeleteAfter,
   buildFileUploadProperty,
 } from "./utils/functions";
 import { CustomJoi } from "../utils/custom_joi";
@@ -32,7 +32,7 @@ const levelOptions: ResourceOptions = {
     },
     new: {
       before: [
-        buildFileUploadBefore({ attribute: "image", extensions: ["png"] }),
+        buildFileUploadBefore([{ attribute: "image", extensions: ["png"] }]),
         buildValidator({
           name: CustomJoi.RequiredString(),
           description: CustomJoi.RequiredString(),
@@ -42,10 +42,11 @@ const levelOptions: ResourceOptions = {
       ],
       after: [
         buildFileUploadAfter({
-          attribute: "image",
-          staticFolderEndpoint: "public",
-          staticFolderPath: PUBLIC_PATH,
-          subPath: "level",
+          image: {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "level",
+          },
         }),
       ],
       handler: async (req: ActionRequest, _res: any, con: ActionContext) => {
@@ -59,10 +60,11 @@ const levelOptions: ResourceOptions = {
       },
     },
     delete: {
-      after: buildDeleteFileAfter({
-        attribute: "image",
-        staticFolderEndpoint: "public",
-        staticFolderPath: PUBLIC_PATH,
+      after: buildFileDeleteAfter({
+        image: {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
       }),
       handler: async (req: ActionRequest, _res: any, con: ActionContext) => {
         const id = req.params.recordId;
