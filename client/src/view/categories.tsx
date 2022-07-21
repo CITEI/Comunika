@@ -26,7 +26,7 @@ const Categories: React.VoidFunctionComponent<CategoriesProps> = (props) => {
       navigation.navigate("Game");
     else
       showMessage({
-        message: "Already completed",
+        message: "Not your current category",
         type: "info"
       })
   };

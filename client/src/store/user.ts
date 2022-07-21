@@ -17,8 +17,7 @@ const userId = async () =>
   ).id;
 
 export const fetchUserData = createAsyncThunk("user/data", async () => {
-  const id = await userId();
-  const data = (await api.get(`/user/${id}`)).data;
+  const data = (await api.get(`/user`)).data;
   return {
     info: {
       email: data.email,
@@ -55,8 +54,7 @@ interface Task {
 export const fetchBox = createAsyncThunk(
   "user/box",
   async (): Promise<Task[]> => {
-    const id = await userId();
-    const data = (await api.get(`/user/${id}/box`)).data;
+    const data = (await api.get(`/user/box`)).data;
     return (data.tasks as Array<any>).map((el) => ({
       name: el.task.name,
       description: el.task.description,
@@ -74,9 +72,8 @@ export enum EvaluateStatus {
 
 export const evaluate = createAsyncThunk(
   "user/evaluate",
-  async (answers: number[]) => {
-    const id = await userId();
-    const res = (await api.post(`/user/${id}/box`, { answers })).data;
+  async (answers: boolean[][]) => {
+    const res = (await api.post(`/user/box`, { answers })).data;
     switch (res.status) {
       case "approved":
         return EvaluateStatus.Approved;
@@ -91,8 +88,7 @@ export const evaluate = createAsyncThunk(
 export const fetchHistory = createAsyncThunk(
   "user/history",
   async (): Promise<{category: string}[]> => {
-    const id = await userId();
-    const res = (await api.get(`/user/${id}/history`)).data;
+    const res = (await api.get(`/user/history`)).data;
     return (res as Array<any>).map((el) => ({category: el.category}));
   }
 );

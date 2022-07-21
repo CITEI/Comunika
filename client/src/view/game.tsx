@@ -20,7 +20,7 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
   const [nodeIndex, setNodeIndex] = useState(0);
   const [answering, setAnswering] = useState(false);
   const [finished, setFinished] = useState(false);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [answers, setAnswers] = useState<boolean[][]>([]);
 
   const handleNextPressed = () => {
     const nextNode = nodeIndex + 1;
@@ -40,8 +40,8 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
 
   const handleAnswer = (answer: boolean) => {
     if (!finished) {
-      if (nodeIndex == 0) answers.push(Number(answer));
-      else answers[taskIndex] += Number(answer);
+      if (nodeIndex == 0) answers.push([answer]);
+      else answers[taskIndex].push(answer);
 
       const nextNode = nodeIndex + 1;
       if (nextNode < box[taskIndex].questionNodes.length)
