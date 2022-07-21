@@ -97,28 +97,19 @@ class UserService extends BasicService<UserDocument> {
           id: category,
           quantity: GAME_TASK_SAMPLE_QUANTITY,
         })
-      ).map((el: any) => ({ task: el, hits: 0 })),
+      ).map((el: any) => ({ task: el, answers: [] })),
     };
 
     return box;
   }
 
   /**
-   * Checks if a user has passed, and decides the next step of the game
-   * for it
+   * Calculates the grade of a user box given its answers
    */
-  async evaluate({
-    id,
-    answers,
-  }: {
-    id: string;
-    answers: Array<number>;
-  }): Promise<EvaluationStatus> {
-    const user = await this.find({
-      id,
-      select: "progress.box progress.category progress.level",
-    });
-
+  protected async calculateGrade(
+    user: UserDocument,
+    answers: boolean[][]
+  ): Promise<number> {
     let grade = 0;
     // update box answers
     if (user.progress.box.tasks.length == answers.length) {
@@ -131,11 +122,12 @@ class UserService extends BasicService<UserDocument> {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count = user.progress.box.tasks[i].task.questionCount;
-        if (el <= count && el >= 0) {
-          user.progress.box.tasks[i].hits = el;
+        let count: number = user.progress.box.tasks[i].task.questionCount;
+        let true_count = el.reduce((acc, cur) => +cur + acc, 0);
+        if (el.length <= count && el.length >= 0) {
+          user.progress.box.tasks[i].answers = el;
           total += count;
-          hits += el;
+          hits += true_count;
         } else
           throw new ValidationError({
             fields: [{ name: "answers", problem: "invalid" }],
@@ -146,59 +138,92 @@ class UserService extends BasicService<UserDocument> {
       throw new ValidationError({
         fields: [{ name: "answers", problem: "missing" }],
       });
+    return grade;
+  }
 
-    if (grade >= GAME_MIN_GRADE_PCT) {
-      let nextLevel = user.progress.level;
-      let nextCategory = await categoryService.findNext({
-        id: user.progress.category,
-      });
+  /**
+   * Updates the user to approve the current box
+   */
+  protected async approve(user: UserDocument) {
+    const id = user._id;
+    let nextLevel = user.progress.level;
+    let nextCategory = await categoryService.findNext({
+      id: user.progress.category,
+    });
 
-      if (!nextCategory) {
-        // reached the last category of a level
-        nextLevel = await levelService.findNext({ id: nextLevel });
-        if (!nextLevel) {
-          // if no level, reached the end of the game
-          await User.findByIdAndUpdate(id, {
-            $set: {
-              "progress.level": user.progress.level,
-              "progress.category": null,
-              "progress.box": null,
-            },
-            $push: {
-              "progress.history": user.progress.box,
-            },
-          });
-          return EvaluationStatus.NoContent;
-        } else
-          nextCategory = await categoryService.findHead({ level: nextLevel });
-      }
-
-      if (nextCategory) {
+    if (!nextCategory) {
+      // reached the last category of a level
+      nextLevel = await levelService.findNext({ id: nextLevel });
+      if (!nextLevel) {
+        // if no level, reached the end of the game
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.level": nextLevel,
-            "progress.category": nextCategory,
-            "progress.box": await this.createBox({
-              category: nextCategory._id,
-            }),
+            "progress.level": user.progress.level,
+            "progress.category": null,
+            "progress.box": null,
           },
           $push: {
             "progress.history": user.progress.box,
           },
         });
-        return EvaluationStatus.Approved;
-      }
-      // level without categories
-      else throw new InternalServerError();
-    } else {
+        return EvaluationStatus.NoContent;
+      } else
+        nextCategory = await categoryService.findHead({ level: nextLevel });
+    }
+
+    if (nextCategory) {
       await User.findByIdAndUpdate(id, {
         $set: {
+          "progress.level": nextLevel,
+          "progress.category": nextCategory,
           "progress.box": await this.createBox({
-            category: user.progress.category,
+            category: nextCategory._id,
           }),
         },
-        $push: { "progress.history": user.progress.box },
+        $push: {
+          "progress.history": user.progress.box,
+        },
       });
+    }
+    // level without categories
+    else throw new InternalServerError();
+  }
+
+  /**
+   * Updates the user to reprove the current box
+   */
+  protected async reprove(user: UserDocument) {
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        "progress.box": await this.createBox({
+          category: user.progress.category,
+        }),
+      },
+      $push: { "progress.history": user.progress.box },
+    });
+  }
+
+  /**
+   * Checks if a user has passed, and decides the next step of the game
+   * for it
+   */
+  async evaluate({
+    id,
+    answers,
+  }: {
+    id: string;
+    answers: Array<Array<boolean>>;
+  }): Promise<EvaluationStatus> {
+    const user = await this.find({
+      id,
+      select: "progress.box progress.category progress.level",
+    });
+    const grade = await this.calculateGrade(user, answers);
+    if (grade >= GAME_MIN_GRADE_PCT) {
+      this.approve(user);
+      return EvaluationStatus.Approved;
+    } else {
+      this.reprove(user);
       return EvaluationStatus.Reproved;
     }
   }
@@ -242,7 +267,7 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    Array<{ category: string; tasks: Array<{ hits: number; name: string }> }>
+    { category: string; tasks: { answers: boolean[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.category", "name");
@@ -254,7 +279,7 @@ class UserService extends BasicService<UserDocument> {
     return user.progress.history.map((box) => ({
       category: box.category.name,
       tasks: box.tasks.map((task) => ({
-        hits: task.hits,
+        answers: task.answers,
         name: task.task.name,
       })),
     }));

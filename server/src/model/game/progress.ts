@@ -26,14 +26,12 @@ export const ProgressSchema = new mongoose.Schema(
     },
     box: {
       type: BoxSchema,
-      ref: "Box",
       required: true,
       default: null,
     },
     history: [
       {
         type: BoxSchema,
-        ref: "Box",
         required: true,
         default: [],
       },
