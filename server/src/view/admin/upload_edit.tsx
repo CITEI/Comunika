@@ -19,12 +19,12 @@ const Edit: React.FC<EditPropertyProps> = (props) => {
   const { property, onChange, record } = props;
   const [editing, setEditing] = useState(true);
   const custom: UploadImageEditCustom = property.custom;
-  custom["initial_state"] = true;
+  custom["initialState"] = true;
 
   useEffect(() => {
     // enables checkbox if image was previously defined (edit mode)
     if (record?.params[property.path]) setEditing(false);
-  }, [custom["initial_state"]]);
+  }, [custom["initialState"]]);
 
   const handleDropZoneChange: DropZoneProps["onChange"] = (files) => {
     if (onChange) onChange(property.path, files[0]);
@@ -53,7 +53,7 @@ const Edit: React.FC<EditPropertyProps> = (props) => {
           <Box p="xl">
             <CheckBox onChange={handleCheckBoxChange} />
             <Label inline ml="default">
-              Change image
+              Change
             </Label>
           </Box>
         )}

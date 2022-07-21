@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { BasePropertyComponent, EditPropertyProps } from "adminjs";
+import { uniqueId } from "underscore";
 
 /**
  * ConditionalProperty custom
@@ -10,7 +11,7 @@ export interface ConditionalPropertyCustom {
   /** array of valid values to enable this field */
   isin: any[] | undefined;
   /** makes the property visible when it is first created */
-  initial_state: boolean | undefined;
+  initialState: boolean | undefined;
 }
 
 /**
@@ -19,10 +20,10 @@ export interface ConditionalPropertyCustom {
 const ConditionalProperty: React.FC<EditPropertyProps> = (props) => {
   const { property, record } = props;
   const { custom } = property;
-  const { dependency, isin, initial_state } =
+  const { dependency, isin, initialState } =
     custom as ConditionalPropertyCustom;
   const [isConditionallyVisible, setIsConditionallyVisible] = useState(
-    initial_state || false
+    initialState || false
   );
   const [checkPath, setCheckPath] = useState(dependency);
 
