@@ -1,13 +1,16 @@
 import { levelService } from "../../service/level";
-import { celebrate, Joi } from "celebrate";
+import { celebrate } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { levelCategoryRouter } from "./category";
 import { CustomJoi } from "../utils/custom_joi";
+import passport from "passport";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.use(passport.authenticate("jwt", { session: false }));
+
+router.get("/", async (_req: Request, res: Response) => {
   res.status(StatusCodes.OK).json(await levelService.findAll());
 });
 
@@ -22,20 +25,6 @@ router.get(
     const next = await levelService.findNext({ id: req.params.id });
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
-  }
-);
-
-router.put(
-  "/swap",
-  celebrate({
-    body: {
-      from: CustomJoi.ObjectId().required(),
-      to: CustomJoi.ObjectId().required(),
-    },
-  }),
-  async (req: Request, res: Response) => {
-    await levelService.swap({ from: req.body.from, to: req.body.to });
-    res.status(StatusCodes.OK).send(ReasonPhrases.OK);
   }
 );
 

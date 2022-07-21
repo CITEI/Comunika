@@ -1,37 +1,34 @@
 import { EvaluationStatus, userService } from "../../service/user";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
-import { CustomJoi } from "../utils/custom_joi";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { InternalServerError } from "../../service/errors";
+import passport from "passport";
+import { UserDocument } from "src/model/game/user";
 
 const router = Router();
 
+router.use(passport.authenticate("jwt", { session: false }));
+
 router.get(
-  "/:id/box",
-  celebrate({
-    params: {
-      id: CustomJoi.ObjectId().required(),
-    },
-  }),
+  "/box",
   async (req: Request, res: Response) => {
-    const box = await userService.findBox(req.params as any);
+    const id = (req.user as UserDocument)._id;
+    const box = await userService.findBox({ id });
     res.status(StatusCodes.OK).send(box);
   }
 );
 
 router.post(
-  "/:id/box",
+  "/box",
   celebrate({
-    params: {
-      id: CustomJoi.ObjectId().required(),
-    },
     body: {
-      answers: Joi.array().items(Joi.number().required().min(0)).required(),
+      answers: Joi.array().items(Joi.array().items(Joi.boolean())).required(),
     },
   }),
   async (req: Request, res: Response) => {
-    switch (+(await userService.evaluate({ ...req.params, ...req.body }))) {
+    const id = (req.user as UserDocument)._id;
+    switch (+(await userService.evaluate({ id, ...req.body }))) {
       case EvaluationStatus.Approved:
         res.status(StatusCodes.OK).send({ status: "approved" });
         break;
@@ -48,25 +45,21 @@ router.post(
 );
 
 router.get(
-  "/:id/history",
-  celebrate({
-    params: {
-      id: CustomJoi.ObjectId().required(),
-    },
-  }),
+  "/history",
   async (req: Request, res: Response) => {
-    const history = await userService.findHistory({ id: req.params.id });
+    const id = (req.user as UserDocument)._id;
+    const history = await userService.findHistory({ id });
     res.status(StatusCodes.OK).send(history);
   }
 );
 
 router.get(
-  "/:id",
-  celebrate({ params: { id: CustomJoi.ObjectId().required() } }),
+  "/",
   async (req: Request, res: Response) => {
+    const id = (req.user as UserDocument)._id;
     res
       .status(StatusCodes.OK)
-      .send(await userService.findUserData({ id: req.params.id }));
+      .send(await userService.findUserData({ id }));
   }
 );
 
