@@ -270,6 +270,9 @@ export function buildFileUploadBefore(
   return hook;
 }
 
+/**
+ * Deletes related files when a record is deleted
+ */
 export function buildFileDeleteAfter(
   destinations: Record<
     string,
@@ -324,9 +327,9 @@ export function buildFileUploadProperty({
 }): PropertyOptions {
   return {
     components: {
-      edit: bundleFromView("upload_image_edit"),
-      list: bundleFromView("upload_image_list"),
-      show: bundleFromView("upload_image_list"),
+      edit: bundleFromView("upload_edit"),
+      list: bundleFromView("upload_list"),
+      show: bundleFromView("upload_list"),
     },
     custom: {
       extensions,

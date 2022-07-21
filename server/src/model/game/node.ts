@@ -34,17 +34,19 @@ const TextNodeSchema = new mongoose.Schema(
   },
   NO_ID
 );
+
 /**
  * This node stores a list of images and its descriptions
  */
 const CarrouselNodeSchema = new mongoose.Schema(
   {
+    text: { type: String, required: true },
     images: {
       type: [
         {
-          text: { type: String, required: true },
-          image: { type: String, required: true },
-          imageAlt: { type: String, required: true },
+          image: { type: String, required: false },
+          imageAlt: { type: String, required: false },
+          audio: { type: String, required: false },
         },
       ],
       required: true,
@@ -65,7 +67,7 @@ const AudibleMosaicNodeSchema = new mongoose.Schema(
         {
           image: { type: String, required: true },
           imageAlt: { type: String, required: true },
-          audio: { type: String, required: true },
+          audio: { type: String, required: false },
         },
       ],
       required: true,

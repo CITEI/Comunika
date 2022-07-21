@@ -24,6 +24,7 @@ import {
 
 const baseNodeCreateSchema = {
   title: CustomJoi.RequiredString(),
+  text: CustomJoi.RequiredString(),
 };
 
 /** Base validator input for Joi */
@@ -36,32 +37,40 @@ const taskValidatorSchema = {
         Joi.object({
           ...baseNodeCreateSchema,
           type: CustomJoi.RequiredString().valid("text"),
-          text: CustomJoi.RequiredString(),
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
         }),
         Joi.object({
           ...baseNodeCreateSchema,
           type: CustomJoi.RequiredString().valid("carrousel"),
-          images: Joi.array()
+          slides: Joi.array()
             .items(
-              Joi.object({
-                image: CustomJoi.UploadStatus().required(),
-                imageAlt: CustomJoi.RequiredString(),
-              })
+              Joi.alternatives().try(
+                Joi.object({
+                  audio: CustomJoi.UploadStatus().required(),
+                }),
+                Joi.object({
+                  image: CustomJoi.UploadStatus().required(),
+                  imageAlt: CustomJoi.RequiredString(),
+                }),
+                Joi.object({
+                  image: CustomJoi.UploadStatus().required(),
+                  imageAlt: CustomJoi.RequiredString(),
+                  audio: CustomJoi.UploadStatus().required(),
+                })
+              )
             )
             .min(1),
         }),
         Joi.object({
           ...baseNodeCreateSchema,
           type: CustomJoi.RequiredString().valid("audible_mosaic"),
-          text: CustomJoi.RequiredString(),
           mosaic: Joi.array()
             .items(
               Joi.object({
                 image: CustomJoi.UploadStatus().required(),
                 imageAlt: CustomJoi.RequiredString(),
-                audio: CustomJoi.UploadStatus().required(),
+                audio: CustomJoi.UploadStatus(),
               })
             )
             .min(1),
@@ -103,11 +112,9 @@ const taskOptions: ResourceOptions = {
         label: capitalize(el.split("_").join(" ")),
       })),
     },
-    "nodes.text": buildConditionalProperty({
-      dependency: "nodes.$.type",
-      isin: ["text", "audible_mosaic"],
+    "nodes.text": {
       type: "textarea",
-    }),
+    },
     "nodes.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["text"],
@@ -134,14 +141,9 @@ const taskOptions: ResourceOptions = {
       isin: ["carrousel", "audible_mosaic"],
       type: "string",
     }),
-    "nodes.images.text": buildConditionalProperty({
-      dependency: "nodes.$.type",
-      isin: ["carrousel", "audible_mosaic"],
-      type: "textarea",
-    }),
     "nodes.images.audio": buildFileUploadProperty({
       dependency: "nodes.$.type",
-      isin: ["audible_mosaic"],
+      isin: ["audible_mosaic", "carrousel"],
       extensions: ["ogg"],
     }),
   },
