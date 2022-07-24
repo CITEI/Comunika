@@ -26,7 +26,7 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
         <Input
           key={el.name}
           type={el.type}
-          placeholder={el.label}
+          label={el.label}
           onChangeText={useCallback(
             (text: string) => handleChangeText(el.name, text),
             []
