@@ -7,7 +7,7 @@ import auth from "./auth";
 import gameData from "./game-data";
 import user from "./user";
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   auth: auth.reducer,
   gameData: gameData.reducer,
   user: user.reducer

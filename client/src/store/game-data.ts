@@ -2,9 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../helper/api";
 import { sortLinkedList } from "./utils";
 
-interface LevelItem {
+export interface LevelItem {
   _id: string;
   name: string;
+  description: string;
+  image: string;
+  imageAlt: string;
   next: string | null;
 }
 
@@ -15,11 +18,12 @@ export const fetchLevels = createAsyncThunk(
   }
 );
 
-interface CategoryItem {
+export interface CategoryItem {
   _id: string;
   name: string;
   description: string;
-  iconUrl: string;
+  image: string;
+  imageAlt: string;
   next: string | null;
 }
 

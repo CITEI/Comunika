@@ -101,8 +101,8 @@ export default createSlice({
       email: null,
     },
     progress: {
-      level: null,
-      category: null,
+      level: null as string | null,
+      category: null as string | null,
     },
     box: [] as Task[],
     boxLoaded: false,
