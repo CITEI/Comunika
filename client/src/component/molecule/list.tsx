@@ -1,5 +1,4 @@
 import React from "react";
-import { FullView } from "../atom/full-view";
 import ListRow from "../atom/list-row";
 import styled from "styled-components/native";
 import { View } from "react-native";
@@ -21,7 +20,7 @@ interface ListProps {
 
 const List: React.FunctionComponent<ListProps> = (props) => {
   return (
-    <View style={{flex: 1}}>
+    <View>
       <FlatList
         data={props.data}
         renderItem={(el) => (

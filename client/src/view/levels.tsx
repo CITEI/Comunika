@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
-import { FullView } from "../component/atom/full-view";
-import List from "../component/molecule/list";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchLevels } from "../store/game-data";
+import { fetchLevels, LevelItem } from "../store/game-data";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
+import Cards from "../component/templates/cards";
 
 interface LevelsProps {}
 
@@ -17,21 +16,17 @@ const Levels: React.VoidFunctionComponent<LevelsProps> = () => {
     if (!levels.loaded) dispatch(fetchLevels());
   }, []);
 
-  const handleItemPress = (id: string) => {
-    navigation.navigate("Categories", { level: id });
+  const handleItemPress = (level: LevelItem) => {
+    navigation.navigate("Categories", { levelId: level._id });
   };
 
   return (
-    <FullView>
-      <List
-        data={levels.data.map((el) => ({
-          id: el._id,
-          title: el.name,
-          subtitle: el.name,
-        }))}
-        onItemPress={handleItemPress}
-      ></List>
-    </FullView>
+    <Cards
+      title="Levels"
+      onPress={handleItemPress}
+      data={levels.data}
+      current={0}
+    />
   );
 };
 

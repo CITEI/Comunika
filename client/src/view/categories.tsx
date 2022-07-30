@@ -1,47 +1,48 @@
 import React, { useEffect } from "react";
-import { FullView } from "../component/atom/full-view";
-import List from "../component/molecule/list";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchCategories } from "../store/game-data";
+import { CategoryItem, fetchCategories } from "../store/game-data";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import { showMessage } from "react-native-flash-message";
+import Cards from "../component/templates/cards";
 
 interface CategoriesProps {}
 
 const Categories: React.VoidFunctionComponent<CategoriesProps> = (props) => {
   const route = useRoute();
-  const { level } = route.params as any;
+  const { levelId } = route.params as any;
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
   const categories = useAppSelector((state) => state.gameData.categories);
   const category = useAppSelector((state) => state.user.progress.category);
 
   useEffect(() => {
-    if (!(level in categories)) dispatch(fetchCategories(level));
+    if (!(levelId in categories)) dispatch(fetchCategories(levelId));
   }, []);
 
-  const handleItemPress = (id: string) => {
-    if (category == id)
-      navigation.navigate("Game");
+  const handleItemPress = (item: CategoryItem) => {
+    if (category == item._id)
+      navigation.navigate("Transition", { category: item });
     else
       showMessage({
         message: "Not your current category",
-        type: "info"
-      })
+        type: "info",
+      });
   };
 
   return (
-    <FullView>
-      <List
-        data={(categories[level] || []).map((el) => ({
-          id: el._id,
-          title: el.name,
-          subtitle: el.name,
-        }))}
-        onItemPress={handleItemPress}
-      ></List>
-    </FullView>
+    <>
+      {categories[levelId] ? (
+        <Cards
+          title="Categories"
+          onPress={handleItemPress}
+          data={categories[levelId]}
+          current={0}
+        />
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
