@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-type AuthProps = {
+export type AuthProps = {
   Register: undefined;
   Login: undefined;
   Main: undefined;
