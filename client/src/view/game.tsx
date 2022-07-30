@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { evaluate, fetchBox } from "../store/user";
 import { useNavigation } from "@react-navigation/native";
-import { FullView } from "../component/atom/full-view";
 import Node from "../component/organism/node";
 import QuestionNode from "../component/organism/question-node";
 import { showMessage } from "react-native-flash-message";
 import { GameNavigatorProps } from "../route/game";
+import Carrousel from "../component/molecule/carrousel";
+import MainContainer from "../component/molecule/main-container";
+import ContentContainer from "../component/atom/content-container";
 
 interface GameProps {}
 
@@ -77,23 +79,43 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
   }, [boxLoaded]);
 
   return (
-    <FullView>
-      {boxLoaded &&
-        (answering ? (
-          <QuestionNode
-            title={box[taskIndex].questionNodes[nodeIndex].title}
-            question={box[taskIndex].questionNodes[nodeIndex].question}
-            onAnswer={handleAnswer}
-          />
-        ) : (
-          <Node
-            type={box[taskIndex].nodes[nodeIndex].type}
-            title={box[taskIndex].nodes[nodeIndex].title}
-            text={box[taskIndex].nodes[nodeIndex].text || undefined}
-            onNextPressed={handleNextPressed}
-          ></Node>
-        ))}
-    </FullView>
+    <MainContainer>
+      <ContentContainer>
+        <Carrousel
+          slides={[
+            {
+              image:
+                'http://10.0.2.2:3000/public/level/282d7d3c-9b18-4c32-98f0-abbea1921c54.png',
+              imageAlt: 'asd',
+            },
+            {
+              audio: 'http://10.0.2.2:3000/public/task/f4de27b5-d00b-4096-84fa-88e4e5e81cba.ogg',
+            },
+            {
+              image:
+                'http://10.0.2.2:3000/public/level/282d7d3c-9b18-4c32-98f0-abbea1921c54.png',
+              imageAlt: 'asd',
+              audio: 'http://10.0.2.2:3000/public/task/f4de27b5-d00b-4096-84fa-88e4e5e81cba.ogg',
+            },
+          ]}
+        />
+        {boxLoaded &&
+          (answering ? (
+            <QuestionNode
+              title={box[taskIndex].questionNodes[nodeIndex].title}
+              question={box[taskIndex].questionNodes[nodeIndex].question}
+              onAnswer={handleAnswer}
+            />
+          ) : (
+            <Node
+              type={box[taskIndex].nodes[nodeIndex].type}
+              title={box[taskIndex].nodes[nodeIndex].title}
+              text={box[taskIndex].nodes[nodeIndex].text || undefined}
+              onNextPressed={handleNextPressed}
+            ></Node>
+          ))}
+      </ContentContainer>
+    </MainContainer>
   );
 };
 

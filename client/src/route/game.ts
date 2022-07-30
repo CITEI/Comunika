@@ -1,10 +1,14 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CategoryItem } from "../store/game-data";
 
-type GameProps = {
+export type GameProps = {
   Main: undefined;
   Categories: {
-    level: string;
+    levelId: string;
   };
+  Transition: {
+    category: CategoryItem;
+  }
   Game: undefined;
   Result: undefined;
   Settings: undefined
