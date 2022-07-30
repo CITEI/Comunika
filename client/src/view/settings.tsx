@@ -62,7 +62,7 @@ export const SettingsButton: React.VoidFunctionComponent = () => {
   return (
     <Button
       title="Settings"
-      style={{ marginRight: "15px" }}
+      style={{ marginRight: 15 }}
       onPress={() => navigation.navigate("Settings")}
     />
   );
