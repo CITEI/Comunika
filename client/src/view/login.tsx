@@ -14,8 +14,25 @@ import logo from "../../assets/logo.png";
 import { dp } from "../helper/resolution";
 import Text from "../component/atom/text";
 import Modal from "../component/molecule/modal";
+import MainContainer from "../component/molecule/main-container";
+import ContentContainer from "../component/atom/content-container";
+import styled from "styled-components/native";
 
 export interface LoginProps {}
+
+const Header = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-top: ${dp(25)}px;
+  margin-bottom: ${dp(25)}px;
+`
+
+const Logo = styled.Image`
+  width: ${dp(98)}px;
+  height: ${dp(41)}px;
+  margin-bottom: ${dp(39)}px;
+  margin-top: ${dp(25)}px;
+`
 
 const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
@@ -28,7 +45,6 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   useEffect(() => {
     if (!first) {
       if (authStatus.isAuthenticated) {
-        navigation.popToTop();
         navigation.navigate("Main");
       } else setModalVisible(true);
     } else setFirst(false);
@@ -45,43 +61,31 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   };
 
   return (
-    <FullView style={{ paddingHorizontal: dp(20) }}>
-      <Modal
-        text="Invalid credentials are present!"
-        title="Not logged! :("
-        onRequestClose={useCallback(() => setModalVisible(false), [])}
-        visible={modalVisible}
-      ></Modal>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: dp(25),
-          marginTop: dp(25),
-        }}
-      >
-        <Image
-          source={logo}
-          style={{
-            width: dp(98),
-            height: dp(41),
-            marginBottom: dp(39),
-          }}
-        ></Image>
-        <Title>Welcome!</Title>
-      </View>
-      <VerticalContainer>
-        <LoginForm onSubmit={handleLogin} />
-        <Button
-          title="Create account"
-          onPress={handleRegister}
-          variant="outline"
-        />
-        <Text style={{ marginTop: 20, textAlign: "center" }}>
-          Forgot the password? Click here
-        </Text>
-      </VerticalContainer>
-    </FullView>
+    <MainContainer>
+      <ContentContainer>
+        <Modal
+          text="Invalid credentials are present!"
+          title="Not logged! :("
+          onRequestClose={useCallback(() => setModalVisible(false), [])}
+          visible={modalVisible}
+        ></Modal>
+        <Header>
+          <Logo source={logo} />
+          <Title>Welcome!</Title>
+        </Header>
+        <VerticalContainer>
+          <LoginForm onSubmit={handleLogin} />
+          <Button
+            title="Create account"
+            onPress={handleRegister}
+            variant="outline"
+          />
+          <Text style={{ marginTop: 20, textAlign: "center" }}>
+            Forgot the password? Click here
+          </Text>
+        </VerticalContainer>
+      </ContentContainer>
+    </MainContainer>
   );
 };
 
