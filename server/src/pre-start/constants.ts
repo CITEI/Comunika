@@ -33,9 +33,12 @@ if (!temp_root_password)
   if (ENV != "production") temp_root_password = "12345678";
   else throw new Error("Root password must be set for production");
 
+export const ORIGIN = process.env.ORIGIN || "http://localhost:3000";
+
 export const ROOT_PASSWORD = temp_root_password;
 export const PROJECT_PATH = dirname(dirname(__dirname))
-export const PUBLIC_PATH = join(PROJECT_PATH, 'public')
+export const STATIC_DIR = 'public'
+export const PUBLIC_PATH = join(PROJECT_PATH, STATIC_DIR)
 
 export const MIN_NODES = Number(process.env.MIN_NODES || 1)
 export const MIN_QUESTION_NODES = Number(process.env.MIN_QUESTION_NODES || 1)

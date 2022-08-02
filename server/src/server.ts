@@ -6,12 +6,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import custom_errors from "./middleware/errors";
-import { BASE_PATH, PUBLIC_PATH } from "./pre-start/constants";
+import { BASE_PATH, PUBLIC_PATH, STATIC_DIR } from "./pre-start/constants";
 import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
 import stageRouter from "./route/game/stage";
-import categoryRouter from "./route/game/category";
+import boxRouter from "./route/game/box";
 import userRouter from "./route/game/user";
 import winston from "./pre-start/winston";
 import adminjs from "./pre-start/adminjs";
@@ -58,7 +58,7 @@ const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/stage", stageRouter);
-apiRouter.use("/category", categoryRouter);
+apiRouter.use("/box", boxRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
@@ -72,7 +72,7 @@ app.use(custom_errors()); // app-only errors
  **********************************************************************************/
 
 // Set static dir
-app.use('/public', express.static(PUBLIC_PATH));
+app.use(`/${STATIC_DIR}`, express.static(PUBLIC_PATH));
 
 // Export here and start in a diff file (for testing).
 export default app;

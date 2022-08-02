@@ -8,26 +8,26 @@ import {
 } from "./stage.test";
 import { Application } from "express";
 
-export const CATEGORY_POST_ROUTE = parseRoute("/category");
-export const SUCCESSFUL_CREATE_CATEGORY_BODY = {
+export const BOX_POST_ROUTE = parseRoute("/box");
+export const SUCCESSFUL_CREATE_BOX_BODY = {
   name: "test",
   description: "test",
   iconUrl: "test",
 };
-export const GET_CATEGORY_ROUTE = STAGE_GET_ROUTE;
+export const GET_BOX_ROUTE = STAGE_GET_ROUTE;
 
-export async function createCategory(
+export async function createBox(
   app: Application,
   stage: string
 ): Promise<Array<string>> {
   await request(app)
-    .post(CATEGORY_POST_ROUTE)
-    .send({ ...SUCCESSFUL_CREATE_CATEGORY_BODY, stage });
-  const res = await request(app).get(GET_CATEGORY_ROUTE).send();
+    .post(BOX_POST_ROUTE)
+    .send({ ...SUCCESSFUL_CREATE_BOX_BODY, stage });
+  const res = await request(app).get(GET_BOX_ROUTE).send();
   return [].concat(...(res.body as Array<any>).map((el) => el.categories));
 }
 
-describe("POST /category", () => {
+describe("POST /box", () => {
   let stages: Map<string, any>;
 
   beforeAll(async () => {
@@ -41,15 +41,15 @@ describe("POST /category", () => {
 
   test("Successful", () => {
     request(app)
-      .post(CATEGORY_POST_ROUTE)
-      .send(SUCCESSFUL_CREATE_CATEGORY_BODY)
+      .post(BOX_POST_ROUTE)
+      .send(SUCCESSFUL_CREATE_BOX_BODY)
       .expect(StatusCodes.CREATED);
   });
 });
 
-const categoryActivityPostRoute = (category: string) =>
-  parseRoute(`/category/${category}/activity`);
-const SUCCESSFUL_CREATE_CATEGORY_ACTIVITY_BODY = {
+const boxActivityPostRoute = (box: string) =>
+  parseRoute(`/box/${box}/activity`);
+const SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY = {
   name: "test",
   description: "test",
   nodes: [
@@ -67,7 +67,7 @@ const SUCCESSFUL_CREATE_CATEGORY_ACTIVITY_BODY = {
   ],
 };
 
-describe("POST /category/activity", () => {
+describe("POST /box/activity", () => {
   let stages: Map<string, any>;
   let categories: Array<string>;
 
@@ -78,13 +78,13 @@ describe("POST /category/activity", () => {
   beforeEach(async () => {
     await cleanDb();
     stages = await createStage(app);
-    categories = await createCategory(app, stages.keys().next().value);
+    categories = await createBox(app, stages.keys().next().value);
   });
 
   test("Successful", async () => {
     request(app)
-      .post(categoryActivityPostRoute(categories[0]))
-      .send(SUCCESSFUL_CREATE_CATEGORY_ACTIVITY_BODY)
+      .post(boxActivityPostRoute(categories[0]))
+      .send(SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY)
       .expect(StatusCodes.CREATED);
   });
 });

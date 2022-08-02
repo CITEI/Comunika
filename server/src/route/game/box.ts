@@ -1,4 +1,4 @@
-import { categoryService } from "../../service/category";
+import { boxService } from "../../service/box";
 import { celebrate } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
@@ -6,7 +6,7 @@ import { CustomJoi } from "../utils/custom_joi";
 import passport from "passport";
 
 /**
- * Category only routes
+ * Box only routes
  */
 const router = Router();
 
@@ -20,7 +20,7 @@ router.get(
     },
   }),
   async (req: Request, res: Response) => {
-    const next = await categoryService.findNext({ id: req.params.id });
+    const next = await boxService.findNext({ id: req.params.id });
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
   }
@@ -31,13 +31,13 @@ export default router;
 /**
  * Required stage id routes
  */
-export const stageCategoryRouter = Router({ mergeParams: true });
+export const stageBoxRouter = Router({ mergeParams: true });
 
-stageCategoryRouter.get(
+stageBoxRouter.get(
   "/",
   async (req: Request, res: Response) => {
     res
       .status(StatusCodes.OK)
-      .send(await categoryService.findAll(req.params as any));
+      .send(await boxService.findAll(req.params as any));
   }
 );

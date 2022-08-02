@@ -3,7 +3,7 @@ import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 import { StageDocument } from "./stage";
 import { ActivityDocument } from "./activity";
 
-export interface CategoryInput {
+export interface BoxInput {
   name: string;
   description: string;
   image: string;
@@ -11,7 +11,7 @@ export interface CategoryInput {
   stage: mongoose.PopulatedDoc<StageDocument>;
 }
 
-export const CategorySchema = new mongoose.Schema({
+export const BoxSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
@@ -25,19 +25,19 @@ export const CategorySchema = new mongoose.Schema({
   },
   next: {
     type: mongoose.Types.ObjectId,
-    ref: "Category",
+    ref: "Box",
     index: true,
     required: false,
     default: null,
   },
 });
 
-export interface CategoryDocument extends mongoose.Document, CategoryInput {
+export interface BoxDocument extends mongoose.Document, BoxInput {
   activities: mongoose.PopulatedDoc<ActivityDocument>[];
-  next: mongoose.PopulatedDoc<CategoryDocument> | null;
+  next: mongoose.PopulatedDoc<BoxDocument> | null;
 }
 
-export const Category = mongoose.model<CategoryDocument>(
-  "Category",
-  CategorySchema
+export const Box = mongoose.model<BoxDocument>(
+  "Box",
+  BoxSchema
 );

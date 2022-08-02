@@ -2,7 +2,7 @@ import { stageService } from "../../service/stage";
 import { celebrate } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { stageCategoryRouter } from "./category";
+import { stageBoxRouter } from "./box";
 import { CustomJoi } from "../utils/custom_joi";
 import passport from "passport";
 
@@ -29,9 +29,9 @@ router.get(
 );
 
 router.use(
-  "/:stage/category",
+  "/:stage/box",
   celebrate({ params: { stage: CustomJoi.ObjectId().required() } }),
-  stageCategoryRouter
+  stageBoxRouter
 );
 
 export default router;

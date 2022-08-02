@@ -4,7 +4,7 @@ import {
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/game/user";
-import { categoryService } from "./category";
+import { boxService } from "./box";
 import {
   InternalServerError,
   ObjectNotFoundError,
@@ -32,11 +32,11 @@ class UserService extends BasicService<UserDocument> {
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
     user.progress.stage = await stageService.findHead();
-    user.progress.category = await categoryService.findHead({
+    user.progress.box = await boxService.findHead({
       stage: user.progress.stage,
     });
     user.progress.userbox = await this.createUserBox({
-      category: user.progress.category,
+      box: user.progress.box,
     });
     await user.save();
     return user;
@@ -83,18 +83,18 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Creates a userbox given a user with defined progress.category
+   * Creates a userbox given a user with defined progress.box
    */
   protected async createUserBox({
-    category,
+    box,
   }: {
-    category: string;
+    box: string;
   }): Promise<UserBoxInput> {
     const userbox: UserBoxInput = {
-      category: category,
+      box: box,
       activities: (
-        await categoryService.sampleActivities({
-          id: category,
+        await boxService.sampleActivities({
+          id: box,
           quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
         })
       ).map((el: any) => ({ activity: el, answers: [] })),
@@ -147,19 +147,19 @@ class UserService extends BasicService<UserDocument> {
   protected async approve(user: UserDocument) {
     const id = user._id;
     let nextStage = user.progress.stage;
-    let nextCategory = await categoryService.findNext({
-      id: user.progress.category,
+    let nextBox = await boxService.findNext({
+      id: user.progress.box,
     });
 
-    if (!nextCategory) {
-      // reached the last category of a stage
+    if (!nextBox) {
+      // reached the last box of a stage
       nextStage = await stageService.findNext({ id: nextStage });
       if (!nextStage) {
         // if no stage, reached the end of the game
         await User.findByIdAndUpdate(id, {
           $set: {
             "progress.stage": user.progress.stage,
-            "progress.category": null,
+            "progress.box": null,
             "progress.userbox": null,
           },
           $push: {
@@ -168,16 +168,16 @@ class UserService extends BasicService<UserDocument> {
         });
         return EvaluationStatus.NoContent;
       } else
-        nextCategory = await categoryService.findHead({ stage: nextStage });
+        nextBox = await boxService.findHead({ stage: nextStage });
     }
 
-    if (nextCategory) {
+    if (nextBox) {
       await User.findByIdAndUpdate(id, {
         $set: {
           "progress.stage": nextStage,
-          "progress.category": nextCategory,
+          "progress.box": nextBox,
           "progress.userbox": await this.createUserBox({
-            category: nextCategory._id,
+            box: nextBox._id,
           }),
         },
         $push: {
@@ -196,7 +196,7 @@ class UserService extends BasicService<UserDocument> {
     await User.findByIdAndUpdate(user._id, {
       $set: {
         "progress.userbox": await this.createUserBox({
-          category: user.progress.category,
+          box: user.progress.box,
         }),
       },
       $push: { "progress.history": user.progress.userbox },
@@ -216,7 +216,7 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
-      select: "progress.userbox progress.category progress.stage",
+      select: "progress.userbox progress.box progress.stage",
     });
     const grade = await this.calculateGrade(user, answers);
     if (grade >= GAME_MIN_GRADE_PCT) {
@@ -239,14 +239,14 @@ class UserService extends BasicService<UserDocument> {
         id: user.progress.stage,
       });
       if (nextStage) {
-        const nextCategory = await categoryService.findHead({
+        const nextBox = await boxService.findHead({
           stage: nextStage,
         });
-        userbox = await this.createUserBox({ category: nextCategory!._id });
+        userbox = await this.createUserBox({ box: nextBox!._id });
         await User.findByIdAndUpdate(id, {
           $set: {
             "progress.stage": nextStage,
-            "progress.category": nextCategory,
+            "progress.box": nextBox,
             "progress.userbox": userbox,
           },
         });
@@ -267,17 +267,17 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    { category: string; activities: { answers: boolean[]; name: string }[] }[]
+    { box: string; activities: { answers: boolean[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
-    await user.populate("progress.history.category", "name");
+    await user.populate("progress.history.box", "name");
     await user.populate({
       path: "progress.history.activities.activity",
       model: "Activity",
       select: "name",
     });
     return user.progress.history.map((userbox) => ({
-      category: userbox.category.name,
+      box: userbox.box.name,
       activities: userbox.activities.map((activity) => ({
         answers: activity.answers,
         name: activity.activity.name,
@@ -291,7 +291,7 @@ class UserService extends BasicService<UserDocument> {
   async findUserData({ id }: { id: string }): Promise<UserDocument> {
     return await this.find({
       id,
-      select: "email name progress.category progress.stage",
+      select: "email name progress.box progress.stage",
     });
   }
 }

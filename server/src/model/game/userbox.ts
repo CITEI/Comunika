@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CategoryDocument } from "./category";
+import { BoxDocument } from "./box";
 import { ActivityDocument } from "./activity";
 
 interface UserBoxActivityInput {
@@ -8,15 +8,15 @@ interface UserBoxActivityInput {
 }
 
 export interface UserBoxInput {
-  category: mongoose.PopulatedDoc<CategoryDocument>;
+  box: mongoose.PopulatedDoc<BoxDocument>;
   activities: UserBoxActivityInput[];
 }
 
 export const UserBoxSchema = new mongoose.Schema(
   {
-    category: {
+    box: {
       type: mongoose.Types.ObjectId,
-      ref: "Category",
+      ref: "Box",
       required: false,
     },
     activities: [

@@ -12,7 +12,7 @@ import {
 import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
 import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
-import { categoryService } from "../../service/category";
+import { boxService } from "../../service/box";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
 import { Activitieschema } from "../../model/game/activity";
@@ -91,9 +91,9 @@ const activityValidatorSchema = {
 
 const activityOptions: ResourceOptions = {
   properties: {
-    category: {
+    box: {
       type: "reference",
-      reference: "Category",
+      reference: "Box",
       isRequired: true,
       isVisible: { edit: true, filter: false, list: false, show: false },
     },
@@ -160,7 +160,7 @@ const activityOptions: ResourceOptions = {
         unflattenRequest,
         buildValidator({
           ...activityValidatorSchema,
-          category: CustomJoi.ObjectId().required(),
+          box: CustomJoi.ObjectId().required(),
         }),
       ],
       after: [
@@ -183,7 +183,7 @@ const activityOptions: ResourceOptions = {
         }),
       ],
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
-        const activity = await categoryService.addActivity(req.payload as any);
+        const activity = await boxService.addActivity(req.payload as any);
         return buildResponse({
           con,
           result: "success",
@@ -210,7 +210,7 @@ const activityOptions: ResourceOptions = {
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await categoryService.deleteActivity({ activity: id });
+          await boxService.deleteActivity({ activity: id });
           return buildResponse({
             con,
             result: "success",

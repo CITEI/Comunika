@@ -1,4 +1,4 @@
-import { categoryService } from "../../service/category";
+import { boxService } from "../../service/box";
 import {
   ActionContext,
   ActionRequest,
@@ -20,7 +20,7 @@ import {
 import { CustomJoi } from "../utils/custom_joi";
 import { PUBLIC_PATH } from "../../pre-start/constants";
 
-const categoryOptions: ResourceOptions = {
+const boxOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
     image: buildFileUploadProperty({ extensions: ["png"] }),
@@ -46,7 +46,7 @@ const categoryOptions: ResourceOptions = {
           image: {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
-            subPath: "category",
+            subPath: "box",
           },
         }),
       ],
@@ -55,12 +55,12 @@ const categoryOptions: ResourceOptions = {
         _res: any,
         con: ActionContext
       ): Promise<ActionResponse> => {
-        const category = await categoryService.create(req.payload as object);
+        const box = await boxService.create(req.payload as object);
         return buildResponse({
           con,
           result: "success",
           message: Messages.Created,
-          record: category,
+          record: box,
         });
       },
     },
@@ -78,7 +78,7 @@ const categoryOptions: ResourceOptions = {
       ): Promise<ActionResponse> => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await categoryService.delete({ id });
+          await boxService.delete({ id });
           return buildResponse({
             con,
             result: "success",
@@ -95,9 +95,9 @@ const categoryOptions: ResourceOptions = {
   },
 };
 
-categoryOptions!.actions!.edit = {
-  before: categoryOptions.actions!.new!.before,
-  after: categoryOptions.actions!.new!.after as After<RecordActionResponse>[],
+boxOptions!.actions!.edit = {
+  before: boxOptions.actions!.new!.before,
+  after: boxOptions.actions!.new!.after as After<RecordActionResponse>[],
 };
 
-export default categoryOptions;
+export default boxOptions;
