@@ -12,7 +12,7 @@ import {
   MIN_STRING_LENGTH,
 } from "../../pre-start/constants";
 
-export interface TaskInput {
+export interface ActivityInput {
   name: string;
   description: string;
   nodes: Array<{ type: string } & NodeInput & { [key: string]: any }>;
@@ -21,7 +21,7 @@ export interface TaskInput {
   >;
 }
 
-export const TaskSchema = new mongoose.Schema({
+export const ActivitySchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: true },
   nodes: [{ type: NodeSchema, required: true, minlength: MIN_NODES }],
@@ -31,7 +31,7 @@ export const TaskSchema = new mongoose.Schema({
   ],
 });
 
-TaskSchema.pre("save", async function (next) {
+ActivitySchema.pre("save", async function (next) {
   this.questionCount = this.questionNodes.length;
   next();
 });
@@ -40,12 +40,12 @@ TaskSchema.pre("save", async function (next) {
 Registering discriminators
 The section below allow us to simulate node inheritance into the db
  */
-const Nodes = TaskSchema.path<mongoose.Schema.Types.Subdocument>("nodes");
+const Nodes = ActivitySchema.path<mongoose.Schema.Types.Subdocument>("nodes");
 for (const [name, schema] of Object.entries(NodeDiscriminators))
   Nodes.discriminator(name, schema);
 
-export interface TaskDocument extends mongoose.Document, TaskInput {
+export interface ActivityDocument extends mongoose.Document, ActivityInput {
   questionCount: number;
 }
 
-export const Task = mongoose.model<TaskDocument>("Task", TaskSchema);
+export const Activity = mongoose.model<ActivityDocument>("Activity", ActivitySchema);

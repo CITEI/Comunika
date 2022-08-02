@@ -6,10 +6,10 @@ import { User } from "../model/game/user";
 import userOptions from "../route/admin/user";
 import { Stage } from "../model/game/stage";
 import stageOptions from "../route/admin/stage";
-import { Task } from "../model/game/task";
+import { Activity } from "../model/game/activity";
 import categoryOptions from "../route/admin/category";
 import { Category } from "../model/game/category";
-import taskOptions from "../route/admin/task";
+import activityOptions from "../route/admin/activity";
 import { Admin } from "../model/admin/admin";
 import { adminOptions } from "../route/admin/admin";
 import { adminAuthenticationService } from "../service/admin";
@@ -52,10 +52,10 @@ const adminJs = new AdminJS({
       },
     },
     {
-      resource: Task,
+      resource: Activity,
       options: {
         navigation: manageNavigation,
-        ...taskOptions,
+        ...activityOptions,
       },
     },
   ] as Array<ResourceWithOptions>,

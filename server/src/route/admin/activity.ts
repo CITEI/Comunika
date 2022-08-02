@@ -15,7 +15,7 @@ import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
-import { TaskSchema } from "../../model/game/task";
+import { ActivitySchema } from "../../model/game/activity";
 import {
   MIN_NODES,
   MIN_QUESTION_NODES,
@@ -27,7 +27,7 @@ const baseNodeCreateSchema = {
 };
 
 /** Base validator input for Joi */
-const taskValidatorSchema = {
+const activityValidatorSchema = {
   name: CustomJoi.RequiredString(),
   description: CustomJoi.RequiredString(),
   nodes: Joi.array()
@@ -89,7 +89,7 @@ const taskValidatorSchema = {
     .required(),
 };
 
-const taskOptions: ResourceOptions = {
+const activityOptions: ResourceOptions = {
   properties: {
     category: {
       type: "reference",
@@ -159,7 +159,7 @@ const taskOptions: ResourceOptions = {
         ]),
         unflattenRequest,
         buildValidator({
-          ...taskValidatorSchema,
+          ...activityValidatorSchema,
           category: CustomJoi.ObjectId().required(),
         }),
       ],
@@ -168,27 +168,27 @@ const taskOptions: ResourceOptions = {
           "nodes.$.image": {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
-            subPath: "task",
+            subPath: "activity",
           },
           "nodes.$.images.$.image": {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
-            subPath: "task",
+            subPath: "activity",
           },
           "nodes.$.images.$.audio": {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
-            subPath: "task",
+            subPath: "activity",
           },
         }),
       ],
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
-        const task = await categoryService.addTask(req.payload as any);
+        const activity = await categoryService.addActivity(req.payload as any);
         return buildResponse({
           con,
           result: "success",
           message: Messages.Created,
-          record: task,
+          record: activity,
         });
       },
     },
@@ -210,7 +210,7 @@ const taskOptions: ResourceOptions = {
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await categoryService.deleteTask({ task: id });
+          await categoryService.deleteActivity({ activity: id });
           return buildResponse({
             con,
             result: "success",
@@ -225,12 +225,12 @@ const taskOptions: ResourceOptions = {
       },
     },
     edit: {
-      before: [unflattenRequest, buildValidator(taskValidatorSchema)],
-      layout: Object.keys(TaskSchema.paths).filter(
+      before: [unflattenRequest, buildValidator(activityValidatorSchema)],
+      layout: Object.keys(ActivitySchema.paths).filter(
         (key) => !["_id", "__v", "questionCount"].includes(key)
       ),
     },
   },
 };
 
-export default taskOptions;
+export default activityOptions;

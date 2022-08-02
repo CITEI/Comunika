@@ -4,9 +4,9 @@ import {
   CategoryDocument,
 } from "../model/game/category";
 import { Stage, StageDocument } from "../model/game/stage";
-import { Task, TaskDocument, TaskInput } from "../model/game/task";
+import { Activity, ActivityDocument, ActivityInput } from "../model/game/activity";
 import { ObjectNotFoundError } from "./errors";
-import { taskService } from "./task";
+import { activityService } from "./activity";
 import { LinkedListService } from "./utils/linkedlist";
 import underscore from "underscore";
 
@@ -41,67 +41,67 @@ export default class CategoryService extends LinkedListService<
   }
 
   /**
-   * Adds a task to a category
+   * Adds a activity to a category
    */
-  async addTask(
-    payload: TaskInput & { category: string }
-  ): Promise<TaskDocument> {
+  async addActivity(
+    payload: ActivityInput & { category: string }
+  ): Promise<ActivityDocument> {
     if (await Category.exists({ _id: payload.category }).exec()) {
-      const task = await taskService.create(payload);
+      const activity = await activityService.create(payload);
       await Category.updateOne(
         { _id: payload.category },
-        { $push: { tasks: task } }
+        { $push: { activitys: activity } }
       );
-      return task;
+      return activity;
     } else throw new ObjectNotFoundError({ schema: Category });
   }
 
   /**
-   * Finds a category by a task
+   * Finds a category by a activity
    */
-  async findByTask({
-    task,
+  async findByActivity({
+    activity,
     select,
   }: {
-    task: string;
+    activity: string;
     select?: string;
   }): Promise<CategoryDocument | null> {
-    return await Category.findOne({ tasks: { $in: [task] } })
+    return await Category.findOne({ activitys: { $in: [activity] } })
       .select(select || "")
       .exec();
   }
 
   /**
-   * Removes a task from a category
+   * Removes a activity from a category
    */
-  async deleteTask({ category, task }: { category?: string; task: string }) {
-    if (!(await Task.exists({ _id: task }).exec()))
-      throw new ObjectNotFoundError({ schema: Task });
+  async deleteActivity({ category, activity }: { category?: string; activity: string }) {
+    if (!(await Activity.exists({ _id: activity }).exec()))
+      throw new ObjectNotFoundError({ schema: Activity });
 
     if (!category) {
-      category = (await this.findByTask({ task, select: "_id" }))?._id;
+      category = (await this.findByActivity({ activity, select: "_id" }))?._id;
       if (!category) throw new ObjectNotFoundError({ schema: Category });
     } else if (!(await Category.exists({ _id: category }).exec()))
       throw new ObjectNotFoundError({ schema: Category });
 
     await Category.findByIdAndUpdate(category, {
-      $pull: { tasks: task },
+      $pull: { activitys: activity },
     }).exec();
-    await Task.findByIdAndDelete(task);
+    await Activity.findByIdAndDelete(activity);
   }
 
   /**
-   * Obtains at most `quantity` number of tasks from a category
+   * Obtains at most `quantity` number of activitys from a category
    */
-  async sampleTasks({
+  async sampleActivitys({
     id,
     quantity,
   }: {
     id: string;
     quantity: number;
   }): Promise<Array<string>> {
-    const category = await this.find({ by: { _id: id }, select: "tasks" });
-    if (category) return underscore.sample(category.tasks, quantity);
+    const category = await this.find({ by: { _id: id }, select: "activitys" });
+    if (category) return underscore.sample(category.activitys, quantity);
     else return [];
   }
 }

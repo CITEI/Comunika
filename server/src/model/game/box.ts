@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import { CategoryDocument } from "./category";
-import { TaskDocument } from "./task";
+import { ActivityDocument } from "./activity";
 
-interface BoxTaskInput {
+interface BoxActivityInput {
   answers: boolean[];
-  task: mongoose.PopulatedDoc<TaskDocument>;
+  activity: mongoose.PopulatedDoc<ActivityDocument>;
 }
 
 export interface BoxInput {
   category: mongoose.PopulatedDoc<CategoryDocument>;
-  tasks: BoxTaskInput[];
+  activitys: BoxActivityInput[];
 }
 
 export const BoxSchema = new mongoose.Schema(
@@ -19,9 +19,9 @@ export const BoxSchema = new mongoose.Schema(
       ref: "Category",
       required: false,
     },
-    tasks: [
+    activitys: [
       {
-        task: { type: mongoose.Types.ObjectId, required: true },
+        activity: { type: mongoose.Types.ObjectId, required: true },
         answers: [{ type: Boolean, required: true }],
       },
     ],

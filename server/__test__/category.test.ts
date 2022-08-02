@@ -47,9 +47,9 @@ describe("POST /category", () => {
   });
 });
 
-const categoryTaskPostRoute = (category: string) =>
-  parseRoute(`/category/${category}/task`);
-const SUCCESSFUL_CREATE_CATEGORY_TASK_BODY = {
+const categoryActivityPostRoute = (category: string) =>
+  parseRoute(`/category/${category}/activity`);
+const SUCCESSFUL_CREATE_CATEGORY_ACTIVITY_BODY = {
   name: "test",
   description: "test",
   nodes: [
@@ -67,7 +67,7 @@ const SUCCESSFUL_CREATE_CATEGORY_TASK_BODY = {
   ],
 };
 
-describe("POST /category/task", () => {
+describe("POST /category/activity", () => {
   let stages: Map<string, any>;
   let categories: Array<string>;
 
@@ -83,8 +83,8 @@ describe("POST /category/task", () => {
 
   test("Successful", async () => {
     request(app)
-      .post(categoryTaskPostRoute(categories[0]))
-      .send(SUCCESSFUL_CREATE_CATEGORY_TASK_BODY)
+      .post(categoryActivityPostRoute(categories[0]))
+      .send(SUCCESSFUL_CREATE_CATEGORY_ACTIVITY_BODY)
       .expect(StatusCodes.CREATED);
   });
 });

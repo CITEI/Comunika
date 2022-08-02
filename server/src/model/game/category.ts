@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 import { StageDocument } from "./stage";
-import { TaskDocument } from "./task";
+import { ActivityDocument } from "./activity";
 
 export interface CategoryInput {
   name: string;
@@ -16,7 +16,7 @@ export const CategorySchema = new mongoose.Schema({
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  tasks: [{ type: mongoose.Types.ObjectId, ref: "Task", required: true }],
+  activitys: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
   stage: {
     type: mongoose.Types.ObjectId,
     ref: "Stage",
@@ -33,7 +33,7 @@ export const CategorySchema = new mongoose.Schema({
 });
 
 export interface CategoryDocument extends mongoose.Document, CategoryInput {
-  tasks: mongoose.PopulatedDoc<TaskDocument>[];
+  activitys: mongoose.PopulatedDoc<ActivityDocument>[];
   next: mongoose.PopulatedDoc<CategoryDocument> | null;
 }
 

@@ -1,7 +1,7 @@
 import { BoxDocument, BoxInput } from "../model/game/box";
 import {
   GAME_MIN_GRADE_PCT,
-  GAME_TASK_SAMPLE_QUANTITY,
+  GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/game/user";
 import { categoryService } from "./category";
@@ -12,7 +12,7 @@ import {
 } from "./errors";
 import { stageService } from "./stage";
 import { BasicService } from "./utils/basic";
-import { Task } from "../model/game/task";
+import { Activity } from "../model/game/activity";
 import { AuthenticationService } from "./utils/authentication";
 
 export enum EvaluationStatus {
@@ -92,12 +92,12 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<BoxInput> {
     const box: BoxInput = {
       category: category,
-      tasks: (
-        await categoryService.sampleTasks({
+      activitys: (
+        await categoryService.sampleActivitys({
           id: category,
-          quantity: GAME_TASK_SAMPLE_QUANTITY,
+          quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
         })
-      ).map((el: any) => ({ task: el, answers: [] })),
+      ).map((el: any) => ({ activity: el, answers: [] })),
     };
 
     return box;
@@ -112,20 +112,20 @@ class UserService extends BasicService<UserDocument> {
   ): Promise<number> {
     let grade = 0;
     // update box answers
-    if (user.progress.box.tasks.length == answers.length) {
+    if (user.progress.box.activitys.length == answers.length) {
       // get total answers
       await user.populate({
-        path: "progress.box.tasks.task",
+        path: "progress.box.activitys.activity",
         select: "questionCount",
-        model: "Task",
+        model: "Activity",
       });
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number = user.progress.box.tasks[i].task.questionCount;
+        let count: number = user.progress.box.activitys[i].activity.questionCount;
         let true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          user.progress.box.tasks[i].answers = el;
+          user.progress.box.activitys[i].answers = el;
           total += count;
           hits += true_count;
         } else
@@ -253,7 +253,7 @@ class UserService extends BasicService<UserDocument> {
       }
     }
     if (box) {
-      await user.populate({ path: "progress.box.tasks.task", model: Task });
+      await user.populate({ path: "progress.box.activitys.activity", model: Activity });
       return user.progress.box;
     }
     return box;
@@ -267,20 +267,20 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    { category: string; tasks: { answers: boolean[]; name: string }[] }[]
+    { category: string; activitys: { answers: boolean[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.category", "name");
     await user.populate({
-      path: "progress.history.tasks.task",
-      model: "Task",
+      path: "progress.history.activitys.activity",
+      model: "Activity",
       select: "name",
     });
     return user.progress.history.map((box) => ({
       category: box.category.name,
-      tasks: box.tasks.map((task) => ({
-        answers: task.answers,
-        name: task.task.name,
+      activitys: box.activitys.map((activity) => ({
+        answers: activity.answers,
+        name: activity.activity.name,
       })),
     }));
   }

@@ -55,8 +55,8 @@ UserSchema.methods.passwordMatches = async function (
   // trues / total
   const box = (this as UserDocument).progress.box;
   return (
-    box.tasks.reduce((sum: number, el) => sum + Number(el.answer), 0) /
-    box.tasks.length
+    box.activitys.reduce((sum: number, el) => sum + Number(el.answer), 0) /
+    box.activitys.length
   );
 };*/
 
