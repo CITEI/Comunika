@@ -49,14 +49,14 @@ UserSchema.methods.passwordMatches = async function (
 
 /*
 /**
- * Calculates the percentage of correctly answered box questions
+ * Calculates the percentage of correctly answered userbox questions
  */
 /*UserSchema.methods.calculateScore = function (): number {
   // trues / total
-  const box = (this as UserDocument).progress.box;
+  const userbox = (this as UserDocument).progress.userbox;
   return (
-    box.activities.reduce((sum: number, el) => sum + Number(el.answer), 0) /
-    box.activities.length
+    userbox.activities.reduce((sum: number, el) => sum + Number(el.answer), 0) /
+    userbox.activities.length
   );
 };*/
 

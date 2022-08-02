@@ -2,17 +2,17 @@ import mongoose from "mongoose";
 import { CategoryDocument } from "./category";
 import { ActivityDocument } from "./activity";
 
-interface BoxActivityInput {
+interface UserBoxActivityInput {
   answers: boolean[];
   activity: mongoose.PopulatedDoc<ActivityDocument>;
 }
 
-export interface BoxInput {
+export interface UserBoxInput {
   category: mongoose.PopulatedDoc<CategoryDocument>;
-  activities: BoxActivityInput[];
+  activities: UserBoxActivityInput[];
 }
 
-export const BoxSchema = new mongoose.Schema(
+export const UserBoxSchema = new mongoose.Schema(
   {
     category: {
       type: mongoose.Types.ObjectId,
@@ -29,4 +29,4 @@ export const BoxSchema = new mongoose.Schema(
   { _id: false }
 );
 
-export interface BoxDocument extends BoxInput {}
+export interface UserBoxDocument extends UserBoxInput {}

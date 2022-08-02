@@ -1,4 +1,4 @@
-import { BoxDocument, BoxInput } from "../model/game/box";
+import { UserBoxDocument, UserBoxInput } from "../model/game/userbox";
 import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
@@ -35,7 +35,7 @@ class UserService extends BasicService<UserDocument> {
     user.progress.category = await categoryService.findHead({
       stage: user.progress.stage,
     });
-    user.progress.box = await this.createBox({
+    user.progress.userbox = await this.createUserBox({
       category: user.progress.category,
     });
     await user.save();
@@ -83,14 +83,14 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Creates a box given a user with defined progress.category
+   * Creates a userbox given a user with defined progress.category
    */
-  protected async createBox({
+  protected async createUserBox({
     category,
   }: {
     category: string;
-  }): Promise<BoxInput> {
-    const box: BoxInput = {
+  }): Promise<UserBoxInput> {
+    const userbox: UserBoxInput = {
       category: category,
       activities: (
         await categoryService.sampleActivities({
@@ -100,32 +100,32 @@ class UserService extends BasicService<UserDocument> {
       ).map((el: any) => ({ activity: el, answers: [] })),
     };
 
-    return box;
+    return userbox;
   }
 
   /**
-   * Calculates the grade of a user box given its answers
+   * Calculates the grade of a user userbox given its answers
    */
   protected async calculateGrade(
     user: UserDocument,
     answers: boolean[][]
   ): Promise<number> {
     let grade = 0;
-    // update box answers
-    if (user.progress.box.activities.length == answers.length) {
+    // update userbox answers
+    if (user.progress.userbox.activities.length == answers.length) {
       // get total answers
       await user.populate({
-        path: "progress.box.activities.activity",
+        path: "progress.userbox.activities.activity",
         select: "questionCount",
         model: "Activity",
       });
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number = user.progress.box.activities[i].activity.questionCount;
+        let count: number = user.progress.userbox.activities[i].activity.questionCount;
         let true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          user.progress.box.activities[i].answers = el;
+          user.progress.userbox.activities[i].answers = el;
           total += count;
           hits += true_count;
         } else
@@ -142,7 +142,7 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Updates the user to approve the current box
+   * Updates the user to approve the current userbox
    */
   protected async approve(user: UserDocument) {
     const id = user._id;
@@ -160,10 +160,10 @@ class UserService extends BasicService<UserDocument> {
           $set: {
             "progress.stage": user.progress.stage,
             "progress.category": null,
-            "progress.box": null,
+            "progress.userbox": null,
           },
           $push: {
-            "progress.history": user.progress.box,
+            "progress.history": user.progress.userbox,
           },
         });
         return EvaluationStatus.NoContent;
@@ -176,12 +176,12 @@ class UserService extends BasicService<UserDocument> {
         $set: {
           "progress.stage": nextStage,
           "progress.category": nextCategory,
-          "progress.box": await this.createBox({
+          "progress.userbox": await this.createUserBox({
             category: nextCategory._id,
           }),
         },
         $push: {
-          "progress.history": user.progress.box,
+          "progress.history": user.progress.userbox,
         },
       });
     }
@@ -190,16 +190,16 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Updates the user to reprove the current box
+   * Updates the user to reprove the current userbox
    */
   protected async reprove(user: UserDocument) {
     await User.findByIdAndUpdate(user._id, {
       $set: {
-        "progress.box": await this.createBox({
+        "progress.userbox": await this.createUserBox({
           category: user.progress.category,
         }),
       },
-      $push: { "progress.history": user.progress.box },
+      $push: { "progress.history": user.progress.userbox },
     });
   }
 
@@ -216,7 +216,7 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
-      select: "progress.box progress.category progress.stage",
+      select: "progress.userbox progress.category progress.stage",
     });
     const grade = await this.calculateGrade(user, answers);
     if (grade >= GAME_MIN_GRADE_PCT) {
@@ -229,12 +229,12 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Returns the current box
+   * Returns the current userbox
    */
-  async findBox({ id }: { id: string }): Promise<BoxDocument | null> {
-    const user = await this.find({ id, select: "progress.box progress.stage" });
-    let box = user.progress.box;
-    if (box == null) {
+  async findUserBox({ id }: { id: string }): Promise<UserBoxDocument | null> {
+    const user = await this.find({ id, select: "progress.userbox progress.stage" });
+    let userbox = user.progress.userbox;
+    if (userbox == null) {
       const nextStage = await stageService.findNext({
         id: user.progress.stage,
       });
@@ -242,25 +242,25 @@ class UserService extends BasicService<UserDocument> {
         const nextCategory = await categoryService.findHead({
           stage: nextStage,
         });
-        box = await this.createBox({ category: nextCategory!._id });
+        userbox = await this.createUserBox({ category: nextCategory!._id });
         await User.findByIdAndUpdate(id, {
           $set: {
             "progress.stage": nextStage,
             "progress.category": nextCategory,
-            "progress.box": box,
+            "progress.userbox": userbox,
           },
         });
       }
     }
-    if (box) {
-      await user.populate({ path: "progress.box.activities.activity", model: Activity });
-      return user.progress.box;
+    if (userbox) {
+      await user.populate({ path: "progress.userbox.activities.activity", model: Activity });
+      return user.progress.userbox;
     }
-    return box;
+    return userbox;
   }
 
   /**
-   * Returns the evaluated boxes history
+   * Returns the evaluated userboxes history
    */
   async findHistory({
     id,
@@ -276,9 +276,9 @@ class UserService extends BasicService<UserDocument> {
       model: "Activity",
       select: "name",
     });
-    return user.progress.history.map((box) => ({
-      category: box.category.name,
-      activities: box.activities.map((activity) => ({
+    return user.progress.history.map((userbox) => ({
+      category: userbox.category.name,
+      activities: userbox.activities.map((activity) => ({
         answers: activity.answers,
         name: activity.activity.name,
       })),
