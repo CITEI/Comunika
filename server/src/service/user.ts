@@ -92,8 +92,8 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<BoxInput> {
     const box: BoxInput = {
       category: category,
-      activitys: (
-        await categoryService.sampleActivitys({
+      activities: (
+        await categoryService.sampleActivities({
           id: category,
           quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
         })
@@ -112,20 +112,20 @@ class UserService extends BasicService<UserDocument> {
   ): Promise<number> {
     let grade = 0;
     // update box answers
-    if (user.progress.box.activitys.length == answers.length) {
+    if (user.progress.box.activities.length == answers.length) {
       // get total answers
       await user.populate({
-        path: "progress.box.activitys.activity",
+        path: "progress.box.activities.activity",
         select: "questionCount",
         model: "Activity",
       });
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number = user.progress.box.activitys[i].activity.questionCount;
+        let count: number = user.progress.box.activities[i].activity.questionCount;
         let true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          user.progress.box.activitys[i].answers = el;
+          user.progress.box.activities[i].answers = el;
           total += count;
           hits += true_count;
         } else
@@ -253,7 +253,7 @@ class UserService extends BasicService<UserDocument> {
       }
     }
     if (box) {
-      await user.populate({ path: "progress.box.activitys.activity", model: Activity });
+      await user.populate({ path: "progress.box.activities.activity", model: Activity });
       return user.progress.box;
     }
     return box;
@@ -267,18 +267,18 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    { category: string; activitys: { answers: boolean[]; name: string }[] }[]
+    { category: string; activities: { answers: boolean[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.category", "name");
     await user.populate({
-      path: "progress.history.activitys.activity",
+      path: "progress.history.activities.activity",
       model: "Activity",
       select: "name",
     });
     return user.progress.history.map((box) => ({
       category: box.category.name,
-      activitys: box.activitys.map((activity) => ({
+      activities: box.activities.map((activity) => ({
         answers: activity.answers,
         name: activity.activity.name,
       })),

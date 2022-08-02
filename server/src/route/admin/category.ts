@@ -24,7 +24,7 @@ const categoryOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
     image: buildFileUploadProperty({ extensions: ["png"] }),
-    activitys: {
+    activities: {
       isVisible: { edit: false, filter: false, list: true, show: true },
     },
   },

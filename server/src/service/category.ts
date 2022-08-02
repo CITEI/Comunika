@@ -6,7 +6,7 @@ import {
 import { Stage, StageDocument } from "../model/game/stage";
 import { Activity, ActivityDocument, ActivityInput } from "../model/game/activity";
 import { ObjectNotFoundError } from "./errors";
-import { activityService } from "./activity";
+import { activitieservice } from "./activity";
 import { LinkedListService } from "./utils/linkedlist";
 import underscore from "underscore";
 
@@ -47,10 +47,10 @@ export default class CategoryService extends LinkedListService<
     payload: ActivityInput & { category: string }
   ): Promise<ActivityDocument> {
     if (await Category.exists({ _id: payload.category }).exec()) {
-      const activity = await activityService.create(payload);
+      const activity = await activitieservice.create(payload);
       await Category.updateOne(
         { _id: payload.category },
-        { $push: { activitys: activity } }
+        { $push: { activities: activity } }
       );
       return activity;
     } else throw new ObjectNotFoundError({ schema: Category });
@@ -66,7 +66,7 @@ export default class CategoryService extends LinkedListService<
     activity: string;
     select?: string;
   }): Promise<CategoryDocument | null> {
-    return await Category.findOne({ activitys: { $in: [activity] } })
+    return await Category.findOne({ activities: { $in: [activity] } })
       .select(select || "")
       .exec();
   }
@@ -85,23 +85,23 @@ export default class CategoryService extends LinkedListService<
       throw new ObjectNotFoundError({ schema: Category });
 
     await Category.findByIdAndUpdate(category, {
-      $pull: { activitys: activity },
+      $pull: { activities: activity },
     }).exec();
     await Activity.findByIdAndDelete(activity);
   }
 
   /**
-   * Obtains at most `quantity` number of activitys from a category
+   * Obtains at most `quantity` number of activities from a category
    */
-  async sampleActivitys({
+  async sampleActivities({
     id,
     quantity,
   }: {
     id: string;
     quantity: number;
   }): Promise<Array<string>> {
-    const category = await this.find({ by: { _id: id }, select: "activitys" });
-    if (category) return underscore.sample(category.activitys, quantity);
+    const category = await this.find({ by: { _id: id }, select: "activities" });
+    if (category) return underscore.sample(category.activities, quantity);
     else return [];
   }
 }

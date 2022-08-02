@@ -15,7 +15,7 @@ import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { categoryService } from "../../service/category";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
-import { ActivitySchema } from "../../model/game/activity";
+import { Activitieschema } from "../../model/game/activity";
 import {
   MIN_NODES,
   MIN_QUESTION_NODES,
@@ -226,7 +226,7 @@ const activityOptions: ResourceOptions = {
     },
     edit: {
       before: [unflattenRequest, buildValidator(activityValidatorSchema)],
-      layout: Object.keys(ActivitySchema.paths).filter(
+      layout: Object.keys(Activitieschema.paths).filter(
         (key) => !["_id", "__v", "questionCount"].includes(key)
       ),
     },

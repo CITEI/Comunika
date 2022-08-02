@@ -16,7 +16,7 @@ export const CategorySchema = new mongoose.Schema({
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  activitys: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
+  activities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
   stage: {
     type: mongoose.Types.ObjectId,
     ref: "Stage",
@@ -33,7 +33,7 @@ export const CategorySchema = new mongoose.Schema({
 });
 
 export interface CategoryDocument extends mongoose.Document, CategoryInput {
-  activitys: mongoose.PopulatedDoc<ActivityDocument>[];
+  activities: mongoose.PopulatedDoc<ActivityDocument>[];
   next: mongoose.PopulatedDoc<CategoryDocument> | null;
 }
 

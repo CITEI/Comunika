@@ -9,7 +9,7 @@ interface BoxActivityInput {
 
 export interface BoxInput {
   category: mongoose.PopulatedDoc<CategoryDocument>;
-  activitys: BoxActivityInput[];
+  activities: BoxActivityInput[];
 }
 
 export const BoxSchema = new mongoose.Schema(
@@ -19,7 +19,7 @@ export const BoxSchema = new mongoose.Schema(
       ref: "Category",
       required: false,
     },
-    activitys: [
+    activities: [
       {
         activity: { type: mongoose.Types.ObjectId, required: true },
         answers: [{ type: Boolean, required: true }],
