@@ -26,8 +26,6 @@ export interface BoxItem {
   _id: string;
   name: string;
   description: string;
-  image: string;
-  imageAlt: string;
   next: string | null;
 }
 
@@ -42,11 +40,6 @@ export const fetchBoxes = createAsyncThunk(
       boxes: (await api.get(`stage/${stage}/box`))
         .data as BoxItem[],
     };
-
-    res.boxes = res.boxes.map((el) => ({
-      ...el,
-      image: toUri(el.image),
-    }));
 
     return res;
   }
