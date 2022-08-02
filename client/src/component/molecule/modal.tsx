@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Modal as RModal, ModalBaseProps } from "react-native";
-import styled from "styled-components/native";
+import styled from "../../pre-start/themes";
 import { dp, vw, vh } from "../../helper/resolution";
 import Button from "../atom/button";
 import Text from "../atom/text";
