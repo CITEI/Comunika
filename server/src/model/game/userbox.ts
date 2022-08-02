@@ -21,7 +21,11 @@ export const UserBoxSchema = new mongoose.Schema(
     },
     activities: [
       {
-        activity: { type: mongoose.Types.ObjectId, required: true },
+        activity: {
+          type: mongoose.Types.ObjectId,
+          ref: "Activity",
+          required: true,
+        },
         answers: [{ type: Boolean, required: true }],
       },
     ],
