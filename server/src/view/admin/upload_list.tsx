@@ -18,7 +18,6 @@ const EXTENSIONS = {
  */
 export function getMimeType(filepath: string): string | undefined {
   const extension = filepath.split(".").pop() || "";
-  console.log(extension)
   for (const type of Object.keys(EXTENSIONS))
     if (EXTENSIONS[type].has(extension)) return `${type}/${extension}`;
   return undefined;

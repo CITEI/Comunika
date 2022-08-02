@@ -23,7 +23,6 @@ import { PUBLIC_PATH } from "../../pre-start/constants";
 const boxOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
-    image: buildFileUploadProperty({ extensions: ["png"] }),
     activities: {
       isVisible: { edit: false, filter: false, list: true, show: true },
     },
@@ -32,22 +31,10 @@ const boxOptions: ResourceOptions = {
     bulkDelete: { isAccessible: false },
     new: {
       before: [
-        buildFileUploadBefore([{ attribute: "image", extensions: ["png"] }]),
         buildValidator({
           name: CustomJoi.RequiredString(),
           description: CustomJoi.RequiredString(),
-          image: CustomJoi.UploadStatus().required(),
-          imageAlt: CustomJoi.RequiredString(),
           stage: CustomJoi.ObjectId().required(),
-        }),
-      ],
-      after: [
-        buildFileUploadAfter({
-          image: {
-            staticFolderEndpoint: "public",
-            staticFolderPath: PUBLIC_PATH,
-            subPath: "box",
-          },
         }),
       ],
       handler: async (
@@ -65,12 +52,6 @@ const boxOptions: ResourceOptions = {
       },
     },
     delete: {
-      after: buildFileDeleteAfter({
-        image: {
-          staticFolderEndpoint: "public",
-          staticFolderPath: PUBLIC_PATH,
-        },
-      }),
       handler: async (
         req: ActionRequest,
         _res: any,

@@ -14,8 +14,6 @@ export interface BoxInput {
 export const BoxSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
-  image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
-  imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   activities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
   stage: {
     type: mongoose.Types.ObjectId,

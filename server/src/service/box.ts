@@ -17,7 +17,7 @@ export default class BoxService extends LinkedListService<
   constructor() {
     super({
       model: Box,
-      select: "name description image imageAlt stage next",
+      select: "name description stage next",
       metaModel: Stage,
       createMeta: false,
     });
