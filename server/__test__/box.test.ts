@@ -24,7 +24,7 @@ export async function createBox(
     .post(BOX_POST_ROUTE)
     .send({ ...SUCCESSFUL_CREATE_BOX_BODY, stage });
   const res = await request(app).get(GET_BOX_ROUTE).send();
-  return [].concat(...(res.body as Array<any>).map((el) => el.categories));
+  return [].concat(...(res.body as Array<any>).map((el) => el.boxes));
 }
 
 describe("POST /box", () => {
@@ -69,7 +69,7 @@ const SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY = {
 
 describe("POST /box/activity", () => {
   let stages: Map<string, any>;
-  let categories: Array<string>;
+  let boxes: Array<string>;
 
   beforeAll(async () => {
     await mockDb();
@@ -78,12 +78,12 @@ describe("POST /box/activity", () => {
   beforeEach(async () => {
     await cleanDb();
     stages = await createStage(app);
-    categories = await createBox(app, stages.keys().next().value);
+    boxes = await createBox(app, stages.keys().next().value);
   });
 
   test("Successful", async () => {
     request(app)
-      .post(boxActivityPostRoute(categories[0]))
+      .post(boxActivityPostRoute(boxes[0]))
       .send(SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY)
       .expect(StatusCodes.CREATED);
   });
