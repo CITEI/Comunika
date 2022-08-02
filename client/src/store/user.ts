@@ -86,7 +86,7 @@ interface QuestionNode extends GameNode {
 }
 
 /** Box challenge definition */
-interface Task {
+interface Activity {
   name: string;
   description: string;
   nodes: Node[];
@@ -95,13 +95,13 @@ interface Task {
 
 /** Obtains the current user box */
 export const fetchBox = createAsyncThunk(
-  "user/box",
-  async (): Promise<Task[]> => {
-    const data = (await api.get(`/user/box`)).data;
-    return (data.tasks as Array<any>).map((el) => ({
-      name: el.task.name,
-      description: el.task.description,
-      nodes: el.task.nodes.map((node) => {
+  "user/userbox",
+  async (): Promise<Activity[]> => {
+    const data = (await api.get(`/user/userbox`)).data;
+    return (data.activities as Array<any>).map((el) => ({
+      name: el.activity.name,
+      description: el.activity.description,
+      nodes: el.activity.nodes.map((node) => {
         if (node.type == "text") {
           return {
             ...node,
@@ -127,7 +127,7 @@ export const fetchBox = createAsyncThunk(
           };
         }
       }),
-      questionNodes: el.task.questionNodes,
+      questionNodes: el.activity.questionNodes,
     }));
   }
 );
@@ -143,7 +143,7 @@ export enum EvaluateStatus {
 export const evaluate = createAsyncThunk(
   "user/evaluate",
   async (answers: boolean[][]) => {
-    const res = (await api.post(`/user/box`, { answers })).data;
+    const res = (await api.post(`/user/userbox`, { answers })).data;
     switch (res.status) {
       case "approved":
         return EvaluateStatus.Approved;
@@ -175,7 +175,7 @@ export default createSlice({
       stage: null as string | null,
       box: null as string | null,
     },
-    box: [] as Task[],
+    box: [] as Activity[],
     boxLoaded: false,
     history: [] as { box: string }[],
     historyLoaded: false,
