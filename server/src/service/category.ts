@@ -3,7 +3,7 @@ import {
   CategoryInput,
   CategoryDocument,
 } from "../model/game/category";
-import { Level, LevelDocument } from "../model/game/level";
+import { Stage, StageDocument } from "../model/game/stage";
 import { Task, TaskDocument, TaskInput } from "../model/game/task";
 import { ObjectNotFoundError } from "./errors";
 import { taskService } from "./task";
@@ -12,13 +12,13 @@ import underscore from "underscore";
 
 export default class CategoryService extends LinkedListService<
   CategoryDocument,
-  LevelDocument
+  StageDocument
 > {
   constructor() {
     super({
       model: Category,
-      select: "name description image imageAlt level next",
-      metaModel: Level,
+      select: "name description image imageAlt stage next",
+      metaModel: Stage,
       createMeta: false,
     });
   }
@@ -28,16 +28,16 @@ export default class CategoryService extends LinkedListService<
    */
   protected async findMeta(
     input: CategoryInput
-  ): Promise<LevelDocument | null> {
-    return this.metaModel.findById(input.level).exec();
+  ): Promise<StageDocument | null> {
+    return this.metaModel.findById(input.stage).exec();
   }
 
   async findAll({
-    level,
+    stage,
   }: {
-    level: string;
+    stage: string;
   }): Promise<Array<CategoryDocument>> {
-    return Category.find({ level: level }).select(this.select).exec();
+    return Category.find({ stage: stage }).select(this.select).exec();
   }
 
   /**

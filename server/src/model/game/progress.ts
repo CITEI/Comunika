@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import { BoxDocument, BoxSchema } from "./box";
 import { CategoryDocument } from "./category";
-import { LevelDocument } from "./level";
+import { StageDocument } from "./stage";
 
 export interface ProgressInput {
-  level: mongoose.PopulatedDoc<LevelDocument>;
+  stage: mongoose.PopulatedDoc<StageDocument>;
   category: mongoose.PopulatedDoc<CategoryDocument>;
   box: BoxDocument;
   history: BoxDocument[];
@@ -12,9 +12,9 @@ export interface ProgressInput {
 
 export const ProgressSchema = new mongoose.Schema(
   {
-    level: {
+    stage: {
       type: mongoose.Types.ObjectId,
-      ref: "Level",
+      ref: "Stage",
       required: true,
       default: null,
     },

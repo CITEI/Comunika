@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MIN_STRING_LENGTH } from "../../pre-start/constants";
-import { LevelDocument } from "./level";
+import { StageDocument } from "./stage";
 import { TaskDocument } from "./task";
 
 export interface CategoryInput {
@@ -8,7 +8,7 @@ export interface CategoryInput {
   description: string;
   image: string;
   imageAlt: string;
-  level: mongoose.PopulatedDoc<LevelDocument>;
+  stage: mongoose.PopulatedDoc<StageDocument>;
 }
 
 export const CategorySchema = new mongoose.Schema({
@@ -17,9 +17,9 @@ export const CategorySchema = new mongoose.Schema({
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   tasks: [{ type: mongoose.Types.ObjectId, ref: "Task", required: true }],
-  level: {
+  stage: {
     type: mongoose.Types.ObjectId,
-    ref: "Level",
+    ref: "Stage",
     required: true,
     index: true,
   },

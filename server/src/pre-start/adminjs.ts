@@ -4,8 +4,8 @@ import AdminJSMongoose from "@adminjs/mongoose";
 import { ADMIN_SECRET, API_VERSION, APP_NAME } from "./constants";
 import { User } from "../model/game/user";
 import userOptions from "../route/admin/user";
-import { Level } from "../model/game/level";
-import levelOptions from "../route/admin/level";
+import { Stage } from "../model/game/stage";
+import stageOptions from "../route/admin/stage";
 import { Task } from "../model/game/task";
 import categoryOptions from "../route/admin/category";
 import { Category } from "../model/game/category";
@@ -38,10 +38,10 @@ const adminJs = new AdminJS({
       },
     },
     {
-      resource: Level,
+      resource: Stage,
       options: {
         navigation: manageNavigation,
-        ...levelOptions,
+        ...stageOptions,
       },
     },
     {

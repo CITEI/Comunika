@@ -91,7 +91,6 @@ export class LinkedListService<
     const meta = await this.getMeta(input);
     const last = await this.getTail(meta);
 
-    // creates a new level
     let doc = new this.model(input);
 
     const session = await mongoose.startSession();

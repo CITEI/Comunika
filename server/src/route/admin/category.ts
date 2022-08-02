@@ -38,7 +38,7 @@ const categoryOptions: ResourceOptions = {
           description: CustomJoi.RequiredString(),
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
-          level: CustomJoi.ObjectId().required(),
+          stage: CustomJoi.ObjectId().required(),
         }),
       ],
       after: [

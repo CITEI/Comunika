@@ -10,7 +10,7 @@ import { BASE_PATH, PUBLIC_PATH } from "./pre-start/constants";
 import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
-import levelRouter from "./route/game/level";
+import stageRouter from "./route/game/stage";
 import categoryRouter from "./route/game/category";
 import userRouter from "./route/game/user";
 import winston from "./pre-start/winston";
@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === "production") {
 const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
-apiRouter.use("/level", levelRouter);
+apiRouter.use("/stage", stageRouter);
 apiRouter.use("/category", categoryRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));

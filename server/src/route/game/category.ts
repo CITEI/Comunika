@@ -29,11 +29,11 @@ router.get(
 export default router;
 
 /**
- * Required level id routes
+ * Required stage id routes
  */
-export const levelCategoryRouter = Router({ mergeParams: true });
+export const stageCategoryRouter = Router({ mergeParams: true });
 
-levelCategoryRouter.get(
+stageCategoryRouter.get(
   "/",
   async (req: Request, res: Response) => {
     res

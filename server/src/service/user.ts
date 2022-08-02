@@ -10,7 +10,7 @@ import {
   ObjectNotFoundError,
   ValidationError,
 } from "./errors";
-import { levelService } from "./level";
+import { stageService } from "./stage";
 import { BasicService } from "./utils/basic";
 import { Task } from "../model/game/task";
 import { AuthenticationService } from "./utils/authentication";
@@ -31,9 +31,9 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    user.progress.level = await levelService.findHead();
+    user.progress.stage = await stageService.findHead();
     user.progress.category = await categoryService.findHead({
-      level: user.progress.level,
+      stage: user.progress.stage,
     });
     user.progress.box = await this.createBox({
       category: user.progress.category,
@@ -146,19 +146,19 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async approve(user: UserDocument) {
     const id = user._id;
-    let nextLevel = user.progress.level;
+    let nextStage = user.progress.stage;
     let nextCategory = await categoryService.findNext({
       id: user.progress.category,
     });
 
     if (!nextCategory) {
-      // reached the last category of a level
-      nextLevel = await levelService.findNext({ id: nextLevel });
-      if (!nextLevel) {
-        // if no level, reached the end of the game
+      // reached the last category of a stage
+      nextStage = await stageService.findNext({ id: nextStage });
+      if (!nextStage) {
+        // if no stage, reached the end of the game
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.level": user.progress.level,
+            "progress.stage": user.progress.stage,
             "progress.category": null,
             "progress.box": null,
           },
@@ -168,13 +168,13 @@ class UserService extends BasicService<UserDocument> {
         });
         return EvaluationStatus.NoContent;
       } else
-        nextCategory = await categoryService.findHead({ level: nextLevel });
+        nextCategory = await categoryService.findHead({ stage: nextStage });
     }
 
     if (nextCategory) {
       await User.findByIdAndUpdate(id, {
         $set: {
-          "progress.level": nextLevel,
+          "progress.stage": nextStage,
           "progress.category": nextCategory,
           "progress.box": await this.createBox({
             category: nextCategory._id,
@@ -185,7 +185,7 @@ class UserService extends BasicService<UserDocument> {
         },
       });
     }
-    // level without categories
+    // stage without categories
     else throw new InternalServerError();
   }
 
@@ -216,7 +216,7 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
-      select: "progress.box progress.category progress.level",
+      select: "progress.box progress.category progress.stage",
     });
     const grade = await this.calculateGrade(user, answers);
     if (grade >= GAME_MIN_GRADE_PCT) {
@@ -232,20 +232,20 @@ class UserService extends BasicService<UserDocument> {
    * Returns the current box
    */
   async findBox({ id }: { id: string }): Promise<BoxDocument | null> {
-    const user = await this.find({ id, select: "progress.box progress.level" });
+    const user = await this.find({ id, select: "progress.box progress.stage" });
     let box = user.progress.box;
     if (box == null) {
-      const nextLevel = await levelService.findNext({
-        id: user.progress.level,
+      const nextStage = await stageService.findNext({
+        id: user.progress.stage,
       });
-      if (nextLevel) {
+      if (nextStage) {
         const nextCategory = await categoryService.findHead({
-          level: nextLevel,
+          stage: nextStage,
         });
         box = await this.createBox({ category: nextCategory!._id });
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.level": nextLevel,
+            "progress.stage": nextStage,
             "progress.category": nextCategory,
             "progress.box": box,
           },
@@ -291,7 +291,7 @@ class UserService extends BasicService<UserDocument> {
   async findUserData({ id }: { id: string }): Promise<UserDocument> {
     return await this.find({
       id,
-      select: "email name progress.category progress.level",
+      select: "email name progress.category progress.stage",
     });
   }
 }
