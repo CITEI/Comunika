@@ -8,12 +8,9 @@ data to the user
  */
 export interface NodeInput {
   type: string;
-  title: string;
 }
 
-export const NodeSchemaInit = {
-  title: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-};
+export const NodeSchemaInit = {};
 
 const NO_ID = { _id: false };
 
@@ -95,6 +92,7 @@ export interface QuestionNodeInput extends NodeInput {
 export const QuestionNodeSchemaInit = {
   ...NodeSchemaInit,
   question: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  notes: { type: String, required: false },
 };
 
 export const QuestionNodeSchema = new mongoose.Schema(

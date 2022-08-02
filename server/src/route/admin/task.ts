@@ -23,7 +23,6 @@ import {
 } from "../../pre-start/constants";
 
 const baseNodeCreateSchema = {
-  title: CustomJoi.RequiredString(),
   text: CustomJoi.RequiredString(),
 };
 
@@ -82,8 +81,8 @@ const taskValidatorSchema = {
   questionNodes: Joi.array()
     .items(
       Joi.object({
-        title: CustomJoi.RequiredString(),
         question: CustomJoi.RequiredString(),
+        notes: Joi.string(),
       })
     )
     .min(MIN_QUESTION_NODES)
