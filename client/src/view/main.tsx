@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchUserData } from "../store/user";
-import Levels from "./levels";
+import Stages from "./stages";
 
 interface MainProps {}
 
@@ -13,7 +13,7 @@ const Main: React.VoidFunctionComponent<MainProps> = () => {
     if (!loaded) dispatch(fetchUserData());
   }, [loaded]);
 
-  return <Levels></Levels>;
+  return <Stages></Stages>;
 };
 
 export default Main;

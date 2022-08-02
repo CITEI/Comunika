@@ -7,7 +7,6 @@ import styled from "styled-components/native";
 import { dp, sp } from "../helper/resolution";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { GameNavigatorProps, GameProps } from "../route/game";
-import { toUri } from "../helper/api";
 import ContentContainer from "../component/atom/content-container";
 
 interface TransitionProps {}
@@ -33,11 +32,11 @@ const Image = styled.Image`
   margin-top: ${dp(76)}px;
 `;
 
-/** Screen used as a transition between categories screen and task screen */
+/** Screen used as a transition between boxes screen and task screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const route = useRoute();
   const navigation = useNavigation<GameNavigatorProps>();
-  const { category } = route.params as GameProps["Transition"];
+  const { box } = route.params as GameProps["Transition"];
 
   setTimeout(() => {
     navigation.navigate("Game");
@@ -53,8 +52,8 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
       />
       <Content>
         <Title>Starting activity 1</Title>
-        <Subtitle>{category.name}</Subtitle>
-        <Image resizeMode="contain" source={{ uri: toUri(category.image) }} />
+        <Subtitle>{box.name}</Subtitle>
+        <Image resizeMode="contain" source={{ uri: box.image }} />
       </Content>
     </MainContainer>
   );

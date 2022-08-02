@@ -1,33 +1,33 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchLevels, LevelItem } from "../store/game-data";
+import { fetchStages, StageItem } from "../store/game-data";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
 
-interface LevelsProps {}
+interface StagesProps {}
 
-const Levels: React.VoidFunctionComponent<LevelsProps> = () => {
+const Stages: React.VoidFunctionComponent<StagesProps> = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
-  const levels = useAppSelector((state) => state.gameData.levels);
+  const stages = useAppSelector((state) => state.gameData.stages);
 
   useEffect(() => {
-    if (!levels.loaded) dispatch(fetchLevels());
+    if (!stages.loaded) dispatch(fetchStages());
   }, []);
 
-  const handleItemPress = (level: LevelItem) => {
-    navigation.navigate("Categories", { levelId: level._id });
+  const handleItemPress = (stage: StageItem) => {
+    navigation.navigate("Boxes", { stageId: stage._id });
   };
 
   return (
     <Cards
-      title="Levels"
+      title="Stages"
       onPress={handleItemPress}
-      data={levels.data}
+      data={stages.data}
       current={0}
     />
   );
 };
 
-export default Levels;
+export default Stages;

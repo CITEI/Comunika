@@ -15,7 +15,7 @@ const Result: React.VoidFunctionComponent = () => {
   return (
     <FullView>
       <Text style={{ fontWeight: "bold", flex: 1 }}>
-        Congratulations, you've completed this category
+        Congratulations, you've completed this box
       </Text>
       <Button title="Return" onPress={handlePress} />
     </FullView>

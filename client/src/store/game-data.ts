@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../helper/api";
+import api, { toUri } from "../helper/api";
 import { sortLinkedList } from "./utils";
 
-export interface LevelItem {
+/** Stage information */
+export interface StageItem {
   _id: string;
   name: string;
   description: string;
@@ -11,14 +12,17 @@ export interface LevelItem {
   next: string | null;
 }
 
-export const fetchLevels = createAsyncThunk(
-  "gameData/level",
-  async (): Promise<LevelItem[]> => {
-    return (await api.get("level")).data as LevelItem[];
+/** Obtains all game stages */
+export const fetchStages = createAsyncThunk(
+  "gameData/stage",
+  async (): Promise<StageItem[]> => {
+    const stages = (await api.get("stage")).data as StageItem[];
+    return stages.map((el) => ({ ...el, image: toUri(el.image) }));
   }
 );
 
-export interface CategoryItem {
+/** Box information */
+export interface BoxItem {
   _id: string;
   name: string;
   description: string;
@@ -27,16 +31,23 @@ export interface CategoryItem {
   next: string | null;
 }
 
-export const fetchCategories = createAsyncThunk(
-  "gameData/category",
+/** Obtains all game boxes */
+export const fetchBoxes = createAsyncThunk(
+  "gameData/box",
   async (
-    level: string
-  ): Promise<{ level: string; categories: CategoryItem[] }> => {
+    stage: string
+  ): Promise<{ stage: string; boxes: BoxItem[] }> => {
     const res = {
-      level,
-      categories: (await api.get(`level/${level}/category`))
-        .data as CategoryItem[],
+      stage,
+      boxes: (await api.get(`stage/${stage}/box`))
+        .data as BoxItem[],
     };
+
+    res.boxes = res.boxes.map((el) => ({
+      ...el,
+      image: toUri(el.image),
+    }));
+
     return res;
   }
 );
@@ -44,24 +55,24 @@ export const fetchCategories = createAsyncThunk(
 export default createSlice({
   name: "gameData",
   initialState: {
-    levels: {
-      data: new Array<LevelItem>(),
+    stages: {
+      data: new Array<StageItem>(),
       loaded: false,
     },
-    categories: {} as { [key: string]: CategoryItem[] },
+    boxes: {} as { [key: string]: BoxItem[] },
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchLevels.fulfilled, (state, action) => {
-      state.levels.data = sortLinkedList(action.payload);
-      state.levels.loaded = true;
+    builder.addCase(fetchStages.fulfilled, (state, action) => {
+      state.stages.data = sortLinkedList(action.payload);
+      state.stages.loaded = true;
     });
-    builder.addCase(fetchCategories.fulfilled, (state, action) => {
-      let categories = {} as { [key: string]: CategoryItem[] };
-      categories[action.payload.level] = sortLinkedList(
-        action.payload.categories
+    builder.addCase(fetchBoxes.fulfilled, (state, action) => {
+      let boxes = {} as { [key: string]: BoxItem[] };
+      boxes[action.payload.stage] = sortLinkedList(
+        action.payload.boxes
       );
-      state.categories = { ...state.categories, ...categories };
+      state.boxes = { ...state.boxes, ...boxes };
     });
   },
 });

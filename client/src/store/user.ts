@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import jwtDecode from "jwt-decode";
-import api from "../helper/api";
+import api, { toUri } from "../helper/api";
 import { getToken } from "../helper/token";
 
 interface UserToken {
@@ -24,26 +24,68 @@ export const fetchUserData = createAsyncThunk("user/data", async () => {
       name: data.name,
     },
     progress: {
-      level: data.progress.level,
-      category: data.progress.category,
+      stage: data.progress.stage,
+      box: data.progress.box,
     },
   };
 });
 
-interface CoreNode {
+/** Base component for game screens definition */
+interface GameNode {
   _id: string;
-  title: string;
 }
 
-interface Node extends CoreNode {
+/** Base component for gameplay screens */
+export interface BaseNode extends GameNode {
   type: string;
-  [key: string]: any;
+  text: string;
 }
 
-interface QuestionNode extends CoreNode {
+/** Node that shows a text along with an image */
+export interface TextNode extends BaseNode {
+  type: "text";
+  image: string;
+  imageAlt: string;
+}
+
+/** Node that shows a text along with an image/audio carrousel */
+export interface CarrouselNode extends BaseNode {
+  type: "carrousel";
+  images: Array<
+    | {
+        image: string;
+        imageAlt: string;
+        audio: string;
+      }
+    | {
+        image: string;
+        imageAlt: string;
+      }
+    | {
+        audio: string;
+      }
+  >;
+}
+
+/** Node that shows a text along with a mosaic of images with audio */
+export interface AudibleMosaicNode extends BaseNode {
+  type: "audible_mosaic";
+  images: {
+    image: string;
+    imageAlt: string;
+    audio: string;
+  }[];
+}
+
+/** Type for nodes all kinds of nodes */
+export type Node = TextNode | CarrouselNode | AudibleMosaicNode;
+
+/** Node displayed after gameplay in order to test knowledge */
+interface QuestionNode extends GameNode {
   question: string;
 }
 
+/** Box challenge definition */
 interface Task {
   name: string;
   description: string;
@@ -51,6 +93,7 @@ interface Task {
   questionNodes: QuestionNode[];
 }
 
+/** Obtains the current user box */
 export const fetchBox = createAsyncThunk(
   "user/box",
   async (): Promise<Task[]> => {
@@ -58,18 +101,45 @@ export const fetchBox = createAsyncThunk(
     return (data.tasks as Array<any>).map((el) => ({
       name: el.task.name,
       description: el.task.description,
-      nodes: el.task.nodes,
+      nodes: el.task.nodes.map((node) => {
+        if (node.type == "text") {
+          return {
+            ...node,
+            image: toUri(node.image),
+          };
+        } else if (node.type == "carrousel") {
+          return {
+            ...node,
+            images: node.images.map((img) => {
+              if (img.audio) img.audio = toUri(img.audio);
+              if (img.image) img.image = toUri(img.image);
+              return img;
+            }),
+          };
+        } else if (node.type == "audible_mosaic") {
+          return {
+            ...node,
+            images: node.images.map((el) => ({
+              ...el,
+              image: toUri(el.image),
+              audio: toUri(el.image),
+            })),
+          };
+        }
+      }),
       questionNodes: el.task.questionNodes,
     }));
   }
 );
 
+/** Grade status of a box evaluation */
 export enum EvaluateStatus {
   Approved,
   Reproved,
   NoContent,
 }
 
+/** Submits user answers to evaluation */
 export const evaluate = createAsyncThunk(
   "user/evaluate",
   async (answers: boolean[][]) => {
@@ -85,11 +155,12 @@ export const evaluate = createAsyncThunk(
   }
 );
 
+/** Obtains the boxes an user finished */
 export const fetchHistory = createAsyncThunk(
   "user/history",
-  async (): Promise<{category: string}[]> => {
+  async (): Promise<{ box: string }[]> => {
     const res = (await api.get(`/user/history`)).data;
-    return (res as Array<any>).map((el) => ({category: el.category}));
+    return (res as Array<any>).map((el) => ({ box: el.box }));
   }
 );
 
@@ -97,16 +168,16 @@ export default createSlice({
   name: "user",
   initialState: {
     info: {
-      name: null,
-      email: null,
+      name: null as string | null,
+      email: null as string | null,
     },
     progress: {
-      level: null as string | null,
-      category: null as string | null,
+      stage: null as string | null,
+      box: null as string | null,
     },
     box: [] as Task[],
     boxLoaded: false,
-    history: [] as {category: string}[],
+    history: [] as { box: string }[],
     historyLoaded: false,
     loaded: false,
     result: EvaluateStatus.NoContent,
