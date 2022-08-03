@@ -4,8 +4,9 @@ import * as Speech from "expo-speech";
 import Icon from "react-native-vector-icons/AntDesign";
 import { sp, dp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
+import { ViewProps } from "react-native";
 
-interface TTSPlayerProps {
+interface TTSPlayerProps extends ViewProps {
   text: string;
 }
 
@@ -60,7 +61,7 @@ const TTSPlayer: React.VoidFunctionComponent<TTSPlayerProps> = (props) => {
   }, [props.text, state]);
 
   return (
-    <Container>
+    <Container {...props}>
       <Button name="fastbackward" onPress={handleStop} />
       <PlayButton
         name={state == PlayerState.Playing ? "pausecircle" : "play"}
