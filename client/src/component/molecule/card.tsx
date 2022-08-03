@@ -1,9 +1,10 @@
 import React from "react";
-import styled from "styled-components/native";
+import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 import BaseTitle from "../atom/title";
 import Text from "../atom/text";
 import BaseButton from "../atom/button";
+import ShadowPanel from "../atom/shadow-panel";
 
 interface CardProps {
   /** image url */
@@ -14,9 +15,9 @@ interface CardProps {
   title: string;
   /** card description */
   description: string;
-  /** number of completed tasks */
+  /** number of completed activities */
   progress: number;
-  /** total number of tasks */
+  /** total number of activities */
   total: number;
   /** status of the card */
   status: "completed" | "incomplete" | "locked";
@@ -24,7 +25,7 @@ interface CardProps {
   onPress: () => void;
 }
 
-const Container = styled.View`
+const Container = styled(ShadowPanel)`
   background: ${(props) => props.theme.color.background};
   padding: ${dp(20)}px;
   border-radius: ${dp(10)}px;
@@ -104,7 +105,7 @@ const Button = styled(BaseButton)`
  * of activities. */
 const Card: React.VoidFunctionComponent<CardProps> = (props) => {
   return (
-    <Container style={{ elevation: 10 }}>
+    <Container>
       <Header>
         <Title>{props.title}</Title>
         {
