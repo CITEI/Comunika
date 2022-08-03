@@ -1,12 +1,11 @@
 import React, { useCallback, useState } from "react";
-import ShadowPanel from "../atom/shadow-panel";
+import ShadowPanel, { ShadowPanelProps } from "../atom/shadow-panel";
 import * as Speech from "expo-speech";
 import Icon from "react-native-vector-icons/AntDesign";
 import { sp, dp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
-import { ViewProps } from "react-native";
 
-interface TTSPlayerProps extends ViewProps {
+interface TTSPlayerProps extends ShadowPanelProps {
   text: string;
 }
 
@@ -36,8 +35,6 @@ const PlayButton = styled(Button)`
 const TTSPlayer: React.VoidFunctionComponent<TTSPlayerProps> = (props) => {
   const [state, setState] = useState(PlayerState.Stopped);
 
-  console.log(state)
-
   /** Stops a tts speech */
   const handleStop = useCallback(async () => {
     await Speech.stop();
@@ -61,7 +58,7 @@ const TTSPlayer: React.VoidFunctionComponent<TTSPlayerProps> = (props) => {
   }, [props.text, state]);
 
   return (
-    <Container {...props}>
+    <Container elevation={7} {...props}>
       <Button name="fastbackward" onPress={handleStop} />
       <PlayButton
         name={state == PlayerState.Playing ? "pausecircle" : "play"}
