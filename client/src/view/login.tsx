@@ -4,17 +4,15 @@ import VerticalContainer from "../component/atom/vertical-container";
 import { useAppDispatch } from "../store/store";
 import { login } from "../store/auth";
 import Button from "../component/atom/button";
-import { FullView } from "../component/atom/full-view";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
 import Title from "../component/atom/title";
-import { Image, View } from "react-native";
 import logo from "../../assets/logo.png";
 import { dp } from "../helper/resolution";
 import Text from "../component/atom/text";
 import Modal from "../component/molecule/modal";
-import MainContainer from "../component/molecule/main-container";
+import MainContainer from "../component/atom/main-container";
 import ContentContainer from "../component/atom/content-container";
 import styled from "styled-components/native";
 

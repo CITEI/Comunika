@@ -1,5 +1,5 @@
 import React from "react";
-import MainContainer from "../component/molecule/main-container";
+import MainContainer from "../component/atom/main-container";
 import Toolbar from "../component/organism/toolbar";
 import BaseTitle from "../component/atom/title";
 import BaseText from "../component/atom/text";
@@ -32,11 +32,11 @@ const Image = styled.Image`
   margin-top: ${dp(76)}px;
 `;
 
-/** Screen used as a transition between boxes screen and task screen */
+/** Screen used as a transition between boxes screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const route = useRoute();
   const navigation = useNavigation<GameNavigatorProps>();
-  const { box } = route.params as GameProps["Transition"];
+  const { stage, boxIndex } = route.params as GameProps["Transition"];
 
   setTimeout(() => {
     navigation.navigate("Game");
@@ -51,9 +51,13 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
         closeButton={false}
       />
       <Content>
-        <Title>Starting activity 1</Title>
-        <Subtitle>{box.name}</Subtitle>
-        <Image resizeMode="contain" source={{ uri: box.image }} />
+        <Title>Starting activity {boxIndex}</Title>
+        <Subtitle>{stage.name}</Subtitle>
+        <Image
+          resizeMode="contain"
+          source={{ uri: stage.image }}
+          accessibilityHint={stage.imageAlt}
+        />
       </Content>
     </MainContainer>
   );
