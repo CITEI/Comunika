@@ -7,7 +7,7 @@ import Register from "./src/view/register";
 import React from "react";
 import FlashMessage from "react-native-flash-message";
 import Main from "./src/view/main";
-import Categories from "./src/view/categories";
+import Boxes from "./src/view/boxes";
 import Game from "./src/view/game";
 import Result from "./src/view/result";
 import { APP_NAME } from "./src/pre-start/constants";
@@ -15,7 +15,7 @@ import Settings, { SettingsButton } from "./src/view/settings";
 import { defaultTheme } from "./src/pre-start/themes";
 import { ThemeProvider } from "styled-components/native";
 import FontLoader from "./src/pre-start/font-loader";
-import MainContainer from "./src/component/molecule/main-container";
+import MainContainer from "./src/component/atom/main-container";
 import Transition from "./src/view/transition";
 
 const Stack = createNativeStackNavigator();
@@ -48,7 +48,7 @@ export default function App() {
                     headerRight: SettingsButton,
                   }}
                 />
-                <Stack.Screen component={Categories} name="Categories" />
+                <Stack.Screen component={Boxes} name="Boxes" />
                 <Stack.Screen component={Game} name="Game" />
                 <Stack.Screen component={Result} name="Result" />
                 <Stack.Screen component={Settings} name="Settings" />
