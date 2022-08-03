@@ -11,6 +11,8 @@ const Stages: React.VoidFunctionComponent<StagesProps> = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
   const stages = useAppSelector((state) => state.gameData.stages);
+  const stageId = useAppSelector((state) => state.user.progress.stage);
+  const stageIndex = stages.data.findIndex((stage) => stage._id == stageId);
 
   useEffect(() => {
     if (!stages.loaded) dispatch(fetchStages());
@@ -25,7 +27,7 @@ const Stages: React.VoidFunctionComponent<StagesProps> = () => {
       title="Stages"
       onPress={handleItemPress}
       data={stages.data}
-      current={0}
+      current={stageIndex}
     />
   );
 };
