@@ -8,31 +8,31 @@ import Card from "../molecule/card";
 import BaseContentContainer from "../atom/content-container";
 
 interface CardData {
-  image: string;
   /** Card image uri */
-  imageAlt: string;
+  image: string;
   /** Card image alt text */
-  name: string;
+  imageAlt: string;
   /** Card title */
-  description: string;
+  name: string;
   /** Card description */
-  progress?: number;
-  /** Card activities progress */
-  total?: number;
-  /** Card total number of activities */
-  status?: "completed" | "incomplete" | "locked";
+  description: string;
   /** Card status. If incomplete, progress and total must be provided */
+  status?: "completed" | "incomplete" | "locked";
 }
 
 interface CardsProps<T extends CardData> {
-  title: string;
   /** Title displayed over the cards */
-  onPress: (id: T) => void;
+  title: string;
   /** Card button press handler */
-  data: T[];
+  onPress: (id: T) => void;
   /** Card data */
-  current: number;
+  data: T[];
   /** index of the current in progress card */
+  current: number;
+  /** Card activities progress */
+  progress?: number;
+  /** Card total number of activities */
+  total?: number;
 }
 
 const ContentContainer = styled(BaseContentContainer)`
@@ -62,9 +62,15 @@ const Cards: React.VoidFunctionComponent<CardsProps<any>> = (props) => {
             description={data.description}
             image={data.image}
             imageAlt={data.imageAlt}
-            progress={0}
-            total={1}
-            status={i == props.current ? "incomplete" : data.status || "locked"}
+            progress={props.progress || 0}
+            total={props.total || 1}
+            status={
+              (i < props.current)
+                ? "completed"
+                : i == props.current
+                ? "incomplete"
+                : "locked"
+            }
             onPress={useCallback(() => props.onPress(data), [props.onPress])}
             key={i}
           />

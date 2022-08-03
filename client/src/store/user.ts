@@ -176,7 +176,7 @@ export default createSlice({
       stage: null as string | null,
       box: null as string | null,
     },
-    userbox: [] as Activity[],
+    userbox: [] as Activity[] | null,
     userboxLoaded: false,
     history: [] as { box: string }[],
     historyLoaded: false,

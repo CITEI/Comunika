@@ -6,7 +6,7 @@ import BaseButton from "../atom/button";
 import { dp, sp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
 import BaseTTSPlayer from "./tts-player";
-import Text from "../atom/text";
+import TTSLabel from "../atom/tts-label";
 
 interface InstructionProps {
   title: string;
@@ -30,11 +30,6 @@ const StageInfo = styled(Title)`
   font-family: ${props => props.theme.fontFamily.titleLight};
   font-size: ${sp(14)}px;
   margin-bottom: ${dp(4)}px;
-`
-
-const TTSLabel = styled(Text)`
-  text-align: center;
-  margin-bottom: ${dp(10)}px;
 `
 
 const TTSPlayer = styled(BaseTTSPlayer)`
