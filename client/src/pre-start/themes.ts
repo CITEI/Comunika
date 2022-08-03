@@ -14,6 +14,7 @@ const lightTheme = {
   fontFamily: {
     text: "OpenSans_400Regular",
     title: "DMSans_700Bold",
+    titleLight: "OpenSans_300Light",
     textBold: "OpenSans_700Bold",
   },
 };

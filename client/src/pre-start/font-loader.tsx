@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { useFonts, OpenSans_400Regular, OpenSans_700Bold } from "@expo-google-fonts/open-sans";
+import { useFonts, OpenSans_300Light, OpenSans_400Regular, OpenSans_700Bold } from "@expo-google-fonts/open-sans";
 import { DMSans_700Bold } from "@expo-google-fonts/dm-sans";
 
 interface FontLoaderProps {
@@ -8,6 +8,7 @@ interface FontLoaderProps {
 
 const FontLoader: React.FunctionComponent<FontLoaderProps> = (props) => {
   const [fontsLoaded, fontsError] = useFonts({
+    OpenSans_300Light,
     OpenSans_400Regular,
     OpenSans_700Bold,
     DMSans_700Bold,
