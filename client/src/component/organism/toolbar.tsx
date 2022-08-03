@@ -1,6 +1,6 @@
 import { Image } from "react-native";
 import React, { useCallback } from "react";
-import styled from "styled-components/native";
+import styled from "../../pre-start/themes";
 import { dp, vw } from "../../helper/resolution";
 import ToolbarButton from "../atom/toolbar-button";
 import logo from "../../../assets/logo_2.png";
@@ -16,6 +16,8 @@ interface ToolbarProps {
   shadow: boolean;
   /** Enables the logo icon */
   logo: boolean;
+  /** Number of navigation stack pops */
+  popCount?: number;
 }
 
 const Container = styled.View`
@@ -51,8 +53,8 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
 
   /** Returns the user to the previous screen */
   const handleClosePress = useCallback(() => {
-    navigation.pop();
-  }, []);
+    navigation.pop(props.popCount || 1);
+  }, [props.popCount]);
 
   return (
     <Container>
