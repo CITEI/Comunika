@@ -43,7 +43,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   useEffect(() => {
     if (!first) {
       if (authStatus.isAuthenticated) {
-        navigation.navigate("Main");
+        navigation.navigate("Onboarding");
       } else setModalVisible(true);
     } else setFirst(false);
   }, [authStatus]);

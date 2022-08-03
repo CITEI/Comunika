@@ -17,6 +17,7 @@ import { ThemeProvider } from "styled-components/native";
 import FontLoader from "./src/pre-start/font-loader";
 import MainContainer from "./src/component/atom/main-container";
 import Transition from "./src/view/transition";
+import Onboarding from "./src/view/onboarding";
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,11 @@ export default function App() {
                 <Stack.Screen
                   component={Register}
                   name="Register"
+                  options={{ title: APP_NAME }}
+                />
+                <Stack.Screen
+                  component={Onboarding}
+                  name="Onboarding"
                   options={{ title: APP_NAME }}
                 />
                 <Stack.Screen
