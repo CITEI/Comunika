@@ -8,7 +8,7 @@ interface TextProps {
 }
 
 const StyledText = styled.Text`
-  font-size: ${(props) => sp(14)}px;
+  font-size: ${(props) => sp(12)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
 `
 

@@ -81,12 +81,13 @@ export interface AudibleMosaicNode extends BaseNode {
 export type Node = TextNode | CarrouselNode | AudibleMosaicNode;
 
 /** Node displayed after gameplay in order to test knowledge */
-interface QuestionNode extends GameNode {
+export interface QuestionNode extends GameNode {
   question: string;
+  notes?: string;
 }
 
 /** Box challenge definition */
-interface Activity {
+export interface Activity {
   name: string;
   description: string;
   nodes: Node[];
@@ -175,12 +176,14 @@ export default createSlice({
       stage: null as string | null,
       box: null as string | null,
     },
-    box: [] as Activity[],
-    boxLoaded: false,
+    userbox: [] as Activity[],
+    userboxLoaded: false,
     history: [] as { box: string }[],
     historyLoaded: false,
     loaded: false,
-    result: EvaluateStatus.NoContent,
+    result: {
+      status: EvaluateStatus.NoContent
+    },
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -190,14 +193,14 @@ export default createSlice({
       state.loaded = true;
     });
     builder.addCase(fetchBox.fulfilled, (state, action) => {
-      state.box = action.payload;
-      state.boxLoaded = true;
+      state.userbox = action.payload;
+      state.userboxLoaded = true;
     });
     builder.addCase(evaluate.fulfilled, (state, action) => {
-      state.boxLoaded = false;
+      state.userboxLoaded = false;
       state.historyLoaded = false;
       state.loaded = false;
-      state.result = action.payload;
+      state.result = {status: action.payload};
     });
     builder.addCase(fetchHistory.fulfilled, (state, action) => {
       state.history = action.payload;
