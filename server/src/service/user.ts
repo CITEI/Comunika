@@ -185,7 +185,7 @@ class UserService extends BasicService<UserDocument> {
         },
       });
     }
-    // module without stagees
+    // module without stages
     else throw new InternalServerError();
   }
 

@@ -24,7 +24,7 @@ export async function createStage(
     .post(STAGE_POST_ROUTE)
     .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, module });
   const res = await request(app).get(GET_STAGE_ROUTE).send();
-  return [].concat(...(res.body as Array<any>).map((el) => el.stagees));
+  return [].concat(...(res.body as Array<any>).map((el) => el.stages));
 }
 
 describe("POST /stage", () => {
@@ -69,7 +69,7 @@ const SUCCESSFUL_CREATE_STAGE_ACTIVITY_BODY = {
 
 describe("POST /stage/activity", () => {
   let modules: Map<string, any>;
-  let stagees: Array<string>;
+  let stages: Array<string>;
 
   beforeAll(async () => {
     await mockDb();
@@ -78,12 +78,12 @@ describe("POST /stage/activity", () => {
   beforeEach(async () => {
     await cleanDb();
     modules = await createModule(app);
-    stagees = await createStage(app, modules.keys().next().value);
+    stages = await createStage(app, modules.keys().next().value);
   });
 
   test("Successful", async () => {
     request(app)
-      .post(stageActivityPostRoute(stagees[0]))
+      .post(stageActivityPostRoute(stages[0]))
       .send(SUCCESSFUL_CREATE_STAGE_ACTIVITY_BODY)
       .expect(StatusCodes.CREATED);
   });
