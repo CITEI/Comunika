@@ -18,7 +18,7 @@ import {
   Messages,
 } from "./utils/functions";
 import { CustomJoi } from "../utils/custom_joi";
-import { PUBLIC_PATH } from "../../pre-start/constants";
+import { PUBLIC_PATH, STATIC_DIR } from "../../pre-start/constants";
 
 const stageOptions: ResourceOptions = {
   properties: {
@@ -26,15 +26,33 @@ const stageOptions: ResourceOptions = {
     activities: {
       isVisible: { edit: false, filter: false, list: true, show: true },
     },
+    image: buildFileUploadProperty({ extensions: ["png"] }),
   },
   actions: {
     bulkDelete: { isAccessible: false },
     new: {
       before: [
+        buildFileUploadBefore([
+          {
+            attribute: "image",
+            extensions: ["png"],
+          },
+        ]),
         buildValidator({
           name: CustomJoi.RequiredString(),
           description: CustomJoi.RequiredString(),
           module: CustomJoi.ObjectId().required(),
+          image: CustomJoi.UploadStatus().required(),
+          imageAlt: CustomJoi.RequiredString(),
+        }),
+      ],
+      after: [
+        buildFileUploadAfter({
+          image: {
+            staticFolderEndpoint: STATIC_DIR,
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "stage",
+          },
         }),
       ],
       handler: async (
@@ -52,6 +70,14 @@ const stageOptions: ResourceOptions = {
       },
     },
     delete: {
+      after: [
+        buildFileDeleteAfter({
+          image: {
+            staticFolderEndpoint: STATIC_DIR,
+            staticFolderPath: PUBLIC_PATH,
+          },
+        }),
+      ],
       handler: async (
         req: ActionRequest,
         _res: any,

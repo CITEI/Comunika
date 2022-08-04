@@ -21,6 +21,8 @@ export const StageSchema = new mongoose.Schema({
     required: true,
     index: true,
   },
+  image: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   next: {
     type: mongoose.Types.ObjectId,
     ref: "Stage",

@@ -19,7 +19,7 @@ import {
   buildFileUploadProperty,
 } from "./utils/functions";
 import { CustomJoi } from "../utils/custom_joi";
-import { PUBLIC_PATH } from "../../pre-start/constants";
+import { PUBLIC_PATH, STATIC_DIR } from "../../pre-start/constants";
 
 const moduleOptions: ResourceOptions = {
   properties: {
@@ -43,7 +43,7 @@ const moduleOptions: ResourceOptions = {
       after: [
         buildFileUploadAfter({
           image: {
-            staticFolderEndpoint: "public",
+            staticFolderEndpoint: STATIC_DIR,
             staticFolderPath: PUBLIC_PATH,
             subPath: "module",
           },
