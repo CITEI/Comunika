@@ -7,7 +7,7 @@ import Instructions from "../organism/instructions";
 import Questionary from "../organism/questionary";
 
 interface ActivityProps {
-  stage: string;
+  module: string;
   activities: ActivityType[];
   onFinish: (answers: boolean[][]) => void;
 }
@@ -62,7 +62,7 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
           <Instructions
             activity={activityIndex+1}
             nodes={activity.nodes}
-            stage={props.stage}
+            module={props.module}
             title={activity.name}
             onFinish={handleFinishedInstructions}
           />

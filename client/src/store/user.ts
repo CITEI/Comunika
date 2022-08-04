@@ -24,8 +24,8 @@ export const fetchUserData = createAsyncThunk("user/data", async () => {
       name: data.name,
     },
     progress: {
+      module: data.progress.module,
       stage: data.progress.stage,
-      box: data.progress.box,
     },
   };
 });
@@ -86,7 +86,7 @@ export interface QuestionNode extends GameNode {
   notes?: string;
 }
 
-/** Box challenge definition */
+/** Stage challenge definition */
 export interface Activity {
   name: string;
   description: string;
@@ -94,11 +94,11 @@ export interface Activity {
   questionNodes: QuestionNode[];
 }
 
-/** Obtains the current user box */
-export const fetchBox = createAsyncThunk(
-  "user/userbox",
+/** Obtains the current user stage */
+export const fetchStage = createAsyncThunk(
+  "user/box",
   async (): Promise<Activity[]> => {
-    const data = (await api.get(`/user/userbox`)).data;
+    const data = (await api.get(`/user/box`)).data;
     return (data.activities as Array<any>).map((el) => ({
       name: el.activity.name,
       description: el.activity.description,
@@ -133,7 +133,7 @@ export const fetchBox = createAsyncThunk(
   }
 );
 
-/** Grade status of a box evaluation */
+/** Grade status of a stage evaluation */
 export enum EvaluateStatus {
   Approved,
   Reproved,
@@ -144,7 +144,7 @@ export enum EvaluateStatus {
 export const evaluate = createAsyncThunk(
   "user/evaluate",
   async (answers: boolean[][]) => {
-    const res = (await api.post(`/user/userbox`, { answers })).data;
+    const res = (await api.post(`/user/box`, { answers })).data;
     switch (res.status) {
       case "approved":
         return EvaluateStatus.Approved;
@@ -156,12 +156,12 @@ export const evaluate = createAsyncThunk(
   }
 );
 
-/** Obtains the boxes an user finished */
+/** Obtains the stages an user finished */
 export const fetchHistory = createAsyncThunk(
   "user/history",
-  async (): Promise<{ box: string }[]> => {
+  async (): Promise<{ stage: string }[]> => {
     const res = (await api.get(`/user/history`)).data;
-    return (res as Array<any>).map((el) => ({ box: el.box }));
+    return (res as Array<any>).map((el) => ({ stage: el.stage }));
   }
 );
 
@@ -173,12 +173,12 @@ export default createSlice({
       email: null as string | null,
     },
     progress: {
+      module: null as string | null,
       stage: null as string | null,
-      box: null as string | null,
     },
-    userbox: [] as Activity[] | null,
-    userboxLoaded: false,
-    history: [] as { box: string }[],
+    box: [] as Activity[] | null,
+    boxLoaded: false,
+    history: [] as { stage: string }[],
     historyLoaded: false,
     loaded: false,
     result: {
@@ -192,12 +192,12 @@ export default createSlice({
       state.progress = action.payload.progress;
       state.loaded = true;
     });
-    builder.addCase(fetchBox.fulfilled, (state, action) => {
-      state.userbox = action.payload;
-      state.userboxLoaded = true;
+    builder.addCase(fetchStage.fulfilled, (state, action) => {
+      state.box = action.payload;
+      state.boxLoaded = true;
     });
     builder.addCase(evaluate.fulfilled, (state, action) => {
-      state.userboxLoaded = false;
+      state.boxLoaded = false;
       state.historyLoaded = false;
       state.loaded = false;
       state.result = {status: action.payload};

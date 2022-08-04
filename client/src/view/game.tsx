@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { evaluate, fetchBox } from "../store/user";
+import { evaluate, fetchStage } from "../store/user";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Activity from "../component/templates/activity";
@@ -10,20 +10,20 @@ interface GameProps {}
 const Game: React.VoidFunctionComponent<GameProps> = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
-  const userbox = useAppSelector((state) => state.user.userbox);
-  const userboxLoaded = useAppSelector((state) => state.user.userboxLoaded);
+  const box = useAppSelector((state) => state.user.box);
+  const boxLoaded = useAppSelector((state) => state.user.boxLoaded);
   const evaluation = useAppSelector((state) => state.user.result);
 
-  const stageId = useAppSelector((state) => state.user.progress.stage);
-  const stages = useAppSelector((state) => state.gameData.stages.data);
+  const moduleId = useAppSelector((state) => state.user.progress.module);
+  const modules = useAppSelector((state) => state.gameData.modules.data);
 
-  const stage = stages.find((stage) => stage._id == stageId);
+  const module = modules.find((module) => module._id == moduleId);
 
   const [finished, setFinished] = useState(false);
 
   useEffect(() => {
-    if (!userboxLoaded) dispatch(fetchBox());
-  }, [userboxLoaded]);
+    if (!boxLoaded) dispatch(fetchStage());
+  }, [boxLoaded]);
 
   /** Sends answers to evaluation */
   const handleFinish = useCallback((answers: boolean[][]) => {
@@ -35,11 +35,11 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
     if (finished) navigation.navigate("Result");
   }, [evaluation, finished]);
 
-  return userboxLoaded ? (
+  return boxLoaded ? (
     <Activity
-      activities={userbox}
+      activities={box}
       onFinish={handleFinish}
-      stage={stage?.name || "None"}
+      module={module?.name || "None"}
     ></Activity>
   ) : (
     <></>

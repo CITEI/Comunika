@@ -45,7 +45,7 @@ const Settings: React.VoidFunctionComponent = () => {
       <BoldItem>History</BoldItem>
       <List
         data={history.map((el, i) => ({
-          title: `#${i} ${el.box}`,
+          title: `#${i} ${el.stage}`,
           subtitle: "",
           id: i,
         }))}

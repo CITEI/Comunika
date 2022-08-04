@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StageItem } from "../../store/game-data";
+import { ModuleItem } from "../../store/game-data";
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";

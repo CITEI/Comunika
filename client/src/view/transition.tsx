@@ -33,10 +33,10 @@ const Image = styled.Image`
   margin-top: ${dp(76)}px;
 `;
 
-/** Screen used as a transition between boxes screen and activity screen */
+/** Screen used as a transition between stages screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const route = useRoute();
-  const { stage, boxIndex } = route.params as GameProps["Transition"];
+  const { module, stageIndex } = route.params as GameProps["Transition"];
   const [timer, setTimer] = React.useState(false);
 
   setTimeout(() => {
@@ -76,12 +76,12 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
           />
         ) : (
           <>
-            <Title>Starting activity {boxIndex}</Title>
-            <Subtitle>{stage.name}</Subtitle>
+            <Title>Starting activity {stageIndex}</Title>
+            <Subtitle>{module.name}</Subtitle>
             <Image
               resizeMode="contain"
-              source={{ uri: stage.image }}
-              accessibilityHint={stage.imageAlt}
+              source={{ uri: module.image }}
+              accessibilityHint={module.imageAlt}
             />
           </>
         )}

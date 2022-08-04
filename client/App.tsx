@@ -7,7 +7,7 @@ import Register from "./src/view/register";
 import React from "react";
 import FlashMessage from "react-native-flash-message";
 import Main from "./src/view/main";
-import Boxes from "./src/view/boxes";
+import Stages from "./src/view/stages";
 import Game from "./src/view/game";
 import Result from "./src/view/result";
 import { APP_NAME } from "./src/pre-start/constants";
@@ -54,7 +54,7 @@ export default function App() {
                     headerRight: SettingsButton,
                   }}
                 />
-                <Stack.Screen component={Boxes} name="Boxes" />
+                <Stack.Screen component={Stages} name="Stages" />
                 <Stack.Screen component={Game} name="Game" />
                 <Stack.Screen component={Result} name="Result" />
                 <Stack.Screen component={Settings} name="Settings" />

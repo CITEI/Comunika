@@ -10,7 +10,7 @@ import TTSLabel from "../atom/tts-label";
 
 interface InstructionProps {
   title: string;
-  stage: string;
+  module: string;
   activity: number;
   nodes: NodeType[];
   onFinish: () => void;
@@ -26,7 +26,7 @@ const Header = styled.View`
   margin-bottom: ${dp(20)}px;
 `
 
-const StageInfo = styled(Title)`
+const ModuleInfo = styled(Title)`
   font-family: ${props => props.theme.fontFamily.titleLight};
   font-size: ${sp(14)}px;
   margin-bottom: ${dp(4)}px;
@@ -55,9 +55,9 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
   return (
     <>
       <Header>
-        <StageInfo>
-          Activity {props.activity} instructions | {props.stage}
-        </StageInfo>
+        <ModuleInfo>
+          Activity {props.activity} instructions | {props.module}
+        </ModuleInfo>
         <Title>{props.title}</Title>
       </Header>
       <TTSLabel>Tap here to listen instructions by audio:</TTSLabel>

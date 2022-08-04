@@ -3,12 +3,12 @@ import ResultTemplate from "../component/templates/result";
 import { useAppSelector } from "../store/store";
 
 const Result: React.VoidFunctionComponent = () => {
-  const stageId = useAppSelector((state) => state.user.progress.stage);
-  const stages = useAppSelector((state) => state.gameData.stages.data);
+  const moduleId = useAppSelector((state) => state.user.progress.module);
+  const modules = useAppSelector((state) => state.gameData.modules.data);
 
-  const stage = stages.find((stage) => stage._id == stageId);
+  const module = modules.find((module) => module._id == moduleId);
 
-  return stage ? <ResultTemplate stage={stage} /> : <></>;
+  return module ? <ResultTemplate module={module} /> : <></>;
 };
 
 export default Result;
