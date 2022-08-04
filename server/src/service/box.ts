@@ -3,7 +3,7 @@ import {
   BoxInput,
   BoxDocument,
 } from "../model/game/box";
-import { Stage, StageDocument } from "../model/game/stage";
+import { Module, ModuleDocument } from "../model/game/module";
 import { Activity, ActivityDocument, ActivityInput } from "../model/game/activity";
 import { ObjectNotFoundError } from "./errors";
 import { activitieservice } from "./activity";
@@ -12,13 +12,13 @@ import underscore from "underscore";
 
 export default class BoxService extends LinkedListService<
   BoxDocument,
-  StageDocument
+  ModuleDocument
 > {
   constructor() {
     super({
       model: Box,
-      select: "name description stage next",
-      metaModel: Stage,
+      select: "name description module next",
+      metaModel: Module,
       createMeta: false,
     });
   }
@@ -28,16 +28,16 @@ export default class BoxService extends LinkedListService<
    */
   protected async findMeta(
     input: BoxInput
-  ): Promise<StageDocument | null> {
-    return this.metaModel.findById(input.stage).exec();
+  ): Promise<ModuleDocument | null> {
+    return this.metaModel.findById(input.module).exec();
   }
 
   async findAll({
-    stage,
+    module,
   }: {
-    stage: string;
+    module: string;
   }): Promise<Array<BoxDocument>> {
-    return Box.find({ stage: stage }).select(this.select).exec();
+    return Box.find({ module: module }).select(this.select).exec();
   }
 
   /**

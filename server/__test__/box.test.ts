@@ -3,9 +3,9 @@ import request from "supertest";
 import app from "../src/server";
 import { StatusCodes } from "http-status-codes";
 import {
-  createStage,
-  STAGE_GET_ROUTE,
-} from "./stage.test";
+  createModule,
+  MODULE_GET_ROUTE,
+} from "./module.test";
 import { Application } from "express";
 
 export const BOX_POST_ROUTE = parseRoute("/box");
@@ -14,21 +14,21 @@ export const SUCCESSFUL_CREATE_BOX_BODY = {
   description: "test",
   iconUrl: "test",
 };
-export const GET_BOX_ROUTE = STAGE_GET_ROUTE;
+export const GET_BOX_ROUTE = MODULE_GET_ROUTE;
 
 export async function createBox(
   app: Application,
-  stage: string
+  module: string
 ): Promise<Array<string>> {
   await request(app)
     .post(BOX_POST_ROUTE)
-    .send({ ...SUCCESSFUL_CREATE_BOX_BODY, stage });
+    .send({ ...SUCCESSFUL_CREATE_BOX_BODY, module });
   const res = await request(app).get(GET_BOX_ROUTE).send();
   return [].concat(...(res.body as Array<any>).map((el) => el.boxes));
 }
 
 describe("POST /box", () => {
-  let stages: Map<string, any>;
+  let modules: Map<string, any>;
 
   beforeAll(async () => {
     await mockDb();
@@ -36,7 +36,7 @@ describe("POST /box", () => {
 
   beforeEach(async () => {
     await cleanDb();
-    stages = await createStage(app);
+    modules = await createModule(app);
   });
 
   test("Successful", () => {
@@ -68,7 +68,7 @@ const SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY = {
 };
 
 describe("POST /box/activity", () => {
-  let stages: Map<string, any>;
+  let modules: Map<string, any>;
   let boxes: Array<string>;
 
   beforeAll(async () => {
@@ -77,8 +77,8 @@ describe("POST /box/activity", () => {
 
   beforeEach(async () => {
     await cleanDb();
-    stages = await createStage(app);
-    boxes = await createBox(app, stages.keys().next().value);
+    modules = await createModule(app);
+    boxes = await createBox(app, modules.keys().next().value);
   });
 
   test("Successful", async () => {

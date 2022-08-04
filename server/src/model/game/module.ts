@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 import { MIN_STRING_LENGTH } from "../../pre-start/constants";
 import { BoxDocument } from "./box";
 
-export interface StageInput {
+export interface ModuleInput {
   name: string;
   description: string;
   image: string;
   imageAlt: string;
 }
 
-export const StageSchema = new mongoose.Schema({
+export const ModuleSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
@@ -18,7 +18,7 @@ export const StageSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     default: null,
     index: true, // required to avoid doubly linked list
-    ref: "Stage",
+    ref: "Module",
   },
   childrenHead: {
     type: mongoose.Types.ObjectId,
@@ -34,10 +34,10 @@ export const StageSchema = new mongoose.Schema({
   },
 });
 
-export interface StageDocument extends mongoose.Document, StageInput {
+export interface ModuleDocument extends mongoose.Document, ModuleInput {
   childrenHead: mongoose.PopulatedDoc<BoxDocument> | null;
   childrenTail: mongoose.PopulatedDoc<BoxDocument> | null;
-  next: mongoose.PopulatedDoc<StageDocument> | null;
+  next: mongoose.PopulatedDoc<ModuleDocument> | null;
 }
 
-export const Stage = mongoose.model<StageDocument>("Stage", StageSchema);
+export const Module = mongoose.model<ModuleDocument>("Module", ModuleSchema);

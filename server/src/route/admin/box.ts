@@ -34,7 +34,7 @@ const boxOptions: ResourceOptions = {
         buildValidator({
           name: CustomJoi.RequiredString(),
           description: CustomJoi.RequiredString(),
-          stage: CustomJoi.ObjectId().required(),
+          module: CustomJoi.ObjectId().required(),
         }),
       ],
       handler: async (

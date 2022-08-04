@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MIN_STRING_LENGTH } from "../../pre-start/constants";
-import { StageDocument } from "./stage";
+import { ModuleDocument } from "./module";
 import { ActivityDocument } from "./activity";
 
 export interface BoxInput {
@@ -8,16 +8,16 @@ export interface BoxInput {
   description: string;
   image: string;
   imageAlt: string;
-  stage: mongoose.PopulatedDoc<StageDocument>;
+  module: mongoose.PopulatedDoc<ModuleDocument>;
 }
 
 export const BoxSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   activities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
-  stage: {
+  module: {
     type: mongoose.Types.ObjectId,
-    ref: "Stage",
+    ref: "Module",
     required: true,
     index: true,
   },

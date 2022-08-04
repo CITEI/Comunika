@@ -29,11 +29,11 @@ router.get(
 export default router;
 
 /**
- * Required stage id routes
+ * Required module id routes
  */
-export const stageBoxRouter = Router({ mergeParams: true });
+export const moduleBoxRouter = Router({ mergeParams: true });
 
-stageBoxRouter.get(
+moduleBoxRouter.get(
   "/",
   async (req: Request, res: Response) => {
     res

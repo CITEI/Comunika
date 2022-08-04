@@ -10,7 +10,7 @@ import {
   ObjectNotFoundError,
   ValidationError,
 } from "./errors";
-import { stageService } from "./stage";
+import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { Activity } from "../model/game/activity";
 import { AuthenticationService } from "./utils/authentication";
@@ -31,9 +31,9 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    user.progress.stage = await stageService.findHead();
+    user.progress.module = await moduleService.findHead();
     user.progress.box = await boxService.findHead({
-      stage: user.progress.stage,
+      module: user.progress.module,
     });
     user.progress.userbox = await this.createUserBox({
       box: user.progress.box,
@@ -146,19 +146,19 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async approve(user: UserDocument) {
     const id = user._id;
-    let nextStage = user.progress.stage;
+    let nextModule = user.progress.module;
     let nextBox = await boxService.findNext({
       id: user.progress.box,
     });
 
     if (!nextBox) {
-      // reached the last box of a stage
-      nextStage = await stageService.findNext({ id: nextStage });
-      if (!nextStage) {
-        // if no stage, reached the end of the game
+      // reached the last box of a module
+      nextModule = await moduleService.findNext({ id: nextModule });
+      if (!nextModule) {
+        // if no module, reached the end of the game
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.stage": user.progress.stage,
+            "progress.module": user.progress.module,
             "progress.box": null,
             "progress.userbox": null,
           },
@@ -168,13 +168,13 @@ class UserService extends BasicService<UserDocument> {
         });
         return EvaluationStatus.NoContent;
       } else
-        nextBox = await boxService.findHead({ stage: nextStage });
+        nextBox = await boxService.findHead({ module: nextModule });
     }
 
     if (nextBox) {
       await User.findByIdAndUpdate(id, {
         $set: {
-          "progress.stage": nextStage,
+          "progress.module": nextModule,
           "progress.box": nextBox,
           "progress.userbox": await this.createUserBox({
             box: nextBox._id,
@@ -185,7 +185,7 @@ class UserService extends BasicService<UserDocument> {
         },
       });
     }
-    // stage without boxes
+    // module without boxes
     else throw new InternalServerError();
   }
 
@@ -216,7 +216,7 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
-      select: "progress.userbox progress.box progress.stage",
+      select: "progress.userbox progress.box progress.module",
     });
     const grade = await this.calculateGrade(user, answers);
     if (grade >= GAME_MIN_GRADE_PCT) {
@@ -232,20 +232,20 @@ class UserService extends BasicService<UserDocument> {
    * Returns the current userbox
    */
   async findUserBox({ id }: { id: string }): Promise<UserBoxDocument | null> {
-    const user = await this.find({ id, select: "progress.userbox progress.stage" });
+    const user = await this.find({ id, select: "progress.userbox progress.module" });
     let userbox = user.progress.userbox;
     if (userbox == null) {
-      const nextStage = await stageService.findNext({
-        id: user.progress.stage,
+      const nextModule = await moduleService.findNext({
+        id: user.progress.module,
       });
-      if (nextStage) {
+      if (nextModule) {
         const nextBox = await boxService.findHead({
-          stage: nextStage,
+          module: nextModule,
         });
         userbox = await this.createUserBox({ box: nextBox!._id });
         await User.findByIdAndUpdate(id, {
           $set: {
-            "progress.stage": nextStage,
+            "progress.module": nextModule,
             "progress.box": nextBox,
             "progress.userbox": userbox,
           },
@@ -291,7 +291,7 @@ class UserService extends BasicService<UserDocument> {
   async findUserData({ id }: { id: string }): Promise<UserDocument> {
     return await this.find({
       id,
-      select: "email name progress.box progress.stage",
+      select: "email name progress.box progress.module",
     });
   }
 }

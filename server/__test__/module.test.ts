@@ -5,17 +5,17 @@ import { StatusCodes } from "http-status-codes";
 import { expect } from "@jest/globals";
 import { Application } from "express";
 
-export const STAGE_POST_ROUTE = parseRoute("/stage");
-export const SUCCESSFUL_CREATE_STAGE_BODY = { name: "test" };
-export const STAGE_GET_ROUTE = parseRoute("/stage");
+export const MODULE_POST_ROUTE = parseRoute("/module");
+export const SUCCESSFUL_CREATE_MODULE_BODY = { name: "test" };
+export const MODULE_GET_ROUTE = parseRoute("/module");
 
-export async function createStage(app: Application): Promise<Map<string, any>> {
-  await request(app).post(STAGE_POST_ROUTE).send(SUCCESSFUL_CREATE_STAGE_BODY);
-  const res = await request(app).get(STAGE_GET_ROUTE).send();
+export async function createModule(app: Application): Promise<Map<string, any>> {
+  await request(app).post(MODULE_POST_ROUTE).send(SUCCESSFUL_CREATE_MODULE_BODY);
+  const res = await request(app).get(MODULE_GET_ROUTE).send();
   return new Map((res.body as Array<any>).map((el) => [el._id, el]));
 }
 
-describe("POST /stage", () => {
+describe("POST /module", () => {
   beforeAll(async () => {
     await mockDb();
   });
@@ -26,8 +26,8 @@ describe("POST /stage", () => {
 
   test("Successful", async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send(SUCCESSFUL_CREATE_STAGE_BODY)
+      .post(MODULE_POST_ROUTE)
+      .send(SUCCESSFUL_CREATE_MODULE_BODY)
       .expect(StatusCodes.CREATED);
   });
 
@@ -35,8 +35,8 @@ describe("POST /stage", () => {
     await expect({
       app,
       method: "post",
-      route: STAGE_POST_ROUTE,
-      successfulBody: SUCCESSFUL_CREATE_STAGE_BODY,
+      route: MODULE_POST_ROUTE,
+      successfulBody: SUCCESSFUL_CREATE_MODULE_BODY,
     }).toBadRequestExtraFields();
   });
 
@@ -44,20 +44,20 @@ describe("POST /stage", () => {
     await expect({
       app,
       method: "post",
-      route: STAGE_POST_ROUTE,
-      successfulBody: SUCCESSFUL_CREATE_STAGE_BODY,
+      route: MODULE_POST_ROUTE,
+      successfulBody: SUCCESSFUL_CREATE_MODULE_BODY,
     }).toBadRequestMissingFields();
   });
 
   test("Invalid name", async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "t" })
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "t" })
       .expect(StatusCodes.BAD_REQUEST);
   });
 });
 
-describe("GET /stage", () => {
+describe("GET /module", () => {
   beforeAll(async () => {
     await mockDb();
   });
@@ -68,10 +68,10 @@ describe("GET /stage", () => {
 
   test("Successful", async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send(SUCCESSFUL_CREATE_STAGE_BODY);
+      .post(MODULE_POST_ROUTE)
+      .send(SUCCESSFUL_CREATE_MODULE_BODY);
     await request(app)
-      .get(STAGE_GET_ROUTE)
+      .get(MODULE_GET_ROUTE)
       .send()
       .expect(StatusCodes.OK)
       .expect((res: request.Response) => {
@@ -81,7 +81,7 @@ describe("GET /stage", () => {
 
   test("Successful empty", async () => {
     await request(app)
-      .get(STAGE_GET_ROUTE)
+      .get(MODULE_GET_ROUTE)
       .send()
       .expect(StatusCodes.OK)
       .expect((res: request.Response) => {
@@ -90,9 +90,9 @@ describe("GET /stage", () => {
   });
 });
 
-const stageNextRoute = (id: string): string => parseRoute(`/stage/${id}/next`);
+const moduleNextRoute = (id: string): string => parseRoute(`/module/${id}/next`);
 
-describe("GET /stage/:id/next", () => {
+describe("GET /module/:id/next", () => {
   let ids: Map<string, string>;
 
   beforeAll(async () => {
@@ -105,15 +105,15 @@ describe("GET /stage/:id/next", () => {
 
   beforeEach(async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "first" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "first" });
 
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "second" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "second" });
 
     ids = new Map<string, string>(
-      ((await request(app).get(STAGE_GET_ROUTE).send()).body as Array<any>).map(
+      ((await request(app).get(MODULE_GET_ROUTE).send()).body as Array<any>).map(
         (lvl) => [lvl.name, lvl._id]
       )
     );
@@ -121,7 +121,7 @@ describe("GET /stage/:id/next", () => {
 
   test("Successful", async () => {
     await request(app)
-      .get(stageNextRoute(ids.get("first")!))
+      .get(moduleNextRoute(ids.get("first")!))
       .send()
       .expect(StatusCodes.OK)
       .expect((res: request.Response) =>
@@ -131,29 +131,29 @@ describe("GET /stage/:id/next", () => {
 
   test("Successful last", async () => {
     await request(app)
-      .get(stageNextRoute(ids.get("second")!))
+      .get(moduleNextRoute(ids.get("second")!))
       .send()
       .expect(StatusCodes.NO_CONTENT);
   });
 
   test("Invalid id", async () => {
     await request(app)
-      .get(stageNextRoute("not-an-id"))
+      .get(moduleNextRoute("not-an-id"))
       .send()
       .expect(StatusCodes.BAD_REQUEST);
   });
 
   test("Inexistent id", async () => {
     await request(app)
-      .get(stageNextRoute(generateFakeMongoUUID()))
+      .get(moduleNextRoute(generateFakeMongoUUID()))
       .send()
       .expect(StatusCodes.NOT_FOUND);
   });
 });
 
-const stageDeleteRoute = (id: string) => parseRoute(`/stage/${id}`);
+const moduleDeleteRoute = (id: string) => parseRoute(`/module/${id}`);
 
-describe("DELETE /stage", () => {
+describe("DELETE /module", () => {
   let id: string;
 
   beforeAll(async () => {
@@ -166,23 +166,23 @@ describe("DELETE /stage", () => {
 
   beforeEach(async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "test" });
-    id = (await request(app).get(STAGE_GET_ROUTE).send()).body[0]._id;
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "test" });
+    id = (await request(app).get(MODULE_GET_ROUTE).send()).body[0]._id;
   });
 
   test("Successful", async () => {
     await request(app)
-      .delete(stageDeleteRoute(id))
+      .delete(moduleDeleteRoute(id))
       .send()
       .expect(StatusCodes.OK);
     // No docs are present
-    await request(app).get(STAGE_GET_ROUTE).send().expect([]);
+    await request(app).get(MODULE_GET_ROUTE).send().expect([]);
   });
 
-  test("Inexistent stage", async () => {
+  test("Inexistent module", async () => {
     await request(app)
-      .delete(stageDeleteRoute(generateFakeMongoUUID()))
+      .delete(moduleDeleteRoute(generateFakeMongoUUID()))
       .send()
       .expect(StatusCodes.NOT_FOUND);
   });
@@ -190,32 +190,32 @@ describe("DELETE /stage", () => {
   test("With list reference", async () => {
     // Creating a new document
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "next" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "next" });
 
     // Getting documents
-    let docs = (await request(app).get(STAGE_GET_ROUTE).send()).body;
+    let docs = (await request(app).get(MODULE_GET_ROUTE).send()).body;
 
     // Getting the new id
     const nextId = id == docs[0]._id ? docs[1]._id : docs[0]._id;
 
     // Deleting the new document
     await request(app)
-      .delete(stageDeleteRoute(nextId))
+      .delete(moduleDeleteRoute(nextId))
       .send()
       .expect(StatusCodes.OK);
 
     // Checking if its reference was deleted
     await request(app)
-      .get(stageNextRoute(id))
+      .get(moduleNextRoute(id))
       .send()
       .expect(StatusCodes.NO_CONTENT);
   });
 });
 
-const STAGE_SWAP_ROUTE = parseRoute("/stage/swap");
+const MODULE_SWAP_ROUTE = parseRoute("/module/swap");
 
-describe("PUT /stage/swap", () => {
+describe("PUT /module/swap", () => {
   let ids: Map<string, string>;
   const getSuccessfulBody = () => ({ from: ids.get("BB"), to: ids.get("DD") });
 
@@ -229,19 +229,19 @@ describe("PUT /stage/swap", () => {
 
   beforeEach(async () => {
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "AA" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "AA" });
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "BB" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "BB" });
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "CC" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "CC" });
     await request(app)
-      .post(STAGE_POST_ROUTE)
-      .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, name: "DD" });
+      .post(MODULE_POST_ROUTE)
+      .send({ ...SUCCESSFUL_CREATE_MODULE_BODY, name: "DD" });
     ids = new Map<string, string>(
-      ((await request(app).get(STAGE_GET_ROUTE).send()).body as Array<any>).map(
+      ((await request(app).get(MODULE_GET_ROUTE).send()).body as Array<any>).map(
         (lvl) => [lvl.name, lvl._id]
       )
     );
@@ -249,14 +249,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : B->A->C->D : A<->B", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("AA"), to: ids.get("BB") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toEqual(ids.get("AA"));
@@ -264,7 +264,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -272,14 +272,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : B->A->C->D : B<->A", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("BB"), to: ids.get("AA") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toEqual(ids.get("AA"));
@@ -287,7 +287,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -295,14 +295,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : A->D->C->B : B<->D", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("BB"), to: ids.get("DD") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("DD"));
@@ -310,7 +310,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("DD")!))
+          .get(moduleNextRoute(ids.get("DD")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -318,7 +318,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("CC")!))
+          .get(moduleNextRoute(ids.get("CC")!))
           .send()
       ).body._id
     ).toEqual(ids.get("BB"));
@@ -326,7 +326,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toBeUndefined();
@@ -334,14 +334,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : A->D->C->B : D<->B", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("DD"), to: ids.get("BB") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("DD"));
@@ -349,7 +349,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("DD")!))
+          .get(moduleNextRoute(ids.get("DD")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -357,7 +357,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("CC")!))
+          .get(moduleNextRoute(ids.get("CC")!))
           .send()
       ).body._id
     ).toEqual(ids.get("BB"));
@@ -365,7 +365,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toBeUndefined();
@@ -373,14 +373,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : A->C->B->D : B<->C", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("BB"), to: ids.get("CC") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -388,7 +388,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("CC")!))
+          .get(moduleNextRoute(ids.get("CC")!))
           .send()
       ).body._id
     ).toEqual(ids.get("BB"));
@@ -396,7 +396,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toEqual(ids.get("DD"));
@@ -404,7 +404,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("DD")!))
+          .get(moduleNextRoute(ids.get("DD")!))
           .send()
       ).body._id
     ).toBeUndefined();
@@ -412,14 +412,14 @@ describe("PUT /stage/swap", () => {
 
   test("Successful A->B->C->D : A->C->B->D : C<->B", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("CC"), to: ids.get("BB") })
       .expect(StatusCodes.OK);
 
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("AA")!))
+          .get(moduleNextRoute(ids.get("AA")!))
           .send()
       ).body._id
     ).toEqual(ids.get("CC"));
@@ -427,7 +427,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("CC")!))
+          .get(moduleNextRoute(ids.get("CC")!))
           .send()
       ).body._id
     ).toEqual(ids.get("BB"));
@@ -435,7 +435,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("BB")!))
+          .get(moduleNextRoute(ids.get("BB")!))
           .send()
       ).body._id
     ).toEqual(ids.get("DD"));
@@ -443,7 +443,7 @@ describe("PUT /stage/swap", () => {
     expect(
       (
         await request(app)
-          .get(stageNextRoute(ids.get("DD")!))
+          .get(moduleNextRoute(ids.get("DD")!))
           .send()
       ).body._id
     ).toBeUndefined();
@@ -451,28 +451,28 @@ describe("PUT /stage/swap", () => {
 
   test("Invalid from", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: "invalid", to: ids.get("AA") })
       .expect(StatusCodes.BAD_REQUEST);
   });
 
   test("Invalid to", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: ids.get("AA"), to: "invalid" })
       .expect(StatusCodes.BAD_REQUEST);
   });
 
   test("Inexistent from", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ from: generateFakeMongoUUID(), to: ids.get("AA") })
       .expect(StatusCodes.NOT_FOUND);
   });
 
   test("Inexistent to", async () => {
     await request(app)
-      .put(STAGE_SWAP_ROUTE)
+      .put(MODULE_SWAP_ROUTE)
       .send({ to: generateFakeMongoUUID(), from: ids.get("AA") })
       .expect(StatusCodes.NOT_FOUND);
   });
@@ -480,7 +480,7 @@ describe("PUT /stage/swap", () => {
   test("Extra fields", async () => {
     await expect({
       app,
-      route: STAGE_SWAP_ROUTE,
+      route: MODULE_SWAP_ROUTE,
       method: "put",
       successfulBody: getSuccessfulBody(),
     }).toBadRequestExtraFields();
@@ -489,7 +489,7 @@ describe("PUT /stage/swap", () => {
   test("Extra fields", async () => {
     await expect({
       app,
-      route: STAGE_SWAP_ROUTE,
+      route: MODULE_SWAP_ROUTE,
       method: "put",
       successfulBody: getSuccessfulBody(),
     }).toBadRequestMissingFields();

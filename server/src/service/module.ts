@@ -1,11 +1,11 @@
 import { Game, GameDocument } from "../model/game/game";
-import { StageDocument, Stage } from "../model/game/stage";
+import { ModuleDocument, Module } from "../model/game/module";
 import { LinkedListService } from "./utils/linkedlist";
 
-export default class StageService extends LinkedListService<StageDocument, GameDocument> {
+export default class ModuleService extends LinkedListService<ModuleDocument, GameDocument> {
   constructor() {
     super({
-      model: Stage,
+      model: Module,
       select: "name description image imageAlt next",
       metaModel: Game,
       createMeta: true,
@@ -13,4 +13,4 @@ export default class StageService extends LinkedListService<StageDocument, GameD
   }
 }
 
-export const stageService = new StageService();
+export const moduleService = new ModuleService();

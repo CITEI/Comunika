@@ -1,4 +1,4 @@
-import { stageService } from "../../service/stage";
+import { moduleService } from "../../service/module";
 import {
   ActionContext,
   ActionRequest,
@@ -21,7 +21,7 @@ import {
 import { CustomJoi } from "../utils/custom_joi";
 import { PUBLIC_PATH } from "../../pre-start/constants";
 
-const stageOptions: ResourceOptions = {
+const moduleOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
     image: buildFileUploadProperty({ extensions: ["png"] }),
@@ -45,17 +45,17 @@ const stageOptions: ResourceOptions = {
           image: {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
-            subPath: "stage",
+            subPath: "module",
           },
         }),
       ],
       handler: async (req: ActionRequest, _res: any, con: ActionContext) => {
-        const stage = await stageService.create(req.payload as object);
+        const module = await moduleService.create(req.payload as object);
         return buildResponse({
           con,
           result: "success",
           message: Messages.Created,
-          record: stage,
+          record: module,
         });
       },
     },
@@ -69,7 +69,7 @@ const stageOptions: ResourceOptions = {
       handler: async (req: ActionRequest, _res: any, con: ActionContext) => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await stageService.delete({ id });
+          await moduleService.delete({ id });
           return buildResponse({
             con,
             result: "success",
@@ -86,9 +86,9 @@ const stageOptions: ResourceOptions = {
   },
 };
 
-stageOptions!.actions!.edit = {
-  before: stageOptions.actions!.new!.before,
-  after: stageOptions.actions!.new!.after as After<RecordActionResponse>[],
+moduleOptions!.actions!.edit = {
+  before: moduleOptions.actions!.new!.before,
+  after: moduleOptions.actions!.new!.after as After<RecordActionResponse>[],
 };
 
-export default stageOptions;
+export default moduleOptions;
