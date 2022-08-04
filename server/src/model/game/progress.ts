@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
-import { UserBoxDocument, UserBoxSchema } from "./userbox";
-import { BoxDocument } from "./box";
+import { BoxDocument, BoxSchema } from "./box";
+import { StageDocument } from "./stage";
 import { ModuleDocument } from "./module";
 
 export interface ProgressInput {
   module: mongoose.PopulatedDoc<ModuleDocument>;
-  box: mongoose.PopulatedDoc<BoxDocument>;
-  userbox: UserBoxDocument;
-  history: UserBoxDocument[];
+  stage: mongoose.PopulatedDoc<StageDocument>;
+  box: BoxDocument;
+  history: BoxDocument[];
 }
 
 export const ProgressSchema = new mongoose.Schema(
@@ -18,20 +18,20 @@ export const ProgressSchema = new mongoose.Schema(
       required: true,
       default: null,
     },
-    box: {
+    stage: {
       type: mongoose.Types.ObjectId,
-      ref: "Box",
+      ref: "Stage",
       required: true,
       default: null,
     },
-    userbox: {
-      type: UserBoxSchema,
+    box: {
+      type: BoxSchema,
       required: true,
       default: null,
     },
     history: [
       {
-        type: UserBoxSchema,
+        type: BoxSchema,
         required: true,
         default: [],
       },

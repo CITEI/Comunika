@@ -1,8 +1,8 @@
 import {
-  Box,
-  BoxInput,
-  BoxDocument,
-} from "../model/game/box";
+  Stage,
+  StageInput,
+  StageDocument,
+} from "../model/game/stage";
 import { Module, ModuleDocument } from "../model/game/module";
 import { Activity, ActivityDocument, ActivityInput } from "../model/game/activity";
 import { ObjectNotFoundError } from "./errors";
@@ -10,13 +10,13 @@ import { activitieservice } from "./activity";
 import { LinkedListService } from "./utils/linkedlist";
 import underscore from "underscore";
 
-export default class BoxService extends LinkedListService<
-  BoxDocument,
+export default class StageService extends LinkedListService<
+  StageDocument,
   ModuleDocument
 > {
   constructor() {
     super({
-      model: Box,
+      model: Stage,
       select: "name description module next",
       metaModel: Module,
       createMeta: false,
@@ -27,7 +27,7 @@ export default class BoxService extends LinkedListService<
    * Makes meta
    */
   protected async findMeta(
-    input: BoxInput
+    input: StageInput
   ): Promise<ModuleDocument | null> {
     return this.metaModel.findById(input.module).exec();
   }
@@ -36,28 +36,28 @@ export default class BoxService extends LinkedListService<
     module,
   }: {
     module: string;
-  }): Promise<Array<BoxDocument>> {
-    return Box.find({ module: module }).select(this.select).exec();
+  }): Promise<Array<StageDocument>> {
+    return Stage.find({ module: module }).select(this.select).exec();
   }
 
   /**
-   * Adds a activity to a box
+   * Adds a activity to a stage
    */
   async addActivity(
-    payload: ActivityInput & { box: string }
+    payload: ActivityInput & { stage: string }
   ): Promise<ActivityDocument> {
-    if (await Box.exists({ _id: payload.box }).exec()) {
+    if (await Stage.exists({ _id: payload.stage }).exec()) {
       const activity = await activitieservice.create(payload);
-      await Box.updateOne(
-        { _id: payload.box },
+      await Stage.updateOne(
+        { _id: payload.stage },
         { $push: { activities: activity } }
       );
       return activity;
-    } else throw new ObjectNotFoundError({ schema: Box });
+    } else throw new ObjectNotFoundError({ schema: Stage });
   }
 
   /**
-   * Finds a box by a activity
+   * Finds a stage by a activity
    */
   async findByActivity({
     activity,
@@ -65,33 +65,33 @@ export default class BoxService extends LinkedListService<
   }: {
     activity: string;
     select?: string;
-  }): Promise<BoxDocument | null> {
-    return await Box.findOne({ activities: { $in: [activity] } })
+  }): Promise<StageDocument | null> {
+    return await Stage.findOne({ activities: { $in: [activity] } })
       .select(select || "")
       .exec();
   }
 
   /**
-   * Removes a activity from a box
+   * Removes a activity from a stage
    */
-  async deleteActivity({ box, activity }: { box?: string; activity: string }) {
+  async deleteActivity({ stage, activity }: { stage?: string; activity: string }) {
     if (!(await Activity.exists({ _id: activity }).exec()))
       throw new ObjectNotFoundError({ schema: Activity });
 
-    if (!box) {
-      box = (await this.findByActivity({ activity, select: "_id" }))?._id;
-      if (!box) throw new ObjectNotFoundError({ schema: Box });
-    } else if (!(await Box.exists({ _id: box }).exec()))
-      throw new ObjectNotFoundError({ schema: Box });
+    if (!stage) {
+      stage = (await this.findByActivity({ activity, select: "_id" }))?._id;
+      if (!stage) throw new ObjectNotFoundError({ schema: Stage });
+    } else if (!(await Stage.exists({ _id: stage }).exec()))
+      throw new ObjectNotFoundError({ schema: Stage });
 
-    await Box.findByIdAndUpdate(box, {
+    await Stage.findByIdAndUpdate(stage, {
       $pull: { activities: activity },
     }).exec();
     await Activity.findByIdAndDelete(activity);
   }
 
   /**
-   * Obtains at most `quantity` number of activities from a box
+   * Obtains at most `quantity` number of activities from a stage
    */
   async sampleActivities({
     id,
@@ -100,10 +100,10 @@ export default class BoxService extends LinkedListService<
     id: string;
     quantity: number;
   }): Promise<Array<string>> {
-    const box = await this.find({ by: { _id: id }, select: "activities" });
-    if (box) return underscore.sample(box.activities, quantity);
+    const stage = await this.find({ by: { _id: id }, select: "activities" });
+    if (stage) return underscore.sample(stage.activities, quantity);
     else return [];
   }
 }
 
-export const boxService = new BoxService();
+export const stageService = new StageService();

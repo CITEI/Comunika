@@ -1,4 +1,4 @@
-import { boxService } from "../../service/box";
+import { stageService } from "../../service/stage";
 import {
   ActionContext,
   ActionRequest,
@@ -20,7 +20,7 @@ import {
 import { CustomJoi } from "../utils/custom_joi";
 import { PUBLIC_PATH } from "../../pre-start/constants";
 
-const boxOptions: ResourceOptions = {
+const stageOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
     activities: {
@@ -42,12 +42,12 @@ const boxOptions: ResourceOptions = {
         _res: any,
         con: ActionContext
       ): Promise<ActionResponse> => {
-        const box = await boxService.create(req.payload as object);
+        const stage = await stageService.create(req.payload as object);
         return buildResponse({
           con,
           result: "success",
           message: Messages.Created,
-          record: box,
+          record: stage,
         });
       },
     },
@@ -59,7 +59,7 @@ const boxOptions: ResourceOptions = {
       ): Promise<ActionResponse> => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await boxService.delete({ id });
+          await stageService.delete({ id });
           return buildResponse({
             con,
             result: "success",
@@ -76,9 +76,9 @@ const boxOptions: ResourceOptions = {
   },
 };
 
-boxOptions!.actions!.edit = {
-  before: boxOptions.actions!.new!.before,
-  after: boxOptions.actions!.new!.after as After<RecordActionResponse>[],
+stageOptions!.actions!.edit = {
+  before: stageOptions.actions!.new!.before,
+  after: stageOptions.actions!.new!.after as After<RecordActionResponse>[],
 };
 
-export default boxOptions;
+export default stageOptions;

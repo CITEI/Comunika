@@ -11,7 +11,7 @@ import passport from "./pre-start/passport";
 import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
 import moduleRouter from "./route/game/module";
-import boxRouter from "./route/game/box";
+import stageRouter from "./route/game/stage";
 import userRouter from "./route/game/user";
 import winston from "./pre-start/winston";
 import adminjs from "./pre-start/adminjs";
@@ -58,7 +58,7 @@ const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/module", moduleRouter);
-apiRouter.use("/box", boxRouter);
+apiRouter.use("/stage", stageRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

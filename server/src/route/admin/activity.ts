@@ -12,7 +12,7 @@ import {
 import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
 import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
-import { boxService } from "../../service/box";
+import { stageService } from "../../service/stage";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
 import { Activitieschema } from "../../model/game/activity";
@@ -91,9 +91,9 @@ const activityValidatorSchema = {
 
 const activityOptions: ResourceOptions = {
   properties: {
-    box: {
+    stage: {
       type: "reference",
-      reference: "Box",
+      reference: "Stage",
       isRequired: true,
       isVisible: { edit: true, filter: false, list: false, show: false },
     },
@@ -160,7 +160,7 @@ const activityOptions: ResourceOptions = {
         unflattenRequest,
         buildValidator({
           ...activityValidatorSchema,
-          box: CustomJoi.ObjectId().required(),
+          stage: CustomJoi.ObjectId().required(),
         }),
       ],
       after: [
@@ -183,7 +183,7 @@ const activityOptions: ResourceOptions = {
         }),
       ],
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
-        const activity = await boxService.addActivity(req.payload as any);
+        const activity = await stageService.addActivity(req.payload as any);
         return buildResponse({
           con,
           result: "success",
@@ -210,7 +210,7 @@ const activityOptions: ResourceOptions = {
       handler: async (req: ActionRequest, res: any, con: ActionContext) => {
         const id = req.params.recordId;
         if (id && con.record) {
-          await boxService.deleteActivity({ activity: id });
+          await stageService.deleteActivity({ activity: id });
           return buildResponse({
             con,
             result: "success",

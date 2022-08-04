@@ -11,16 +11,16 @@ const router = Router();
 router.use(passport.authenticate("jwt", { session: false }));
 
 router.get(
-  "/userbox",
+  "/box",
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
-    const userbox = await userService.findUserBox({ id });
-    res.status(StatusCodes.OK).send(userbox);
+    const box = await userService.findBox({ id });
+    res.status(StatusCodes.OK).send(box);
   }
 );
 
 router.post(
-  "/userbox",
+  "/box",
   celebrate({
     body: {
       answers: Joi.array().items(Joi.array().items(Joi.boolean())).required(),

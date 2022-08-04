@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MIN_STRING_LENGTH } from "../../pre-start/constants";
-import { BoxDocument } from "./box";
+import { StageDocument } from "./stage";
 
 export interface ModuleInput {
   name: string;
@@ -22,21 +22,21 @@ export const ModuleSchema = new mongoose.Schema({
   },
   childrenHead: {
     type: mongoose.Types.ObjectId,
-    ref: "Box",
+    ref: "Stage",
     required: false,
     default: null,
   },
   childrenTail: {
     type: mongoose.Types.ObjectId,
-    ref: "Box",
+    ref: "Stage",
     required: false,
     default: null,
   },
 });
 
 export interface ModuleDocument extends mongoose.Document, ModuleInput {
-  childrenHead: mongoose.PopulatedDoc<BoxDocument> | null;
-  childrenTail: mongoose.PopulatedDoc<BoxDocument> | null;
+  childrenHead: mongoose.PopulatedDoc<StageDocument> | null;
+  childrenTail: mongoose.PopulatedDoc<StageDocument> | null;
   next: mongoose.PopulatedDoc<ModuleDocument> | null;
 }
 

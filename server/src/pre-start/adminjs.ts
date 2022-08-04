@@ -7,8 +7,8 @@ import userOptions from "../route/admin/user";
 import { Module } from "../model/game/module";
 import moduleOptions from "../route/admin/module";
 import { Activity } from "../model/game/activity";
-import boxOptions from "../route/admin/box";
-import { Box } from "../model/game/box";
+import stageOptions from "../route/admin/stage";
+import { Stage } from "../model/game/stage";
 import activityOptions from "../route/admin/activity";
 import { Admin } from "../model/admin/admin";
 import { adminOptions } from "../route/admin/admin";
@@ -46,10 +46,10 @@ const adminJs = new AdminJS({
       },
     },
     {
-      resource: Box,
+      resource: Stage,
       options: {
         navigation: manageNavigation,
-        ...boxOptions,
+        ...stageOptions,
       },
     },
     {

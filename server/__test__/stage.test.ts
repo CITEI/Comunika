@@ -8,26 +8,26 @@ import {
 } from "./module.test";
 import { Application } from "express";
 
-export const BOX_POST_ROUTE = parseRoute("/box");
-export const SUCCESSFUL_CREATE_BOX_BODY = {
+export const STAGE_POST_ROUTE = parseRoute("/stage");
+export const SUCCESSFUL_CREATE_STAGE_BODY = {
   name: "test",
   description: "test",
   iconUrl: "test",
 };
-export const GET_BOX_ROUTE = MODULE_GET_ROUTE;
+export const GET_STAGE_ROUTE = MODULE_GET_ROUTE;
 
-export async function createBox(
+export async function createStage(
   app: Application,
   module: string
 ): Promise<Array<string>> {
   await request(app)
-    .post(BOX_POST_ROUTE)
-    .send({ ...SUCCESSFUL_CREATE_BOX_BODY, module });
-  const res = await request(app).get(GET_BOX_ROUTE).send();
-  return [].concat(...(res.body as Array<any>).map((el) => el.boxes));
+    .post(STAGE_POST_ROUTE)
+    .send({ ...SUCCESSFUL_CREATE_STAGE_BODY, module });
+  const res = await request(app).get(GET_STAGE_ROUTE).send();
+  return [].concat(...(res.body as Array<any>).map((el) => el.stagees));
 }
 
-describe("POST /box", () => {
+describe("POST /stage", () => {
   let modules: Map<string, any>;
 
   beforeAll(async () => {
@@ -41,15 +41,15 @@ describe("POST /box", () => {
 
   test("Successful", () => {
     request(app)
-      .post(BOX_POST_ROUTE)
-      .send(SUCCESSFUL_CREATE_BOX_BODY)
+      .post(STAGE_POST_ROUTE)
+      .send(SUCCESSFUL_CREATE_STAGE_BODY)
       .expect(StatusCodes.CREATED);
   });
 });
 
-const boxActivityPostRoute = (box: string) =>
-  parseRoute(`/box/${box}/activity`);
-const SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY = {
+const stageActivityPostRoute = (stage: string) =>
+  parseRoute(`/stage/${stage}/activity`);
+const SUCCESSFUL_CREATE_STAGE_ACTIVITY_BODY = {
   name: "test",
   description: "test",
   nodes: [
@@ -67,9 +67,9 @@ const SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY = {
   ],
 };
 
-describe("POST /box/activity", () => {
+describe("POST /stage/activity", () => {
   let modules: Map<string, any>;
-  let boxes: Array<string>;
+  let stagees: Array<string>;
 
   beforeAll(async () => {
     await mockDb();
@@ -78,13 +78,13 @@ describe("POST /box/activity", () => {
   beforeEach(async () => {
     await cleanDb();
     modules = await createModule(app);
-    boxes = await createBox(app, modules.keys().next().value);
+    stagees = await createStage(app, modules.keys().next().value);
   });
 
   test("Successful", async () => {
     request(app)
-      .post(boxActivityPostRoute(boxes[0]))
-      .send(SUCCESSFUL_CREATE_BOX_ACTIVITY_BODY)
+      .post(stageActivityPostRoute(stagees[0]))
+      .send(SUCCESSFUL_CREATE_STAGE_ACTIVITY_BODY)
       .expect(StatusCodes.CREATED);
   });
 });
