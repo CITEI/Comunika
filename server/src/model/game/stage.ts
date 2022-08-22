@@ -15,6 +15,7 @@ export const StageSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   activities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
+  alternativeActivities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
   module: {
     type: mongoose.Types.ObjectId,
     ref: "Module",
@@ -34,6 +35,7 @@ export const StageSchema = new mongoose.Schema({
 
 export interface StageDocument extends mongoose.Document, StageInput {
   activities: mongoose.PopulatedDoc<ActivityDocument>[];
+  alternativeActivities: mongoose.PopulatedDoc<ActivityDocument>[];
   next: mongoose.PopulatedDoc<StageDocument> | null;
 }
 

@@ -21,7 +21,7 @@ export interface ActivityInput {
   >;
 }
 
-export const Activitieschema = new mongoose.Schema({
+export const ActivitySchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   description: { type: String, required: true },
   nodes: [{ type: NodeSchema, required: true, minlength: MIN_NODES }],
@@ -31,7 +31,7 @@ export const Activitieschema = new mongoose.Schema({
   ],
 });
 
-Activitieschema.pre("save", async function (next) {
+ActivitySchema.pre("save", async function (next) {
   this.questionCount = this.questionNodes.length;
   next();
 });
@@ -40,7 +40,7 @@ Activitieschema.pre("save", async function (next) {
 Registering discriminators
 The section below allow us to simulate node inheritance into the db
  */
-const Nodes = Activitieschema.path<mongoose.Schema.Types.Subdocument>("nodes");
+const Nodes = ActivitySchema.path<mongoose.Schema.Types.Subdocument>("nodes");
 for (const [name, schema] of Object.entries(NodeDiscriminators))
   Nodes.discriminator(name, schema);
 
@@ -48,4 +48,4 @@ export interface ActivityDocument extends mongoose.Document, ActivityInput {
   questionCount: number;
 }
 
-export const Activity = mongoose.model<ActivityDocument>("Activity", Activitieschema);
+export const Activity = mongoose.model<ActivityDocument>("Activity", ActivitySchema);

@@ -26,6 +26,9 @@ const stageOptions: ResourceOptions = {
     activities: {
       isVisible: { edit: false, filter: false, list: true, show: true },
     },
+    alternativeActivities: {
+      isVisible: { edit: false, filter: false, list: true, show: true },
+    },
     image: buildFileUploadProperty({ extensions: ["png"] }),
   },
   actions: {

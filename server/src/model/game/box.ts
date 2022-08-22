@@ -10,6 +10,7 @@ interface BoxActivityInput {
 export interface BoxInput {
   stage: mongoose.PopulatedDoc<StageDocument>;
   activities: BoxActivityInput[];
+  attempt: number;
 }
 
 export const BoxSchema = new mongoose.Schema(
@@ -18,6 +19,11 @@ export const BoxSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Stage",
       required: false,
+    },
+    attempt: {
+      type: Number,
+      required: false,
+      default: 0,
     },
     activities: [
       {

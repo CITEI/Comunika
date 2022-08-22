@@ -15,7 +15,7 @@ import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { stageService } from "../../service/stage";
 import { NodeDiscriminators } from "../../model/game/node";
 import { capitalize } from "underscore.string";
-import { Activitieschema } from "../../model/game/activity";
+import { ActivitySchema } from "../../model/game/activity";
 import {
   MIN_NODES,
   MIN_QUESTION_NODES,
@@ -97,6 +97,11 @@ const activityOptions: ResourceOptions = {
       isRequired: true,
       isVisible: { edit: true, filter: false, list: false, show: false },
     },
+    alternative: {
+      type: "boolean",
+      isRequired: true,
+      isVisible: { edit: true, filter: false, list: false, show: false },
+    },
     questionCount: {
       isVisible: { edit: false, filter: false, list: false, show: false },
     },
@@ -161,6 +166,7 @@ const activityOptions: ResourceOptions = {
         buildValidator({
           ...activityValidatorSchema,
           stage: CustomJoi.ObjectId().required(),
+          alternative: Joi.boolean().default(false),
         }),
       ],
       after: [
@@ -226,7 +232,7 @@ const activityOptions: ResourceOptions = {
     },
     edit: {
       before: [unflattenRequest, buildValidator(activityValidatorSchema)],
-      layout: Object.keys(Activitieschema.paths).filter(
+      layout: Object.keys(ActivitySchema.paths).filter(
         (key) => !["_id", "__v", "questionCount"].includes(key)
       ),
     },

@@ -85,17 +85,16 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Creates a box given a user with defined progress.stage
    */
-  protected async createBox({
-    stage,
-  }: {
-    stage: string;
-  }): Promise<BoxInput> {
+  protected async createBox({stage, attempt}: {stage: string, attempt?: number}): Promise<BoxInput> {
+    const realAttempt = attempt || 0;
     const box: BoxInput = {
       stage: stage,
+      attempt: realAttempt,
       activities: (
         await stageService.sampleActivities({
           id: stage,
           quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
+          alternative: (realAttempt % 2 == 0)
         })
       ).map((el: any) => ({ activity: el, answers: [] })),
     };
@@ -197,6 +196,7 @@ class UserService extends BasicService<UserDocument> {
       $set: {
         "progress.box": await this.createBox({
           stage: user.progress.stage,
+          attempt: user.progress.box.attempt + 1
         }),
       },
       $push: { "progress.history": user.progress.box },
