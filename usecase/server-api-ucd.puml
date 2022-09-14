@@ -1,0 +1,17 @@
+@startuml
+
+title Server API UCD
+
+actor Client
+
+Client --> (get data)
+Client --> (get box)
+(get box) ..> (get next box) : extends
+Client --> (evaluate)
+(evaluate) --> (get alternate box)
+(evaluate) --> (get next box)
+Client --> (get modules)
+Client --> (get stages)
+(get stages) ..> (get modules) : include
+
+@enduml
