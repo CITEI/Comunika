@@ -14,11 +14,12 @@ import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { Activity } from "../model/game/activity";
 import { AuthenticationService } from "./utils/authentication";
+import _ from "underscore";
+import { ModuleDocument } from "src/model/game/module";
 
 export enum EvaluationStatus {
   Approved,
   Reproved,
-  NoContent,
 }
 
 class UserService extends BasicService<UserDocument> {
@@ -85,18 +86,49 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Creates a box given a user with defined progress.stage
    */
-  protected async createBox({stage, attempt}: {stage: string, attempt?: number}): Promise<BoxInput> {
-    const realAttempt = attempt || 0;
+  protected async createBox({
+    stage,
+    attempt,
+  }: {
+    stage: string;
+    attempt?: number;
+  }): Promise<BoxInput> {
+    attempt = attempt || 0;
+    const alternative = attempt > 0;
+    let activities = Array<string>();
+
+    if (attempt <= 1) {
+      activities = await stageService.sampleActivities({
+        id: stage,
+        quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
+        alternative,
+      });
+    } else if (attempt > 1) {
+      const regularQuantity = Math.floor(GAME_ACTIVITY_SAMPLE_QUANTITY / 2);
+      const alternativeQuantity =
+        GAME_ACTIVITY_SAMPLE_QUANTITY - regularQuantity;
+
+      activities = _.shuffle(
+        (
+          await stageService.sampleActivities({
+            id: stage,
+            quantity: regularQuantity,
+            alternative: false,
+          })
+        ).concat(
+          await stageService.sampleActivities({
+            id: stage,
+            quantity: alternativeQuantity,
+            alternative: true,
+          })
+        )
+      );
+    }
+
     const box: BoxInput = {
       stage: stage,
-      attempt: realAttempt,
-      activities: (
-        await stageService.sampleActivities({
-          id: stage,
-          quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
-          alternative: (realAttempt % 2 == 0)
-        })
-      ).map((el: any) => ({ activity: el, answers: [] })),
+      attempt: attempt,
+      activities: activities.map((el: any) => ({ activity: el, answers: [] })),
     };
 
     return box;
@@ -121,7 +153,8 @@ class UserService extends BasicService<UserDocument> {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number = user.progress.box.activities[i].activity.questionCount;
+        let count: number =
+          user.progress.box.activities[i].activity.questionCount;
         let true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
           user.progress.box.activities[i].answers = el;
@@ -145,47 +178,14 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async approve(user: UserDocument) {
     const id = user._id;
-    let nextModule = user.progress.module;
-    let nextStage = await stageService.findNext({
-      id: user.progress.stage,
+    await User.findByIdAndUpdate(id, {
+      $set: {
+        "progress.box": null,
+      },
+      $push: {
+        "progress.history": user.progress.box,
+      },
     });
-
-    if (!nextStage) {
-      // reached the last stage of a module
-      nextModule = await moduleService.findNext({ id: nextModule });
-      if (!nextModule) {
-        // if no module, reached the end of the game
-        await User.findByIdAndUpdate(id, {
-          $set: {
-            "progress.module": user.progress.module,
-            "progress.stage": null,
-            "progress.box": null,
-          },
-          $push: {
-            "progress.history": user.progress.box,
-          },
-        });
-        return EvaluationStatus.NoContent;
-      } else
-        nextStage = await stageService.findHead({ module: nextModule });
-    }
-
-    if (nextStage) {
-      await User.findByIdAndUpdate(id, {
-        $set: {
-          "progress.module": nextModule,
-          "progress.stage": nextStage,
-          "progress.box": await this.createBox({
-            stage: nextStage._id,
-          }),
-        },
-        $push: {
-          "progress.history": user.progress.box,
-        },
-      });
-    }
-    // module without stages
-    else throw new InternalServerError();
   }
 
   /**
@@ -196,7 +196,7 @@ class UserService extends BasicService<UserDocument> {
       $set: {
         "progress.box": await this.createBox({
           stage: user.progress.stage,
-          attempt: user.progress.box.attempt + 1
+          attempt: user.progress.box.attempt + 1,
         }),
       },
       $push: { "progress.history": user.progress.box },
@@ -232,31 +232,49 @@ class UserService extends BasicService<UserDocument> {
    * Returns the current box
    */
   async findBox({ id }: { id: string }): Promise<BoxDocument | null> {
-    const user = await this.find({ id, select: "progress.box progress.module" });
+    const user = await this.find({
+      id,
+      select: "progress.box progress.module progress.stage",
+    });
+
     let box = user.progress.box;
-    if (box == null) {
-      const nextModule = await moduleService.findNext({
-        id: user.progress.module,
-      });
-      if (nextModule) {
-        const nextStage = await stageService.findHead({
-          module: nextModule,
+    if (box == null) { // reach the end of the game in that moment
+
+      let nextStage = await stageService.findNext({id: user.progress.stage});
+      let nextModule: ModuleDocument | null = user.progress.module;
+      if (!nextStage) { // reached the last stage of a module
+
+        nextModule = await moduleService.findNext({
+          id: user.progress.module,
         });
-        box = await this.createBox({ stage: nextStage!._id });
-        await User.findByIdAndUpdate(id, {
-          $set: {
-            "progress.module": nextModule,
-            "progress.stage": nextStage,
-            "progress.box": box,
-          },
-        });
+        if (!nextModule) // if no module, reached the end of the game
+          nextModule = user.progress.module;
+        else
+          nextStage = await stageService.findHead({
+            module: nextModule,
+          });
       }
+      else
+        nextStage = user.progress.stage;
+
+      box = await this.createBox({ stage: nextStage!._id });
+      await User.findByIdAndUpdate(id, {
+        $set: {
+          "progress.module": nextModule,
+          "progress.stage": nextStage,
+          "progress.box": box,
+        },
+      });
     }
+
     if (box) {
-      await user.populate({ path: "progress.box.activities.activity", model: Activity });
+      await user.populate({
+        path: "progress.box.activities.activity",
+        model: Activity,
+      });
       return user.progress.box;
-    }
-    return box;
+    } else
+      return null;
   }
 
   /**

@@ -15,7 +15,10 @@ router.get(
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
     const box = await userService.findBox({ id });
-    res.status(StatusCodes.OK).send(box);
+    if (box)
+      res.status(StatusCodes.OK).send(box);
+    else
+      res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
   }
 );
 
@@ -34,9 +37,6 @@ router.post(
         break;
       case EvaluationStatus.Reproved:
         res.status(StatusCodes.OK).send({ status: "reproved" });
-        break;
-      case EvaluationStatus.NoContent:
-        res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
         break;
       default:
         throw new InternalServerError();
