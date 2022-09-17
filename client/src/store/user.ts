@@ -95,7 +95,7 @@ export interface Activity {
 }
 
 /** Obtains the current user stage */
-export const fetchStage = createAsyncThunk(
+export const fetchBox = createAsyncThunk(
   "user/box",
   async (): Promise<Activity[]> => {
     const data = (await api.get(`/user/box`)).data;
@@ -192,7 +192,7 @@ export default createSlice({
       state.progress = action.payload.progress;
       state.loaded = true;
     });
-    builder.addCase(fetchStage.fulfilled, (state, action) => {
+    builder.addCase(fetchBox.fulfilled, (state, action) => {
       state.box = action.payload;
       state.boxLoaded = true;
     });
