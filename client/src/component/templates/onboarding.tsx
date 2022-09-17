@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { ModuleItem } from "../../store/game-data";
+import t from "../../pre-start/i18n"
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";
@@ -77,7 +78,7 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
         <Text>{slide.text}</Text>
         <Image source={slide.image} accessibilityHint={slide.imageAlt} resizeMode="contain"/>
         <Footer>
-          <Button title="Next" onPress={handleNext} />
+          <Button title={t("Next")} onPress={handleNext} />
         </Footer>
       </Container>
     </MainContainer>

@@ -15,6 +15,7 @@ import Modal from "../component/molecule/modal";
 import MainContainer from "../component/atom/main-container";
 import ContentContainer from "../component/atom/content-container";
 import styled from "styled-components/native";
+import t from "../pre-start/i18n";
 
 export interface LoginProps {}
 
@@ -62,24 +63,24 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
     <MainContainer>
       <ContentContainer>
         <Modal
-          text="Invalid credentials are present!"
-          title="Not logged! :("
+          text={t("Invalid credentials are present!")}
+          title={t("Not logged! :(")}
           onRequestClose={useCallback(() => setModalVisible(false), [])}
           visible={modalVisible}
         ></Modal>
         <Header>
           <Logo source={logo} />
-          <Title>Welcome!</Title>
+          <Title>{t("Welcome!")}</Title>
         </Header>
         <VerticalContainer>
           <LoginForm onSubmit={handleLogin} />
           <Button
-            title="Create account"
+            title={t("Create account")}
             onPress={handleRegister}
             variant="outline"
           />
           <Text style={{ marginTop: 20, textAlign: "center" }}>
-            Forgot the password? Click here
+            {t('Forgot the password? Click here!')}
           </Text>
         </VerticalContainer>
       </ContentContainer>

@@ -1,3 +1,20 @@
 {
-    
+    "Welcome!": "Bem-vindo!",
+    "Create account": "Criar conta",
+    "Forgot the password? Click here!": "Esqueceu a senha? Clique aqui!",
+    "Not logged! :(": "Não logado! :(",
+    "Invalid credentials are present!": "Credenciais inválidas!",
+    "Email": "Email",
+    "Password": "Senha",
+    "Login": "Entrar",
+    "Illustration of a woman with a bulb": "Ilustração de uma mulher com uma lâmpada",
+    "Onboarding1": "O Zica App tem o objetivo de auxiliar no desenvolvimento da comunicação de crianças afetas pelo Zica Virus e por outros problemas genéticos ou cogênitos.",
+    "Hello! :)": "Olá! :)",
+    "Onboarding2": "O App possui 3 estágios com diferentes atividades para o responsável realizar com a criança e auxiliá-la no seu desenvolvimento.",
+    "How it works": "Como funciona",
+    "Illustration of people solving a puzzle.": "Ilustração de pessoas resolvendo um quebra-cabeça.",
+    "Illustration of a woman with a pencil.": "Ilustração de uma mulher com um lápis.",
+    "Onboarding3": "Todas as atividades contarão com instruções detalhadas de como realiza-las e ao final você poderá registrar o desempenho da criança.",
+    "To begin": "Para começar",
+    "Next": "Próximo",
 }

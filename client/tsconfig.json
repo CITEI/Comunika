@@ -5,7 +5,7 @@
   },
   "include": ["src/types"],
   "files": [
-    "src/types/styled.d.ts",
+    "src/types/env.d.ts",
   ],
   "typesRoots": ["src/types"]
 }
