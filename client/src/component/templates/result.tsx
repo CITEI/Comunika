@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
-import { ModuleItem } from "../../store/game-data";
-import { EvaluateStatus } from "../../store/user";
+import { StageItem } from "../../store/game-data";
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";
@@ -13,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
 
 interface ResultProps {
-  module: ModuleItem;
+  stage: StageItem;
 }
 
 const Container = styled(ContentContainer)`
@@ -65,15 +64,15 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         shadow={false}
       />
       <Container>
-        <Title>You made to {props.module.name}!</Title>
+        <Title>You made to {props.stage.name}!</Title>
         <Image
-          source={{ uri: props.module.image }}
-          accessibilityHint={props.module.imageAlt}
+          source={{ uri: props.stage.image }}
+          accessibilityHint={props.stage.imageAlt}
           resizeMode="contain"
         />
         <Text>
           Based on your answers, we concluded it is time to move on to the next
-          module.
+          stage.
         </Text>
         <Footer>
           <Button title="Start next" onPress={handleNext} />
