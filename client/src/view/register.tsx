@@ -29,9 +29,6 @@ const Register: React.VoidFunctionComponent = () => {
         showMessage({
           message: "Registered",
           type: "success",
-          onHide: () => {
-            navigation.navigate("Main");
-          },
         });
       else
         showMessage({
