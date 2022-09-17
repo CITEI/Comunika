@@ -1,36 +1,53 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchStages } from "../store/game-data";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
-import MainContainer from "../component/atom/main-container";
+import Cards from "../component/templates/cards";
 
 interface StagesProps {}
 
-/** Non visual screen to load stages */
+/** Screen that displays the list of stages */
 const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
   const route = useRoute();
   const { moduleId } = route.params as any;
+
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
-  const modules = useAppSelector((state) => state.gameData.modules.data);
-  const stages = useAppSelector((state) => state.gameData.stages);
+
+  const moduleStages = useAppSelector((state) => state.gameData.stages);
   const stageId = useAppSelector((state) => state.user.progress.stage);
+  const [stageIndex, setStageIndex] = useState(0);
 
+  const stages = moduleStages[moduleId] || [];
+
+  /** Fetches a module stages if not present */
   useEffect(() => {
-    if (!(moduleId in stages)) dispatch(fetchStages(moduleId));
-  }, []);
+    if (!(moduleId in moduleStages)) dispatch(fetchStages(moduleId));
+    else setStageIndex(stages.findIndex((stage) => stage._id == stageId));
+  }, [moduleStages]);
 
-  useEffect(() => {
-    if (stages && moduleId in stages && modules) {
-      const stageIndex = stages[moduleId].findIndex((el) => el._id == stageId);
-      const module = modules.find((el) => el._id == moduleId);
-      if (stageIndex > -1 && module)
-        navigation.navigate("Transition", { stageIndex: stageIndex + 1, module });
-    }
-  }, [stages, modules]);
+  /** Goes to the game screen */
+  const handlePress = useCallback(
+    (stageId: string) => {
+      navigation.navigate("Transition", {
+        stage: stages[stageIndex],
+        activityIndex: 1,
+      });
+    },
+    [stageIndex, moduleStages]
+  );
 
-  return <MainContainer></MainContainer>;
+  return (
+    <Cards
+      current={stageIndex}
+      data={stages}
+      onPress={handlePress}
+      title="Stages"
+      progress={0}
+      total={1}
+    />
+  );
 };
 
 export default Stages;
