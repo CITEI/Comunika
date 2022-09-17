@@ -44,32 +44,34 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
   }, [answers, props.activities]);
 
   return (
-    <MainContainer>
-      <Toolbar
-        accountButton={false}
-        closeButton={true}
-        logo={answering}
-        shadow={false}
-        popCount={3}
-      />
-      <ContentContainer>
-        {answering ? (
-          <Questionary
-            questions={activity.questionNodes}
-            onFinish={handleFinishedQuestionary}
-          />
-        ) : (
-          <Instructions
-            activity={activityIndex+1}
-            nodes={activity.nodes}
-            module={props.module}
-            title={activity.name}
-            onFinish={handleFinishedInstructions}
-          />
-        )}
-      </ContentContainer>
-    </MainContainer>
-  );
+    activity ? (
+      <MainContainer>
+        <Toolbar
+          accountButton={false}
+          closeButton={true}
+          logo={answering}
+          shadow={false}
+          popCount={3}
+        />
+        <ContentContainer>
+          {answering ? (
+            <Questionary
+              questions={activity.questionNodes}
+              onFinish={handleFinishedQuestionary}
+            />
+          ) : (
+            <Instructions
+              activity={activityIndex + 1}
+              nodes={activity.nodes}
+              module={props.module}
+              title={activity.name}
+              onFinish={handleFinishedInstructions}
+            />
+          )}
+        </ContentContainer>
+      </MainContainer>
+    )
+  : <></>);
 };
 
 export default Activity;
