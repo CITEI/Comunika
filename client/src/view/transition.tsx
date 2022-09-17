@@ -5,8 +5,8 @@ import BaseTitle from "../component/atom/title";
 import BaseText from "../component/atom/text";
 import styled from "styled-components/native";
 import { dp, sp } from "../helper/resolution";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { GameNavigatorProps, GameProps } from "../route/game";
+import { useRoute } from "@react-navigation/native";
+import { GameProps } from "../route/game";
 import ContentContainer from "../component/atom/content-container";
 import GeneralInstructions from "../component/organism/general-instructions";
 
@@ -36,7 +36,7 @@ const Image = styled.Image`
 /** Screen used as a transition between stages screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const route = useRoute();
-  const { module, stageIndex } = route.params as GameProps["Transition"];
+  const { stage, activityIndex } = route.params as GameProps["Transition"];
   const [timer, setTimer] = React.useState(false);
 
   setTimeout(() => {
@@ -76,12 +76,12 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
           />
         ) : (
           <>
-            <Title>Starting activity {stageIndex}</Title>
-            <Subtitle>{module.name}</Subtitle>
+            <Title>Starting activity {activityIndex}</Title>
+            <Subtitle>{stage.name}</Subtitle>
             <Image
               resizeMode="contain"
-              source={{ uri: module.image }}
-              accessibilityHint={module.imageAlt}
+              source={{ uri: stage.image }}
+              accessibilityHint={stage.imageAlt}
             />
           </>
         )}

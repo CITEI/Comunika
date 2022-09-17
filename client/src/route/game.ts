@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ModuleItem } from "../store/game-data";
+import { ModuleItem, StageItem } from "../store/game-data";
 
 export type GameProps = {
   Main: undefined;
@@ -7,8 +7,8 @@ export type GameProps = {
     moduleId: string;
   };
   Transition: {
-    module: ModuleItem;
-    stageIndex: number;
+    stage: StageItem;
+    activityIndex: number;
   }
   Game: undefined;
   Result: undefined;
