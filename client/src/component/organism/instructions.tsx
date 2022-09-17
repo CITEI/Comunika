@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Node as NodeType } from "../../store/user";
-import Title from "../atom/title";
+import BaseTitle from "../atom/title";
 import Node from "./node";
 import BaseButton from "../atom/button";
 import { dp, sp } from "../../helper/resolution";
@@ -26,10 +26,14 @@ const Header = styled.View`
   margin-bottom: ${dp(20)}px;
 `
 
-const ModuleInfo = styled(Title)`
+const ModuleInfo = styled(BaseTitle)`
   font-family: ${props => props.theme.fontFamily.titleLight};
   font-size: ${sp(14)}px;
   margin-bottom: ${dp(4)}px;
+`
+
+const Title = styled(BaseTitle)`
+  text-align: center;
 `
 
 const TTSPlayer = styled(BaseTTSPlayer)`
