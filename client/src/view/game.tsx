@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { evaluate, fetchStage } from "../store/user";
+import { evaluate, fetchBox } from "../store/user";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Activity from "../component/templates/activity";
@@ -19,10 +19,11 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
 
   const module = modules.find((module) => module._id == moduleId);
 
+  const [evaluated, setEvaluated] = useState(false);
   const [finished, setFinished] = useState(false);
 
   useEffect(() => {
-    if (!boxLoaded) dispatch(fetchStage());
+    if (!boxLoaded) dispatch(fetchBox());
   }, [boxLoaded]);
 
   /** Sends answers to evaluation */
@@ -32,12 +33,15 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (finished) navigation.navigate("Result");
-  }, [evaluation, finished]);
+    if (!evaluated)
+      setEvaluated(true);
+    else if (evaluated && finished)
+      navigation.navigate("Result");
+  }, [evaluation, evaluated, finished]);
 
   return boxLoaded ? (
     <Activity
-      activities={box}
+      activities={box || []}
       onFinish={handleFinish}
       module={module?.name || "None"}
     ></Activity>
