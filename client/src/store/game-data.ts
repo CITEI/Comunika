@@ -26,19 +26,20 @@ export interface StageItem {
   _id: string;
   name: string;
   description: string;
+  image: string;
+  imageAlt: string;
   next: string | null;
 }
 
 /** Obtains all game stages */
 export const fetchStages = createAsyncThunk(
   "gameData/stage",
-  async (
-    module: string
-  ): Promise<{ module: string; stages: StageItem[] }> => {
+  async (module: string): Promise<{ module: string; stages: StageItem[] }> => {
     const res = {
       module,
-      stages: (await api.get(`module/${module}/stage`))
-        .data as StageItem[],
+      stages: (
+        (await api.get(`module/${module}/stage`)).data as StageItem[]
+      ).map((el) => ({ ...el, image: toUri(el.image) })),
     };
 
     return res;
@@ -62,9 +63,7 @@ export default createSlice({
     });
     builder.addCase(fetchStages.fulfilled, (state, action) => {
       let stages = {} as { [key: string]: StageItem[] };
-      stages[action.payload.module] = sortLinkedList(
-        action.payload.stages
-      );
+      stages[action.payload.module] = sortLinkedList(action.payload.stages);
       state.stages = { ...state.stages, ...stages };
     });
   },
