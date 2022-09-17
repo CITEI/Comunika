@@ -50,6 +50,8 @@ const Image = styled.Image`
   flex: 2;
   width: 100%;
   height: 100%;
+  margin-top: ${dp(5)}px;
+  margin-bottom: ${dp(5)}px;
 `;
 
 const AudioContainer = styled.TouchableOpacity`
