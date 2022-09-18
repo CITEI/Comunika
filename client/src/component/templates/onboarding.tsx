@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import { ModuleItem } from "../../store/game-data";
 import t from "../../pre-start/i18n"
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
@@ -52,17 +51,17 @@ const Footer = styled.View`
   width: 100%;
 `;
 
+/** Onboarding screen */
 const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const slide = props.slides[currentSlide];
+  const isLast = currentSlide == (props.slides.length - 1);
 
+  /** Advances to the next slide */
   const handleNext = useCallback(() => {
-    if (currentSlide < props.slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
-    } else {
-      navigation.navigate("Main");
-    }
+    if (isLast) navigation.navigate("Main");
+    else setCurrentSlide(currentSlide + 1);
   }, [currentSlide, navigation, props.slides.length]);
 
   return (
@@ -78,7 +77,9 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
         <Text>{slide.text}</Text>
         <Image source={slide.image} accessibilityHint={slide.imageAlt} resizeMode="contain"/>
         <Footer>
-          <Button title={t("Next")} onPress={handleNext} />
+          <Button
+            title={isLast ? t("Go to the activities"): t("Next")}
+            onPress={handleNext} />
         </Footer>
       </Container>
     </MainContainer>
