@@ -9,6 +9,7 @@ import { useRoute } from "@react-navigation/native";
 import { GameProps } from "../route/game";
 import ContentContainer from "../component/atom/content-container";
 import GeneralInstructions from "../component/organism/general-instructions";
+import t from "../pre-start/i18n";
 
 interface TransitionProps {}
 
@@ -54,29 +55,12 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
       <Content>
         {timer ? (
           <GeneralInstructions
-            slides={[
-              {
-                text:
-                  "1 | Ao iniciar a atividade chamar a criança pelo nome no " +
-                  "início e durante a realização para ter a certeza de que ela " +
-                  "está participando.\n\n" +
-                  "2 | Colocar a criança de frente para quem está conduzindo a " +
-                  "atividade e certificar-se de que ela está numa boa posição " +
-                  "para realiza-la.",
-              },
-              {
-                text:
-                  "3 | Verificar se a criança esta disposta para realizar as " +
-                  "atividades: Se não está com sono, fome ou sob efeito de " +
-                  "medicação.\n\n" +
-                  "4| Evitar antecipar a resposta! Dê tempo para a criança " +
-                  "participar da atividade de acordo com o ritmo dela.",
-              },
+            slides={[{text: t("General1"),}, {text: t("General2"),},
             ]}
           />
         ) : (
           <>
-            <Title>Starting activity {activityIndex}</Title>
+            <Title>{t("Starting activity")} {activityIndex}</Title>
             <Subtitle>{stage.name}</Subtitle>
             <Image
               resizeMode="contain"
