@@ -7,6 +7,8 @@ import { dp, sp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
 import BaseTTSPlayer from "./tts-player";
 import TTSLabel from "../atom/tts-label";
+import t from "../../pre-start/i18n";
+import util from 'util'
 
 interface InstructionProps {
   title: string;
@@ -60,14 +62,15 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
     <>
       <Header>
         <ModuleInfo>
-          Activity {props.activity} instructions | {props.module}
+          {util.format(t('Activity %s instructions'), props.activity)}
+          {" | "}{props.module}
         </ModuleInfo>
         <Title>{props.title}</Title>
       </Header>
-      <TTSLabel>Tap here to listen instructions by audio:</TTSLabel>
+      <TTSLabel />
       <TTSPlayer text={currentNode.text} />
       <Node {...currentNode} />
-      <Button title={isLast ? "Finish" : "Next"} onPress={handleNextPressed} />
+      <Button title={isLast ? t("Finish") : t("Next")} onPress={handleNextPressed} />
     </>
   );
 };
