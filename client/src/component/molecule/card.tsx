@@ -5,6 +5,7 @@ import BaseTitle from "../atom/title";
 import Text from "../atom/text";
 import BaseButton from "../atom/button";
 import ShadowPanel from "../atom/shadow-panel";
+import t from "../../pre-start/i18n";
 
 interface CardProps {
   /** image url */
@@ -110,7 +111,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         <Title>{props.title}</Title>
         {
           {
-            completed: <PercentText>Completed</PercentText>,
+            completed: <PercentText>{t("Completed")}</PercentText>,
             incomplete: (
               <ProgressContainer>
                 <ProgressText>
@@ -118,11 +119,11 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
                   {" | "}
                 </ProgressText>
                 <PercentText>
-                  {Math.round((100 * props.progress) / props.total)}% finished
+                  {Math.round((100 * props.progress) / props.total)}% {t("completed")}
                 </PercentText>
               </ProgressContainer>
             ),
-            locked: <BlockedText>Locked</BlockedText>,
+            locked: <BlockedText>{t("Locked")}</BlockedText>,
           }[props.status || "locked"]
         }
       </Header>
@@ -136,11 +137,11 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         <ContentRightContainer>
           <Description>
             {props.status == "locked"
-              ? "Cannot do this now"
+              ? t("Cannot do this now")
               : props.description}
           </Description>
           {props.status == "incomplete" && (
-            <Button title="Start" onPress={props.onPress} />
+            <Button title={t("Start")} onPress={props.onPress} />
           )}
         </ContentRightContainer>
       </ContentContainer>
