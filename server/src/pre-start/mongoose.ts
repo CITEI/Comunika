@@ -6,15 +6,14 @@ import {
   DB_PORT,
   DB_USER,
   DB_REPLICA_SET,
+  DB_PROTOCOL,
 } from "./constants";
 
-export const uri = `mongodb://${DB_HOST}:${DB_PORT}`;
+export const uri = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}`;
 
 let mongo = mongoose
   .connect(uri, {
     dbName: DB_DATABASE,
-    user: DB_USER,
-    pass: DB_PASSWORD,
     replicaSet: DB_REPLICA_SET,
   })
 

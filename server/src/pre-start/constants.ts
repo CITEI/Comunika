@@ -6,13 +6,15 @@ export const JWT_ALGORITHM = "HS256";
 export const API_VERSION = process.env.API_VERSION || "v1";
 export const BASE_PATH = `/api/${API_VERSION}`;
 export const ENV = process.env.ENV || "development";
+
+export const DB_PROTOCOL = process.env.DB_PROTOCOL || 'mongodb'
 export const DB_VERSION = process.env.DB_VERSION || "5.0.0";
 export const DB_HOST = process.env.DB_HOST;
-export const DB_PORT = process.env.DB_PORT;
 export const DB_DATABASE = process.env.DB_NAME;
 export const DB_USER = process.env.DB_USER;
 export const DB_PASSWORD = process.env.DB_PASSWORD;
-export const DB_REPLICA_SET = process.env.DB_REPLICASET || "rs0";
+export const DB_REPLICA_SET = process.env.DB_REPLICASET;
+
 export const LOG_FOLDER = "logs";
 export const GAME_ACTIVITY_SAMPLE_QUANTITY = 5;
 export const GAME_MIN_GRADE_PCT = 0.7;
