@@ -29,7 +29,6 @@ const baseNodeCreateSchema = {
 /** Base validator input for Joi */
 const activityValidatorSchema = {
   name: CustomJoi.RequiredString(),
-  description: CustomJoi.RequiredString(),
   nodes: Joi.array()
     .items(
       Joi.alternatives().try(

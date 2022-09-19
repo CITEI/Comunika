@@ -14,7 +14,6 @@ import {
 
 export interface ActivityInput {
   name: string;
-  description: string;
   nodes: Array<{ type: string } & NodeInput & { [key: string]: any }>;
   questionNodes: Array<
     { type: string } & QuestionNodeInput & { [key: string]: any }
@@ -23,7 +22,6 @@ export interface ActivityInput {
 
 export const ActivitySchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  description: { type: String, required: true },
   nodes: [{ type: NodeSchema, required: true, minlength: MIN_NODES }],
   questionCount: { type: Number, default: 0 },
   questionNodes: [
