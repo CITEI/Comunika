@@ -1,10 +1,10 @@
 import React from 'react'
 import { TextStyle } from 'react-native'
-import styled from 'styled-components/native'
+import styled from '../../pre-start/themes'
 import { sp } from '../../helper/resolution'
 
 interface TextProps {
-  style?: TextStyle
+  style?: TextStyle[] | TextStyle
 }
 
 const StyledText = styled.Text`
