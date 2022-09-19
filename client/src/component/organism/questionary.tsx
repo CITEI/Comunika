@@ -6,6 +6,9 @@ import RadioQuestions from "../molecule/radio-questions";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 import BaseButton from "../atom/button";
+import t from "../../pre-start/i18n";
+import Md from "../molecule/md";
+import util from 'util'
 
 interface QuestionaryProps {
   questions: QuestionNode[];
@@ -20,12 +23,14 @@ const BackButton = styled(BaseButton)`
 const Counter = styled(Title)`
   font-size: ${sp(16)}px;
   margin-bottom: ${dp(8)}px;
+  color: ${(props) => props.theme.color.notes};
 `;
 
 const Notes = styled(Text)`
   font-size: ${dp(14)}px;
   margin-top: ${dp(8)}px;
   margin-bottom: ${dp(28)}px;
+  color: ${(props) => props.theme.color.notes};
 `;
 
 /** A form that shows boolean questions to answer */
@@ -65,16 +70,16 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
   return currentNode ? (
     <>
       <Counter>
-        Question {index + 1}/{answers.length}
+        {util.format(t('Question %s/%s'), index + 1, answers.length)}
       </Counter>
-      <Title>{currentNode.question}</Title>
+      <Md>{`# ${currentNode.question}`}</Md>
       <Notes>{currentNode.notes}</Notes>
       <RadioQuestions
-        questions={["Yes", "No"]}
+        questions={[t("Yes"), t("No")]}
         onSelected={handleRadioSelect}
         selected={answers[index]}
       />
-      <BackButton title="Back" onPress={handleBackPressed} />
+      <BackButton title={t("Back")} onPress={handleBackPressed} />
     </>
   ) : <></>;
 };
