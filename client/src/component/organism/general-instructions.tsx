@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
 import BaseTTSPlayer from "./tts-player";
 import TTSLabel from "../atom/tts-label";
+import t from "../../pre-start/i18n";
+import Md from "../molecule/md";
 
 interface GeneralInstructionsProps {
   slides: {
@@ -27,11 +29,10 @@ const Title = styled(BaseTitle)`
   margin-bottom: ${dp(18)}px;
 `;
 
-const Text = styled(BaseText)`
-  font-family: ${(props) => props.theme.fontFamily.titleLight};
-  font-size: ${sp(16)}px;
+const Text = styled(Md)`
   text-align: center;
-  margin-bottom: ${dp(38)}px;
+  flex: 1;
+  height: 100%;
 `;
 
 const TTSPlayer = styled(BaseTTSPlayer)`
@@ -57,12 +58,14 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
 
   return (
     <Container>
-      <Title>General Instructions</Title>
+      <Title>{t("General instructions")}</Title>
       <TTSLabel />
       <TTSPlayer text={slide.text} />
-      <Text>{slide.text}</Text>
+      <Text textStyle={{fontSize: sp(13)}}>
+        {slide.text}
+      </Text>
       <Footer>
-        <Button title="Next" onPress={handleNext} />
+        <Button title={t("Next")} onPress={handleNext} />
       </Footer>
     </Container>
   );
