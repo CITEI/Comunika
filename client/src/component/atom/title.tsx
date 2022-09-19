@@ -1,12 +1,12 @@
 import styled from "../../pre-start/themes";
 import React from "react";
-import { dp } from "../../helper/resolution";
+import { sp } from "../../helper/resolution";
 import { TextProps, Text } from "react-native";
 
 interface TitleProps extends TextProps {}
 
 const StyledTitle = styled(Text)`
-  font-size: ${dp(18)}px;
+  font-size: ${sp(18)}px;
   font-family: ${(props) => props.theme.fontFamily.title};
 `;
 
