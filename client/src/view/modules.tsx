@@ -4,6 +4,7 @@ import { fetchStages, fetchModules, ModuleItem } from "../store/game-data";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
+import t from "../pre-start/i18n";
 
 interface ModulesProps {}
 
@@ -57,7 +58,7 @@ const Modules: React.VoidFunctionComponent<ModulesProps> = () => {
 
   return (
     <Cards
-      title="Modules"
+      title={t("Modules")}
       onPress={handleItemPress}
       data={modules.data}
       current={moduleIndex}
