@@ -5,6 +5,7 @@ import BaseText from '../atom/text'
 import { BaseNode } from "../../store/user";
 import AudibleMosaic from "../molecule/audible-mosaic";
 import { dp, sp } from "../../helper/resolution";
+import Md from "../molecule/md";
 
 export interface NodeProps extends BaseNode {
   [key: string]: any;
@@ -39,7 +40,7 @@ const Node: React.FunctionComponent<NodeProps> = (props) => {
           <AudibleMosaic images={props.images} />
         )
       }[props.type]}
-      <Text>{props.text}</Text>
+      <Md>{props.text}</Md>
     </Container>
   );
 };
