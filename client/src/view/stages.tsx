@@ -4,6 +4,7 @@ import { fetchStages } from "../store/game-data";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
+import t from "../pre-start/i18n";
 
 interface StagesProps {}
 
@@ -43,7 +44,7 @@ const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
       current={stageIndex}
       data={stages}
       onPress={handlePress}
-      title="Stages"
+      title={t("Stages")}
       progress={0}
       total={1}
     />
