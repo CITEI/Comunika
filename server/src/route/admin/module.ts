@@ -35,7 +35,6 @@ const moduleOptions: ResourceOptions = {
         buildFileUploadBefore([{ attribute: "image", extensions: ["png"] }]),
         buildValidator({
           name: CustomJoi.RequiredString(),
-          description: CustomJoi.RequiredString(),
           image: CustomJoi.UploadStatus(),
           imageAlt: CustomJoi.RequiredString(),
         }),

@@ -6,7 +6,7 @@ export default class ModuleService extends LinkedListService<ModuleDocument, Gam
   constructor() {
     super({
       model: Module,
-      select: "name description image imageAlt next",
+      select: "name image imageAlt next",
       metaModel: Game,
       createMeta: true,
     });

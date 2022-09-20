@@ -24,10 +24,10 @@ const stageOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
     activities: {
-      isVisible: { edit: false, filter: false, list: true, show: true },
+      isVisible: { edit: true, filter: false, list: true, show: true },
     },
     alternativeActivities: {
-      isVisible: { edit: false, filter: false, list: true, show: true },
+      isVisible: { edit: true, filter: false, list: true, show: true },
     },
     image: buildFileUploadProperty({ extensions: ["png"] }),
   },
@@ -43,7 +43,6 @@ const stageOptions: ResourceOptions = {
         ]),
         buildValidator({
           name: CustomJoi.RequiredString(),
-          description: CustomJoi.RequiredString(),
           module: CustomJoi.ObjectId().required(),
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),

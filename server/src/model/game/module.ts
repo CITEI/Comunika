@@ -4,14 +4,12 @@ import { StageDocument } from "./stage";
 
 export interface ModuleInput {
   name: string;
-  description: string;
   image: string;
   imageAlt: string;
 }
 
 export const ModuleSchema = new mongoose.Schema({
   name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  description: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   image: { type: String, required: false, minlength: MIN_STRING_LENGTH },
   imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   next: {

@@ -17,7 +17,7 @@ export default class StageService extends LinkedListService<
   constructor() {
     super({
       model: Stage,
-      select: "name description module image imageAlt next",
+      select: "name module image imageAlt next",
       metaModel: Module,
       createMeta: false,
     });
