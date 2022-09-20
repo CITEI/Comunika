@@ -1,19 +1,13 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchUserData } from "../store/user";
+import React from "react";
+import useUserProgress from "../hooks/useuserprogress";
 import Modules from "./modules";
 
 interface MainProps {}
 
 const Main: React.VoidFunctionComponent<MainProps> = () => {
-  const dispatch = useAppDispatch();
-  const loaded = useAppSelector((state) => state.user.loaded);
+  const progress = useUserProgress();
 
-  useEffect(() => {
-    if (!loaded) dispatch(fetchUserData());
-  }, [loaded]);
-
-  return <Modules></Modules>;
+  return (progress ? <Modules></Modules> : <></>);
 };
 
 export default Main;
