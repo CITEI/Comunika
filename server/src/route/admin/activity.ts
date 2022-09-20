@@ -37,6 +37,7 @@ const activityValidatorSchema = {
           type: CustomJoi.RequiredString().valid("text"),
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
+          audio: CustomJoi.UploadStatus(),
         }),
         Joi.object({
           ...baseNodeCreateSchema,
@@ -121,25 +122,30 @@ const activityOptions: ResourceOptions = {
       isin: ["text"],
       extensions: ["ogg"],
     }),
+    "nodes.preview": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel"],
+      type: "boolean",
+    }),
     "nodes.images": buildConditionalProperty({
       dependency: "nodes.$.type",
-      isin: ["carrousel", "audible_mosaic"],
+      isin: ["carrousel"],
       type: "mixed",
       isArray: true,
     }),
     "nodes.images.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
-      isin: ["carrousel", "audible_mosaic"],
+      isin: ["carrousel"],
       extensions: ["png", "gif"],
     }),
     "nodes.images.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
-      isin: ["carrousel", "audible_mosaic"],
+      isin: ["carrousel"],
       type: "string",
     }),
     "nodes.images.audio": buildFileUploadProperty({
       dependency: "nodes.$.type",
-      isin: ["audible_mosaic", "carrousel"],
+      isin: ["carrousel"],
       extensions: ["ogg"],
     }),
   },
