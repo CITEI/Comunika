@@ -5,67 +5,44 @@ import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
 import t from "../pre-start/i18n";
+import useModules from "../hooks/usemodules";
+import useUserModule from "../hooks/useusermodule";
 
 interface ModulesProps {}
 
 /** Screen that displays a list of modules */
 const Modules: React.VoidFunctionComponent<ModulesProps> = () => {
   const navigation = useNavigation<GameNavigatorProps>();
-  const dispatch = useAppDispatch();
-  const modules = useAppSelector((state) => state.gameData.modules);
-  const stages = useAppSelector((state) => state.gameData.stages);
-  const stageId = useAppSelector((state) => state.user.progress.stage);
-  const moduleId = useAppSelector((state) => state.user.progress.module);
-  const moduleIndex = modules.data.findIndex(
-    (module) => module._id == moduleId
-  );
-  const [progress, setProgress] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [refresh, setRefresh] = useState(0);
-
-  /** Fetches modules if not yet loaded */
-  useEffect(() => {
-    if (!modules.loaded) dispatch(fetchModules());
-  }, []);
-
-  /** Fetches the stages of the current module */
-  useEffect(() => {
-    if (moduleId) dispatch(fetchStages(moduleId));
-  }, [modules.loaded, moduleId]);
-
-  /** Calculates the number of completed stages */
-  useEffect(() => {
-    if (stageId == null) {
-      setProgress(1);
-      setTotal(1);
-    } else if (stages && moduleId && moduleId in stages && modules) {
-      setProgress(stages[moduleId].findIndex((el) => el._id == stageId));
-      setTotal(stages[moduleId].length);
-    }
-  }, [stages]);
+  const modules = useModules();
+  const module = useUserModule();
+  const index = modules.findIndex((el) => el._id == module?._id);
 
   /** Navigates to the stages screen og a given module */
   const handleItemPress = useCallback((module: ModuleItem) => {
     navigation.navigate("Stages", { moduleId: module._id });
-  }, []);
+  }, [modules]);
 
-  /** Skips this screen if only one module is present */
+  /** Skips this screen if it contains only one module */
+  const skip = useCallback(() => {
+    if (modules.length == 1)
+      handleItemPress(modules[0])
+  }, [modules])
+
   useEffect(() => {
-    if (modules.data.length == 1) handleItemPress(modules.data[0]);
-  }, [modules, stageId, refresh]);
+    navigation.addListener("focus", skip);
+    skip();
+  }, [modules])
 
-  navigation.addListener("focus", () => setRefresh(refresh + 1));
-
-  return (
+  return (modules.length > 1 && module) ? (
     <Cards
       title={t("Modules")}
       onPress={handleItemPress}
-      data={modules.data}
-      current={moduleIndex}
-      progress={progress}
-      total={total}
+      data={modules}
+      current={index}
+      progress={0}
+      total={1}
     />
-  );
+  ) : <></>;
 };
 
 export default Modules;
