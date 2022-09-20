@@ -1,53 +1,45 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchStages } from "../store/game-data";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
 import t from "../pre-start/i18n";
+import useUserStage from "../hooks/useuserstage";
+import useUserStages from "../hooks/useuserstages";
+import useBox from "../hooks/usebox";
+import { StageItem } from "../store/game-data";
 
 interface StagesProps {}
 
 /** Screen that displays the list of stages */
 const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
-  const route = useRoute();
-  const { moduleId } = route.params as any;
-
   const navigation = useNavigation<GameNavigatorProps>();
-  const dispatch = useAppDispatch();
-
-  const moduleStages = useAppSelector((state) => state.gameData.stages);
-  const stageId = useAppSelector((state) => state.user.progress.stage);
-  const [stageIndex, setStageIndex] = useState(0);
-
-  const stages = moduleStages[moduleId] || [];
-
-  /** Fetches a module stages if not present */
-  useEffect(() => {
-    if (!(moduleId in moduleStages)) dispatch(fetchStages(moduleId));
-    else setStageIndex(stages.findIndex((stage) => stage._id == stageId));
-  }, [moduleStages]);
+  const stages = useUserStages();
+  const stage = useUserStage();
+  const box = useBox();
+  const index = stages.findIndex((el) => el._id == stage?._id);
 
   /** Goes to the game screen */
   const handlePress = useCallback(
-    (stageId: string) => {
+    (selection: StageItem) => {
       navigation.navigate("Transition", {
-        stage: stages[stageIndex],
+        stage: selection,
         activityIndex: 1,
       });
     },
-    [stageIndex, moduleStages]
+    [stages]
   );
 
-  return (
+  return stage && index >= 0 ? (
     <Cards
-      current={stageIndex}
+      current={index}
       data={stages}
       onPress={handlePress}
       title={t("Stages")}
       progress={0}
-      total={1}
+      total={box.length}
     />
+  ) : (
+    <></>
   );
 };
 
