@@ -10,6 +10,8 @@ import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
+import util from 'util'
+import t from "../../pre-start/i18n";
 
 interface ResultProps {
   stage: StageItem;
@@ -64,19 +66,16 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         shadow={false}
       />
       <Container>
-        <Title>You made to {props.stage.name}!</Title>
+        <Title>{util.format(t("You made to %s!"), props.stage.name)}</Title>
         <Image
           source={{ uri: props.stage.image }}
           accessibilityHint={props.stage.imageAlt}
           resizeMode="contain"
         />
-        <Text>
-          Based on your answers, we concluded it is time to move on to the next
-          stage.
-        </Text>
+        <Text>{t("StageSucceeded")}</Text>
         <Footer>
-          <Button title="Start next" onPress={handleNext} />
-          <Button variant="outline" title="Back to menu" onPress={handleBack} />
+          <Button title={t("Start next")} onPress={handleNext} />
+          <Button variant="outline" title={t("Back to menu")} onPress={handleBack} />
         </Footer>
       </Container>
     </MainContainer>
