@@ -8,6 +8,7 @@ import Text from "./text";
 const Label = styled(Text)`
   text-align: center;
   margin-bottom: ${dp(10)}px;
+  font-family: ${(props) => props.theme.fontFamily.textSemiBold};
 `;
 
 const TTSLabel: React.VoidFunctionComponent<TextProps> = (props) => {
