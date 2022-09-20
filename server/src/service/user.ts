@@ -6,7 +6,6 @@ import {
 import { User, UserDocument, UserInput } from "../model/game/user";
 import { stageService } from "./stage";
 import {
-  InternalServerError,
   ObjectNotFoundError,
   ValidationError,
 } from "./errors";
@@ -231,7 +230,7 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box
    */
-  async findBox({ id }: { id: string }): Promise<BoxDocument | null> {
+  async findBox({ id }: { id: string }): Promise<BoxDocument & {module: ModuleDocument} | null> {
     const user = await this.find({
       id,
       select: "progress.box progress.module progress.stage",
@@ -272,7 +271,12 @@ class UserService extends BasicService<UserDocument> {
         path: "progress.box.activities.activity",
         model: Activity,
       });
-      return user.progress.box;
+      return {
+        activities: user.progress.box.activities,
+        attempt: user.progress.box.attempt,
+        stage: user.progress.stage,
+        module: user.progress.module,
+      };
     } else
       return null;
   }

@@ -40,6 +40,7 @@ const activityValidatorSchema = {
         }),
         Joi.object({
           ...baseNodeCreateSchema,
+          preview: Joi.bool().default(false),
           type: CustomJoi.RequiredString().valid("carrousel"),
           slides: Joi.array()
             .items(
@@ -60,19 +61,6 @@ const activityValidatorSchema = {
             )
             .min(1),
         }),
-        Joi.object({
-          ...baseNodeCreateSchema,
-          type: CustomJoi.RequiredString().valid("audible_mosaic"),
-          mosaic: Joi.array()
-            .items(
-              Joi.object({
-                image: CustomJoi.UploadStatus().required(),
-                imageAlt: CustomJoi.RequiredString(),
-                audio: CustomJoi.UploadStatus(),
-              })
-            )
-            .min(1),
-        })
       )
     )
     .min(MIN_NODES)
@@ -121,12 +109,17 @@ const activityOptions: ResourceOptions = {
     "nodes.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["text"],
-      extensions: ["png"],
+      extensions: ["png", "gif"],
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
       isin: ["text"],
       type: "string",
+    }),
+    "nodes.audio": buildFileUploadProperty({
+      dependency: "nodes.$.type",
+      isin: ["text"],
+      extensions: ["ogg"],
     }),
     "nodes.images": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -137,7 +130,7 @@ const activityOptions: ResourceOptions = {
     "nodes.images.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["carrousel", "audible_mosaic"],
-      extensions: ["png"],
+      extensions: ["png", "gif"],
     }),
     "nodes.images.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -158,6 +151,7 @@ const activityOptions: ResourceOptions = {
       before: [
         buildFileUploadBefore([
           { attribute: "nodes.$.image", extensions: ["png"] },
+          { attribute: "nodes.$.audio", extensions: ["ogg"] },
           { attribute: "nodes.$.images.$.image", extensions: ["png"] },
           { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
         ]),
@@ -171,6 +165,11 @@ const activityOptions: ResourceOptions = {
       after: [
         buildFileUploadAfter({
           "nodes.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.audio": {
             staticFolderEndpoint: "public",
             staticFolderPath: PUBLIC_PATH,
             subPath: "activity",
@@ -200,6 +199,10 @@ const activityOptions: ResourceOptions = {
     delete: {
       after: buildFileDeleteAfter({
         "nodes.$.image": {
+          staticFolderEndpoint: "public",
+          staticFolderPath: PUBLIC_PATH,
+        },
+        "nodes.$.audio": {
           staticFolderEndpoint: "public",
           staticFolderPath: PUBLIC_PATH,
         },

@@ -28,6 +28,7 @@ const TextNodeSchema = new mongoose.Schema(
     text: { type: String, required: true },
     image: { type: String, required: true },
     imageAlt: { type: String, required: true },
+    audio: { type: String, required: false },
   },
   NO_ID
 );
@@ -49,37 +50,17 @@ const CarrouselNodeSchema = new mongoose.Schema(
       required: true,
       minlength: 1,
     },
+    preview: { type: Boolean, required: true, default: false }
   },
   NO_ID
 );
-/**
- * This node stores a text and a list of images with its descriptions and an
- * audio for the image
- */
-const AudibleMosaicNodeSchema = new mongoose.Schema(
-  {
-    text: { type: String, required: true },
-    images: {
-      type: [
-        {
-          image: { type: String, required: true },
-          imageAlt: { type: String, required: true },
-          audio: { type: String, required: false },
-        },
-      ],
-      required: true,
-      minlength: 1,
-    },
-  },
-  NO_ID
-);
+
 /**
  * An object containing all types of nodes
  */
 export const NodeDiscriminators = {
   text: TextNodeSchema,
   carrousel: CarrouselNodeSchema,
-  audible_mosaic: AudibleMosaicNodeSchema,
 };
 
 /*
