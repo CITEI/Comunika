@@ -46,6 +46,7 @@ export interface TextNode extends BaseNode {
   type: "text";
   image: string;
   imageAlt: string;
+  audio?: string;
 }
 
 /** Node that shows a text along with an image/audio carrousel */
@@ -65,20 +66,11 @@ export interface CarrouselNode extends BaseNode {
         audio: string;
       }
   >;
-}
-
-/** Node that shows a text along with a mosaic of images with audio */
-export interface AudibleMosaicNode extends BaseNode {
-  type: "audible_mosaic";
-  images: {
-    image: string;
-    imageAlt: string;
-    audio: string;
-  }[];
+  preview: boolean;
 }
 
 /** Type for nodes all kinds of nodes */
-export type Node = TextNode | CarrouselNode | AudibleMosaicNode;
+export type Node = TextNode | CarrouselNode;
 
 /** Node displayed after gameplay in order to test knowledge */
 export interface QuestionNode extends GameNode {
@@ -89,7 +81,6 @@ export interface QuestionNode extends GameNode {
 /** Stage challenge definition */
 export interface Activity {
   name: string;
-  description: string;
   nodes: Node[];
   questionNodes: QuestionNode[];
 }
@@ -97,11 +88,13 @@ export interface Activity {
 /** Obtains the current user stage */
 export const fetchBox = createAsyncThunk(
   "user/box",
-  async (): Promise<Activity[]> => {
+  async (): Promise<{activities: Activity[], module: string, stage: string}> => {
     const data = (await api.get(`/user/box`)).data;
-    return (data.activities as Array<any>).map((el) => ({
+    return {
+      stage: data.stage,
+      module: data.module,
+      activities: (data.activities as Array<any>).map((el) => ({
       name: el.activity.name,
-      description: el.activity.description,
       nodes: el.activity.nodes.map((node) => {
         if (node.type == "text") {
           return {
@@ -129,8 +122,9 @@ export const fetchBox = createAsyncThunk(
         }
       }),
       questionNodes: el.activity.questionNodes,
-    }));
+    }))
   }
+}
 );
 
 /** Grade status of a stage evaluation */
@@ -180,7 +174,7 @@ export default createSlice({
     boxLoaded: false,
     history: [] as { stage: string }[],
     historyLoaded: false,
-    loaded: false,
+    infoLoaded: false,
     result: {
       status: EvaluateStatus.NoContent
     },
@@ -190,16 +184,17 @@ export default createSlice({
     builder.addCase(fetchUserData.fulfilled, (state, action) => {
       state.info = action.payload.info;
       state.progress = action.payload.progress;
-      state.loaded = true;
+      state.infoLoaded = true;
     });
     builder.addCase(fetchBox.fulfilled, (state, action) => {
-      state.box = action.payload;
+      state.box = action.payload.activities;
+      state.progress.module = action.payload.module;
+      state.progress.stage = action.payload.stage;
       state.boxLoaded = true;
     });
     builder.addCase(evaluate.fulfilled, (state, action) => {
       state.boxLoaded = false;
       state.historyLoaded = false;
-      state.loaded = false;
       state.result = {status: action.payload};
     });
     builder.addCase(fetchHistory.fulfilled, (state, action) => {
