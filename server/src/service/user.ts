@@ -246,15 +246,14 @@ class UserService extends BasicService<UserDocument> {
         nextModule = await moduleService.findNext({
           id: user.progress.module,
         });
-        if (!nextModule) // if no module, reached the end of the game
+        if (!nextModule) { // if no module, reached the end of the game
           nextModule = user.progress.module;
-        else
+          nextStage = user.progress.stage;
+        } else // otherwise, get the first stage of the next module
           nextStage = await stageService.findHead({
             module: nextModule,
           });
       }
-      else
-        nextStage = user.progress.stage;
 
       box = await this.createBox({ stage: nextStage!._id });
       await User.findByIdAndUpdate(id, {

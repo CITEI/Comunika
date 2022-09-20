@@ -3,7 +3,6 @@ import {
   DB_DATABASE,
   DB_HOST,
   DB_PASSWORD,
-  DB_PORT,
   DB_USER,
   DB_REPLICA_SET,
   DB_PROTOCOL,
