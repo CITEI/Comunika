@@ -36,6 +36,7 @@ const Modules: React.VoidFunctionComponent<ModulesProps> = () => {
   return (modules.length > 1 && module) ? (
     <Cards
       title={t("Modules")}
+      unit={t("module")}
       onPress={handleItemPress}
       data={modules}
       current={index}
