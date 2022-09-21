@@ -10,11 +10,12 @@ import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
-import util from 'util'
+import util from "util";
 import t from "../../pre-start/i18n";
 
 interface ResultProps {
   stage: StageItem;
+  no_content: boolean;
 }
 
 const Container = styled(ContentContainer)`
@@ -46,15 +47,18 @@ const Footer = styled.View`
   width: 100%;
 `;
 
+/** Templated result screen */
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
 
+  /** Goes back to the modules screen */
   const handleBack = useCallback(() => {
-    navigation.navigate("Main");
+    navigation.pop(2);
   }, []);
 
+  /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
-    navigation.navigate("Game");
+    navigation.replace("Game");
   }, []);
 
   return (
@@ -66,16 +70,27 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         shadow={false}
       />
       <Container>
-        <Title>{util.format(t("You made to %s!"), props.stage.name)}</Title>
+        <Title>
+          {util.format(
+            props.no_content ? t("You finished %s") : t("You made to %s!"),
+            props.stage.name
+          )}
+        </Title>
         <Image
           source={{ uri: props.stage.image }}
           accessibilityHint={props.stage.imageAlt}
           resizeMode="contain"
         />
-        <Text>{t("StageSucceeded")}</Text>
+        <Text>{props.no_content ? t("NoContent") : t("StageSucceeded")}</Text>
         <Footer>
-          <Button title={t("Start next")} onPress={handleNext} />
-          <Button variant="outline" title={t("Back to menu")} onPress={handleBack} />
+          {!props.no_content && (
+            <Button title={t("Start next")} onPress={handleNext} />
+          )}
+          <Button
+            variant="outline"
+            title={t("Back to menu")}
+            onPress={handleBack}
+          />
         </Footer>
       </Container>
     </MainContainer>
