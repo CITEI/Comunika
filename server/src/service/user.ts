@@ -5,16 +5,14 @@ import {
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/game/user";
 import { stageService } from "./stage";
-import {
-  ObjectNotFoundError,
-  ValidationError,
-} from "./errors";
+import { ObjectNotFoundError, ValidationError } from "./errors";
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
-import { Activity } from "../model/game/activity";
+import { Activity, ActivityDocument } from "../model/game/activity";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
 import { ModuleDocument } from "src/model/game/module";
+import { StageDocument } from "src/model/game/stage";
 
 export enum EvaluationStatus {
   Approved,
@@ -230,39 +228,50 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box
    */
-  async findBox({ id }: { id: string }): Promise<BoxDocument & {module: ModuleDocument} | null> {
+  async findBox({
+    id,
+  }: {
+    id: string;
+  }): Promise<{
+    activities?: ActivityDocument[];
+    attempt?: number;
+    stage: StageDocument;
+    module: ModuleDocument;
+  }> {
     const user = await this.find({
       id,
       select: "progress.box progress.module progress.stage",
     });
 
     let box = user.progress.box;
-    if (box == null) { // reach the end of the game in that moment
+    if (box == null) {
+      // reach the end of the game in that moment
 
-      let nextStage = await stageService.findNext({id: user.progress.stage});
+      let nextStage = await stageService.findNext({ id: user.progress.stage });
       let nextModule: ModuleDocument | null = user.progress.module;
-      if (!nextStage) { // reached the last stage of a module
+      if (!nextStage) {
+        // reached the last stage of a module
 
         nextModule = await moduleService.findNext({
           id: user.progress.module,
         });
-        if (!nextModule) { // if no module, reached the end of the game
-          nextModule = user.progress.module;
-          nextStage = user.progress.stage;
-        } else // otherwise, get the first stage of the next module
+        if (nextModule)
+          // if next module, get its first stage
           nextStage = await stageService.findHead({
             module: nextModule,
           });
       }
 
-      box = await this.createBox({ stage: nextStage!._id });
-      await User.findByIdAndUpdate(id, {
-        $set: {
-          "progress.module": nextModule,
-          "progress.stage": nextStage,
-          "progress.box": box,
-        },
-      });
+      if (nextStage) {
+        box = await this.createBox({ stage: nextStage!._id });
+        await User.findByIdAndUpdate(id, {
+          $set: {
+            "progress.module": nextModule,
+            "progress.stage": nextStage,
+            "progress.box": box,
+          },
+        });
+      }
     }
 
     if (box) {
@@ -271,13 +280,16 @@ class UserService extends BasicService<UserDocument> {
         model: Activity,
       });
       return {
-        activities: user.progress.box.activities,
+        activities: user.progress.box.activities.map(el => el.activity),
         attempt: user.progress.box.attempt,
         stage: user.progress.stage,
         module: user.progress.module,
       };
     } else
-      return null;
+      return {
+        stage: user.progress.stage,
+        module: user.progress.module,
+      };
   }
 
   /**

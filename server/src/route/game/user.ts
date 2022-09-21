@@ -1,7 +1,7 @@
 import { EvaluationStatus, userService } from "../../service/user";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
-import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
 import { InternalServerError } from "../../service/errors";
 import passport from "passport";
 import { UserDocument } from "src/model/game/user";
@@ -15,10 +15,7 @@ router.get(
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
     const box = await userService.findBox({ id });
-    if (box)
-      res.status(StatusCodes.OK).send(box);
-    else
-      res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
+    res.status(StatusCodes.OK).send(box);
   }
 );
 
