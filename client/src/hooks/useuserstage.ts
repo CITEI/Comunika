@@ -5,7 +5,7 @@ import useUserProgress from "./useuserprogress";
 const useUserStage = () => {
   const userData = useUserProgress();
   const stage = useStage(userData?.module, userData?.stage);
-  return stage
+  return stage;
 }
 
 export default useUserStage

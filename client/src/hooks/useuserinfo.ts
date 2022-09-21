@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../store/store'
 import { fetchUserData } from '../store/user'
 
 const useUserInfo = () => {
-  const loaded = useAppSelector((state) => state.user.infoLoaded);
+  const loaded = useAppSelector((state) => state.user.loaded.info);
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.user.info);
 
