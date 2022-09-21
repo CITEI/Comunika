@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Axios } from "axios";
 import jwtDecode from "jwt-decode";
 import api, { toUri } from "../helper/api";
 import { getToken } from "../helper/token";
@@ -88,50 +89,54 @@ export interface Activity {
 /** Obtains the current user stage */
 export const fetchBox = createAsyncThunk(
   "user/box",
-  async (): Promise<{activities: Activity[], module: string, stage: string}> => {
-    const data = (await api.get(`/user/box`)).data;
-    return {
-      stage: data.stage,
-      module: data.module,
-      activities: (data.activities as Array<any>).map((el) => ({
-      name: el.activity.name,
-      nodes: el.activity.nodes.map((node) => {
-        if (node.type == "text") {
-          return {
-            ...node,
-            image: toUri(node.image),
-          };
-        } else if (node.type == "carrousel") {
-          return {
-            ...node,
-            images: node.images.map((img) => {
-              if (img.audio) img.audio = toUri(img.audio);
-              if (img.image) img.image = toUri(img.image);
-              return img;
-            }),
-          };
-        } else if (node.type == "audible_mosaic") {
-          return {
-            ...node,
-            images: node.images.map((el) => ({
-              ...el,
-              image: toUri(el.image),
-              audio: toUri(el.image),
-            })),
-          };
-        }
-      }),
-      questionNodes: el.activity.questionNodes,
-    }))
+  async (): Promise<{
+    activities?: Activity[];
+    module: string;
+    stage: string;
+  }> => {
+    const res = await api.get(`/user/box`);
+    const data = res.data;
+    if ("activities" in res.data)
+      return {
+        stage: data.stage,
+        module: data.module,
+        activities: (data.activities as Activity[]).map((el) => ({
+          name: el.name,
+          nodes: el.nodes.map((node) => {
+            if (node.type == "text") {
+              const newNode = {
+                ...node,
+                image: toUri(node.image),
+              };
+              if (node.audio) newNode.audio = toUri(node.audio);
+              return newNode;
+            } else {
+              return {
+                ...node,
+                images: node.images.map((img) => {
+                  if ("audio" in img) img.audio = toUri(img.audio);
+                  if ("image" in img) img.image = toUri(img.image);
+                  return img;
+                }),
+              };
+            }
+          }),
+          questionNodes: el.questionNodes,
+        })),
+      };
+    else
+      return {
+        activities: undefined,
+        module: data.module,
+        stage: data.stage,
+      };
   }
-}
 );
 
 /** Grade status of a stage evaluation */
 export enum EvaluateStatus {
   Approved,
   Reproved,
-  NoContent,
 }
 
 /** Submits user answers to evaluation */
@@ -139,14 +144,8 @@ export const evaluate = createAsyncThunk(
   "user/evaluate",
   async (answers: boolean[][]) => {
     const res = (await api.post(`/user/box`, { answers })).data;
-    switch (res.status) {
-      case "approved":
-        return EvaluateStatus.Approved;
-      case "reproved":
-        return EvaluateStatus.Reproved;
-      default:
-        return EvaluateStatus.NoContent;
-    }
+    if (res.status == "approved") return EvaluateStatus.Approved;
+    else return EvaluateStatus.Reproved;
   }
 );
 
@@ -163,43 +162,51 @@ export default createSlice({
   name: "user",
   initialState: {
     info: {
-      name: null as string | null,
-      email: null as string | null,
+      name: undefined as string | undefined,
+      email: undefined as string | undefined,
     },
     progress: {
-      module: null as string | null,
-      stage: null as string | null,
+      module: undefined as string | undefined,
+      stage: undefined as string | undefined,
+      box: [] as Activity[] | undefined,
     },
-    box: [] as Activity[] | null,
-    boxLoaded: false,
     history: [] as { stage: string }[],
-    historyLoaded: false,
-    infoLoaded: false,
-    result: {
-      status: EvaluateStatus.NoContent
+    flags: {
+      box: false,
+      history: false,
+      info: false,
+      no_content: false,
     },
   },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchUserData.fulfilled, (state, action) => {
       state.info = action.payload.info;
-      state.progress = action.payload.progress;
-      state.infoLoaded = true;
+      state.progress = Object.assign(
+        {},
+        state.progress,
+        action.payload.progress
+      );
+      state.flags.info = true;
     });
     builder.addCase(fetchBox.fulfilled, (state, action) => {
-      state.box = action.payload.activities;
-      state.progress.module = action.payload.module;
       state.progress.stage = action.payload.stage;
-      state.boxLoaded = true;
+      state.progress.module = action.payload.module;
+      if (action.payload.activities)
+        state.progress.box = action.payload.activities;
+      else {
+        state.flags.no_content = true;
+        state.progress.box = undefined;
+      }
+      state.flags.box = true;
     });
     builder.addCase(evaluate.fulfilled, (state, action) => {
-      state.boxLoaded = false;
-      state.historyLoaded = false;
-      state.result = {status: action.payload};
+      state.flags.box = false;
+      state.flags.history = false;
     });
     builder.addCase(fetchHistory.fulfilled, (state, action) => {
       state.history = action.payload;
-      state.historyLoaded = true;
+      state.flags.history = true;
     });
   },
 });
