@@ -36,9 +36,6 @@ const Node: React.FunctionComponent<NodeProps> = (props) => {
         "carrousel": (
           <Carrousel slides={props.images} />
         ),
-        "audible_mosaic": (
-          <AudibleMosaic images={props.images} />
-        )
       }[props.type]}
       <Md>{props.text}</Md>
     </Container>

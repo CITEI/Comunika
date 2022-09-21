@@ -136,9 +136,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         />
         <ContentRightContainer>
           <Description>
-            {props.status == "locked"
-              ? t("Cannot do this now")
-              : props.description}
+            {props.description}
           </Description>
           {props.status == "incomplete" && (
             <Button title={t("Start")} onPress={props.onPress} />

@@ -32,11 +32,12 @@ const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
   return stage && index >= 0 ? (
     <Cards
       current={index}
+      unit={t("stage")}
       data={stages}
       onPress={handlePress}
       title={t("Stages")}
       progress={0}
-      total={box.length}
+      total={box ? box.length : 0}
     />
   ) : (
     <></>
