@@ -6,7 +6,6 @@ import { sortLinkedList } from "./utils";
 export interface ModuleItem {
   _id: string;
   name: string;
-  description: string;
   image: string;
   imageAlt: string;
   next: string | null;
@@ -25,7 +24,6 @@ export const fetchModules = createAsyncThunk(
 export interface StageItem {
   _id: string;
   name: string;
-  description: string;
   image: string;
   imageAlt: string;
   next: string | null;
