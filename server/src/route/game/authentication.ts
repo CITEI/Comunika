@@ -1,9 +1,11 @@
+import { disabilityService } from "../../service/disability";
 import { celebrate, Joi } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { UserInput, UserDocument } from "../../model/game/user";
+import { UserInput, UserDocument } from "../../model/user";
 import { userAuthenticationService } from "../../service/user";
+import { CustomJoi } from "../utils/custom_joi";
 
 const router = Router();
 
@@ -11,9 +13,13 @@ router.post(
   "/register",
   celebrate({
     body: {
-      email: Joi.string().required(),
-      password: Joi.string().required(),
-      name: Joi.string().required(),
+      email: CustomJoi.RequiredString(),
+      password: CustomJoi.RequiredString(),
+      guardian: CustomJoi.RequiredString(),
+      relationship: CustomJoi.RequiredString(),
+      birth: Joi.date().required(),
+      region: CustomJoi.RequiredString(),
+      comorbidity: CustomJoi.RequiredString(),
     },
   }),
   async (req: Request, res: Response) => {
@@ -53,5 +59,10 @@ router.get(
     res.status(StatusCodes.OK).send(token);
   }
 );
+
+router.get('/disabilites', async (req, res) => {
+  const disabilities = await disabilityService.findAll()
+  res.status(StatusCodes.OK).send(disabilities)
+})
 
 export default router;

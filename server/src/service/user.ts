@@ -1,18 +1,18 @@
-import { BoxDocument, BoxInput } from "../model/game/box";
+import { BoxDocument, BoxInput } from "../model/box";
 import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
-import { User, UserDocument, UserInput } from "../model/game/user";
+import { User, UserDocument, UserInput } from "../model/user";
 import { stageService } from "./stage";
 import { ObjectNotFoundError, ValidationError } from "./errors";
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
-import { Activity, ActivityDocument } from "../model/game/activity";
+import { Activity, ActivityDocument } from "../model/activity";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
-import { ModuleDocument } from "src/model/game/module";
-import { StageDocument } from "src/model/game/stage";
+import { ModuleDocument } from "src/model/module";
+import { StageDocument } from "src/model/stage";
 
 export enum EvaluationStatus {
   Approved,
@@ -228,11 +228,7 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box
    */
-  async findBox({
-    id,
-  }: {
-    id: string;
-  }): Promise<{
+  async findBox({ id }: { id: string }): Promise<{
     activities?: ActivityDocument[];
     attempt?: number;
     stage: StageDocument;
@@ -280,7 +276,7 @@ class UserService extends BasicService<UserDocument> {
         model: Activity,
       });
       return {
-        activities: user.progress.box.activities.map(el => el.activity),
+        activities: user.progress.box.activities.map((el) => el.activity),
         attempt: user.progress.box.attempt,
         stage: user.progress.stage,
         module: user.progress.module,
@@ -324,7 +320,8 @@ class UserService extends BasicService<UserDocument> {
   async findUserData({ id }: { id: string }): Promise<UserDocument> {
     return await this.find({
       id,
-      select: "email name progress.stage progress.module",
+      select:
+        "email guardian relationship birth region comorbidity progress.stage progress.module",
     });
   }
 }

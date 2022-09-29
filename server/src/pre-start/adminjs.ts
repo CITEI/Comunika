@@ -2,23 +2,29 @@ import AdminJS, { ResourceOptions, ResourceWithOptions } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSMongoose from "@adminjs/mongoose";
 import { ADMIN_SECRET, API_VERSION, APP_NAME, ORIGIN, STATIC_DIR } from "./constants";
-import { User } from "../model/game/user";
+import { User } from "../model/user";
 import userOptions from "../route/admin/user";
-import { Module } from "../model/game/module";
+import { Module } from "../model/module";
 import moduleOptions from "../route/admin/module";
-import { Activity } from "../model/game/activity";
+import { Activity } from "../model/activity";
 import stageOptions from "../route/admin/stage";
-import { Stage } from "../model/game/stage";
+import { Stage } from "../model/stage";
 import activityOptions from "../route/admin/activity";
-import { Admin } from "../model/admin/admin";
+import { Admin } from "../model/admin";
+import { Disability } from "../model/disability";
 import { adminOptions } from "../route/admin/admin";
 import { adminAuthenticationService } from "../service/admin";
 import { join } from "path";
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
-const manageNavigation: ResourceOptions["navigation"] = {
-  name: "Manage",
+const gameNavigation: ResourceOptions["navigation"] = {
+  name: "Game",
+  icon: "",
+};
+
+const peopleNavigation: ResourceOptions["navigation"] = {
+  name: "People",
   icon: "",
 };
 
@@ -27,35 +33,41 @@ const adminJs = new AdminJS({
     {
       resource: Admin,
       options: {
-        navigation: manageNavigation,
+        navigation: peopleNavigation,
         ...adminOptions,
       },
     },
     {
       resource: User,
       options: {
-        navigation: manageNavigation,
+        navigation: peopleNavigation,
         ...userOptions,
+      },
+    },
+    {
+      resource: Disability,
+      options: {
+        navigation: peopleNavigation,
       },
     },
     {
       resource: Module,
       options: {
-        navigation: manageNavigation,
+        navigation: gameNavigation,
         ...moduleOptions,
       },
     },
     {
       resource: Stage,
       options: {
-        navigation: manageNavigation,
+        navigation: gameNavigation,
         ...stageOptions,
       },
     },
     {
       resource: Activity,
       options: {
-        navigation: manageNavigation,
+        navigation: gameNavigation,
         ...activityOptions,
       },
     },
