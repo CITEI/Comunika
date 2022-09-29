@@ -1,10 +1,10 @@
-import { Stage, StageInput, StageDocument } from "../model/game/stage";
-import { Module, ModuleDocument } from "../model/game/module";
+import { Stage, StageInput, StageDocument } from "../model/stage";
+import { Module, ModuleDocument } from "../model/module";
 import {
   Activity,
   ActivityDocument,
   ActivityInput,
-} from "../model/game/activity";
+} from "../model/activity";
 import { ObjectNotFoundError } from "./errors";
 import { activityService } from "./activity";
 import { LinkedListService } from "./utils/linkedlist";

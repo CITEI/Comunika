@@ -1,5 +1,5 @@
-import { Game, GameDocument } from "../model/game/game";
-import { ModuleDocument, Module } from "../model/game/module";
+import { Game, GameDocument } from "../model/game";
+import { ModuleDocument, Module } from "../model/module";
 import { LinkedListService } from "./utils/linkedlist";
 
 export default class ModuleService extends LinkedListService<ModuleDocument, GameDocument> {

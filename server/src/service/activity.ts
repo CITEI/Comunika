@@ -1,4 +1,4 @@
-import { Activity, ActivityDocument } from "../model/game/activity";
+import { Activity, ActivityDocument } from "../model/activity";
 import { BasicService } from "./utils/basic";
 
 class ActivityService extends BasicService<ActivityDocument> {

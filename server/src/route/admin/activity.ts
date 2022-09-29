@@ -13,9 +13,9 @@ import Joi from "joi";
 import { CustomJoi } from "../utils/custom_joi";
 import { ActionContext, ActionRequest, ResourceOptions } from "adminjs";
 import { stageService } from "../../service/stage";
-import { NodeDiscriminators } from "../../model/game/node";
+import { NodeDiscriminators } from "../../model/node";
 import { capitalize } from "underscore.string";
-import { ActivitySchema } from "../../model/game/activity";
+import { ActivitySchema } from "../../model/activity";
 import {
   MIN_NODES,
   MIN_QUESTION_NODES,

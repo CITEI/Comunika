@@ -10,7 +10,7 @@ import {
   MIN_NODES,
   MIN_QUESTION_NODES,
   MIN_STRING_LENGTH,
-} from "../../pre-start/constants";
+} from "../pre-start/constants";
 
 export interface ActivityInput {
   name: string;

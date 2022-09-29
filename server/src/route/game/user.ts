@@ -4,7 +4,7 @@ import { Router, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { InternalServerError } from "../../service/errors";
 import passport from "passport";
-import { UserDocument } from "src/model/game/user";
+import { UserDocument } from "src/model/user";
 
 const router = Router();
 

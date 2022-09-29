@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { MIN_STRING_LENGTH } from "../../pre-start/constants";
+import { MIN_STRING_LENGTH } from "../pre-start/constants";
 import { StageDocument } from "./stage";
 
 export interface ModuleInput {

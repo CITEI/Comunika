@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Admin, AdminDocument, AdminInput } from "../model/admin/admin";
+import { Admin, AdminDocument, AdminInput } from "../model/admin";
 import { ROOT_PASSWORD, ROOT_EMAIL, ROOT_NAME } from "../pre-start/constants";
 import {
   BadRequestError,

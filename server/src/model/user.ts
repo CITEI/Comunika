@@ -1,14 +1,22 @@
 import mongoose from "mongoose";
-import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MIN_STRING_LENGTH } from "../../pre-start/constants";
+import {
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
+  MIN_STRING_LENGTH,
+} from "../pre-start/constants";
 import isEmail from "validator/lib/isEmail";
-import { passwordsMatch, hashPassword } from "../utils";
+import { passwordsMatch, hashPassword } from "./utils";
 import { ProgressDocument, ProgressSchema } from "./progress";
 
 /** Interface for creating a new user */
 export interface UserInput {
   email: string;
   password: string;
-  name: string;
+  guardian: string;
+  relationship: string;
+  birth: Date;
+  region: string;
+  comorbidity: string;
 }
 
 export const UserSchema = new mongoose.Schema({
@@ -26,9 +34,20 @@ export const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: MIN_PASSWORD_LENGTH,
-    maxlength: MAX_PASSWORD_LENGTH
+    maxlength: MAX_PASSWORD_LENGTH,
   },
-  name: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  guardian: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  relationship: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  birth: { type: Date, required: true },
+  region: { type: String, required: true, minlength: MIN_STRING_LENGTH },
+  comorbidity: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Disability",
+      required: true,
+      min: 1,
+    },
+  ],
   progress: { type: ProgressSchema, required: true, default: () => ({}) },
 });
 
@@ -47,32 +66,10 @@ UserSchema.methods.passwordMatches = async function (
   return passwordsMatch(pass, this.password);
 };
 
-/*
-/**
- * Calculates the percentage of correctly answered box questions
- */
-/*UserSchema.methods.calculateScore = function (): number {
-  // trues / total
-  const box = (this as UserDocument).progress.box;
-  return (
-    box.activities.reduce((sum: number, el) => sum + Number(el.answer), 0) /
-    box.activities.length
-  );
-};*/
-
-/**
- * Checks if a user achieved the minimum requirements to advance
- */
-/*UserSchema.methods.isApproved = function (): boolean {
-  return this.calculateScore() > 0.7;
-};*/
-
 /** Interface for retrieving user registers */
 export interface UserDocument extends mongoose.Document, UserInput {
   progress: ProgressDocument;
   passwordMatches(pass: string): Promise<boolean>;
-  //calculateScore(): number;
-  //isApproved(): boolean;
 }
 
 export const User = mongoose.model<UserDocument>("User", UserSchema);
