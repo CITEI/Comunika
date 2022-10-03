@@ -54,7 +54,7 @@ const Modal: React.VoidFunctionComponent<ModalProps> = (props) => {
               {props.text}
             </Text>
             <Button
-              title="Close"
+              label="Close"
               style={{ marginHorizontal: dp(20) }}
               onPress={useCallback(() => {
                 setVisible(false);
