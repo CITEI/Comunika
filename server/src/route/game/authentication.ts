@@ -19,7 +19,7 @@ router.post(
       relationship: CustomJoi.RequiredString(),
       birth: Joi.date().required(),
       region: CustomJoi.RequiredString(),
-      comorbidity: CustomJoi.RequiredString(),
+      comorbidity: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
     },
   }),
   async (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ router.get(
   }
 );
 
-router.get('/disabilites', async (req, res) => {
+router.get('/disabilities', async (req, res) => {
   const disabilities = await disabilityService.findAll()
   res.status(StatusCodes.OK).send(disabilities)
 })
