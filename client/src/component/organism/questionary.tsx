@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { QuestionNode } from "../../store/user";
 import Title from "../atom/title";
-import Text from "../atom/text";
+import RawText from "../atom/text";
 import RadioQuestions from "../molecule/radio-questions";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
@@ -26,7 +26,7 @@ const Counter = styled(Title)`
   color: ${(props) => props.theme.color.notes};
 `;
 
-const Notes = styled(Text)`
+const Notes = styled(RawText)`
   font-size: ${dp(14)}px;
   margin-top: ${dp(8)}px;
   margin-bottom: ${dp(28)}px;

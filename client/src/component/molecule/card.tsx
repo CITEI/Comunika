@@ -2,7 +2,7 @@ import React from "react";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 import BaseTitle from "../atom/title";
-import Text from "../atom/text";
+import RawText from "../atom/text";
 import BaseButton from "../atom/button";
 import ShadowPanel from "../atom/shadow-panel";
 import t from "../../pre-start/i18n";
@@ -53,7 +53,7 @@ const ProgressContainer = styled.View`
   justify-content: center;
 `;
 
-const ProgressText = styled(Text)`
+const ProgressText = styled(RawText)`
   font-size: ${sp(10)}px;
 `;
 
@@ -93,7 +93,7 @@ const ContentRightContainer = styled.View`
   margin-left: ${dp(20)}px;
 `;
 
-const Description = styled(Text)`
+const Description = styled(RawText)`
   font-size: ${sp(10)}px;
   text-align: center;
 `;

@@ -3,9 +3,9 @@ import { TextProps } from "react-native";
 import { dp } from "../../helper/resolution";
 import t from "../../pre-start/i18n";
 import styled from "../../pre-start/themes";
-import Text from "./text";
+import RawText from "./text";
 
-const Label = styled(Text)`
+const Label = styled(RawText)`
   text-align: center;
   margin-bottom: ${dp(10)}px;
   font-family: ${(props) => props.theme.fontFamily.textSemiBold};
