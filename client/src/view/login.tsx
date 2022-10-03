@@ -1,53 +1,47 @@
 import React, { useCallback, useEffect, useState } from "react";
-import LoginForm from "../component/organism/login-form";
 import VerticalContainer from "../component/atom/vertical-container";
-import { useAppDispatch } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { login } from "../store/auth";
-import Button from "../component/atom/button";
-import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import Title from "../component/atom/title";
-import logo from "../../assets/logo.png";
-import { dp } from "../helper/resolution";
 import Text from "../component/atom/text";
 import Modal from "../component/molecule/modal";
 import MainContainer from "../component/atom/main-container";
 import ContentContainer from "../component/atom/content-container";
-import styled from "styled-components/native";
 import t from "../pre-start/i18n";
+import LoginHeader from "../component/organism/login-header";
+import Form from "../component/organism/form";
 
 export interface LoginProps {}
-
-const Header = styled.View`
-  align-items: center;
-  justify-content: center;
-  margin-top: ${dp(25)}px;
-  margin-bottom: ${dp(25)}px;
-`
-
-const Logo = styled.Image`
-  width: ${dp(98)}px;
-  height: ${dp(41)}px;
-  margin-bottom: ${dp(39)}px;
-  margin-top: ${dp(25)}px;
-`
 
 const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
-  const authStatus = useSelector((state) => (state as any).auth.status);
+  const authentication = useAppSelector((state) => state.auth.authentication);
+  const [validated, setValidated] = useState(false);
 
   const [first, setFirst] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalText, setModalText] = useState("");
 
   useEffect(() => {
     if (!first) {
-      if (authStatus.isAuthenticated) {
+      if (authentication.status) {
         navigation.navigate("Onboarding");
-      } else setModalVisible(true);
+      } else setModalText(authentication.message);
     } else setFirst(false);
-  }, [authStatus]);
+  }, [authentication]);
+
+  const handleChange = useCallback(
+    (map: Map<string, string>) => {
+      if (
+        (map.get("password") || "").length < 8 ||
+        !/\w+@\w+\.\w+/.test(map.get("email") || "")
+      )
+        setValidated(false);
+      else setValidated(true);
+    },
+    [setValidated]
+  );
 
   const handleLogin = (map: Map<string, string>) => {
     const email = map.get("email");
@@ -63,24 +57,35 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
     <MainContainer>
       <ContentContainer>
         <Modal
-          text={t("Invalid credentials are present!")}
+          text={t(modalText)}
           title={t("Not logged! :(")}
-          onRequestClose={useCallback(() => setModalVisible(false), [])}
-          visible={modalVisible}
+          onRequestClose={useCallback(() => setModalText(""), [])}
+          visible={Boolean(modalText)}
         ></Modal>
-        <Header>
-          <Logo source={logo} />
-          <Title>{t("Welcome!")}</Title>
-        </Header>
+        <LoginHeader />
         <VerticalContainer>
-          <LoginForm onSubmit={handleLogin} />
-          <Button
-            title={t("Create account")}
-            onPress={handleRegister}
-            variant="outline"
+          <Form
+            inputs={[
+              { type: "text", label: t("Email"), name: "email" },
+              { type: "password", label: t("Password"), name: "password" },
+              {
+                type: "submit",
+                label: t("Login"),
+                name: "login",
+                onSubmit: handleLogin,
+                disabled: !validated,
+              },
+              {
+                type: "button",
+                label: t("Create account"),
+                name: "register",
+                onPress: handleRegister,
+              },
+            ]}
+            onChange={handleChange}
           />
           <Text style={{ marginTop: 20, textAlign: "center" }}>
-            {t('Forgot the password? Click here!')}
+            {t("Forgot the password? Click here!")}
           </Text>
         </VerticalContainer>
       </ContentContainer>

@@ -1,13 +1,9 @@
-import styled from "styled-components/native";
-import React, { useCallback } from "react";
-import { View } from "react-native";
-import { dp, sp } from "../../helper/resolution";
+import styled from "../../pre-start/themes"
+import React, { useState, useEffect, useCallback } from "react";
+import { dp } from "../../helper/resolution";
+import MaskedInput, { MaskInputProps } from 'react-native-mask-input'
 
-const StyledView = styled.View`
-  margin-bottom: ${(props) => dp(8)}px;
-`;
-
-const StyledInput = styled.TextInput`
+const MaskInput = styled(MaskedInput).attrs((props: {focused: boolean}) => props)`
   margin: 5px 0 5px 0;
   height: ${(props) => dp(36)}px;
   padding: ${(props) => dp(10)}px;
@@ -22,33 +18,33 @@ const StyledInput = styled.TextInput`
   justify-content: center;
 `;
 
-const StyledLabel = styled.Text`
-  font-size: ${(props) => sp(13)}px;
-  margin-left: 15px;
-  margin-top: ${(props) => dp(4)}px;
-  font-family: ${(props) => props.theme.fontFamily.text};
-`;
-
-interface InputProps {
-  type?: "text" | "password" | "email";
-  label: string;
+export interface InputProps extends Omit<MaskInputProps, "value"> {
   onChangeText: (text: string) => void;
+  value?: string;
 }
 
+/** A component that receives user information. */
 const Input: React.VoidFunctionComponent<InputProps> = (props) => {
   const [isFocused, setIsFocused] = React.useState(false);
+  const [text, setText] = useState(props.value || "");
+
+  const handleOnChangeText = useCallback((masked: string, unmasked: string) => {
+    setText(masked);
+  }, [props.onChangeText]);
+
+  useEffect(() => {
+    props.onChangeText(text);
+  }, [text, props.onChangeText])
 
   return (
-    <StyledView>
-      <StyledLabel>{props.label}</StyledLabel>
-      <StyledInput
-        {...props}
-        onFocus={useCallback(() => setIsFocused(true), [])}
-        onBlur={useCallback(() => setIsFocused(false), [])}
-        focused={isFocused}
-        secureTextEntry={props.type == "password"}
-      ></StyledInput>
-    </StyledView>
+    <MaskInput
+      {...props}
+      onChangeText={handleOnChangeText}
+      onFocus={useCallback(() => setIsFocused(true), [])}
+      onBlur={useCallback(() => setIsFocused(false), [])}
+      focused={isFocused}
+      value={text}
+    ></MaskInput>
   );
 };
 
