@@ -16,8 +16,7 @@ const Container = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  padding: ${(props) => dp(15)}px;
-  border: 1px solid black;
+  padding: ${(props) => dp(12)}px;
 `;
 
 const Checkbox: React.VoidFunctionComponent<CheckboxProps> = (props) => {

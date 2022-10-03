@@ -5,6 +5,7 @@ import PasswordInput, { PasswordInputProps } from "../molecule/password-input";
 import Checkbox, { CheckboxProps } from "../molecule/checkbox";
 import Button, { ButtonProps } from "../atom/button";
 import DateInput, { DateInputProps } from "../molecule/date-input";
+import CheckboxSet, { CheckboxSetProps } from "./checkbox-set";
 
 interface SubmitProps extends Omit<ButtonProps, "onPress"> {
   onSubmit: (map: Map<string, string>) => void;
@@ -18,6 +19,10 @@ type InputConstructor = { name: string } & (
   | ({ type: "checkbox" } & PartialSingle<CheckboxProps, "onSelected">)
   | ({ type: "button" } & ButtonProps)
   | ({ type: "date" } & PartialSingle<DateInputProps, "onChangeDate">)
+  | ({ type: "checkboxset" } & PartialSingle<
+      CheckboxSetProps,
+      "onSelectionChange"
+    >)
   | SubmitConstructor
 );
 
@@ -34,11 +39,13 @@ const DoNothing = (...args) => {};
  */
 const Form: React.VoidFunctionComponent<FormProps> = (props) => {
   const [inputs, setInputs] = useState(new Map<string, any>());
-  const [filled, setFilled] = useState(false);
 
   const handleChange = useCallback(
     (key: string, val: any, callback?: (val: any) => void) => {
-      if (val && inputs.get(key) != val) {
+      if (
+        val &&
+        (!inputs.has(key) || inputs.get(key).toString() != val.toString())
+      ) {
         setInputs(new Map(inputs.set(key, val)));
         (callback || DoNothing)(val);
       } else if (!val && inputs.has(key)) {
@@ -56,7 +63,6 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
   const generateChild = (el: InputConstructor) => {
     const { type, name, ...rest } = el;
     rest["key"] = name;
-    //console.log(rest);
     switch (type) {
       case "text": {
         const elProps = rest as InputProps;
@@ -109,6 +115,17 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
       case "submit": {
         const elProps = rest as SubmitProps;
         return <Button {...elProps} onPress={() => el.onSubmit(inputs)} />;
+      }
+      case "checkboxset": {
+        const elProps = rest as CheckboxSetProps;
+        return (
+          <CheckboxSet
+            {...elProps}
+            onSelectionChange={(selected) =>
+              handleChange(name, selected, elProps.onSelectionChange)
+            }
+          />
+        );
       }
       default:
         throw new Error("Invalid input type");

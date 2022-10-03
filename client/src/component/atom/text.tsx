@@ -1,20 +1,18 @@
 import React from 'react'
-import { TextStyle } from 'react-native'
+import { Text as RNText, TextProps as RNTextProps } from 'react-native'
 import styled from '../../pre-start/themes'
 import { sp } from '../../helper/resolution'
 
-interface TextProps {
-  style?: TextStyle[] | TextStyle
-}
+interface TextProps extends RNTextProps {}
 
-const StyledText = styled.Text`
+const RawText = styled(RNText)`
   font-size: ${(props) => sp(12)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
 `
 
 const Text: React.FunctionComponent<TextProps> = (props) => {
   return (
-    <StyledText {...props}>{props.children}</StyledText>
+    <RawText {...props}>{props.children}</RawText>
   )
 }
 

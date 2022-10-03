@@ -12,8 +12,9 @@ const DateInput: React.VoidFunctionComponent<DateInputProps> = (props) => {
   const {onChangeDate, ...inputProps} = props;
 
   const handleOnChangeText = useCallback((text: string) => {
-    const date = moment(text, 'DDMMYYYY').toDate();
-    onChangeDate(date);
+    const momentDate = moment(text, 'DDMMYYYY');
+    if (momentDate.isValid())
+      onChangeDate(momentDate.toDate());
   }, [onChangeDate]);
 
   return (

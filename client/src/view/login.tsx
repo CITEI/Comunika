@@ -4,13 +4,16 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { login } from "../store/auth";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import Text from "../component/atom/text";
 import Modal from "../component/molecule/modal";
 import MainContainer from "../component/atom/main-container";
 import ContentContainer from "../component/atom/content-container";
 import t from "../pre-start/i18n";
 import LoginHeader from "../component/organism/login-header";
 import Form from "../component/organism/form";
+import { isEmail, isPassword } from "../helper/validators";
+import TextLink from "../component/molecule/text-link";
+import { Linking } from "react-native";
+import { AUTHOR_EMAIL } from "../pre-start/constants";
 
 export interface LoginProps {}
 
@@ -34,11 +37,11 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const handleChange = useCallback(
     (map: Map<string, string>) => {
       if (
-        (map.get("password") || "").length < 8 ||
-        !/\w+@\w+\.\w+/.test(map.get("email") || "")
+        isPassword(map.get("password") || "") &&
+        isEmail(map.get("email") || "")
       )
-        setValidated(false);
-      else setValidated(true);
+        setValidated(true);
+      else setValidated(false);
     },
     [setValidated]
   );
@@ -84,9 +87,15 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
             ]}
             onChange={handleChange}
           />
-          <Text style={{ marginTop: 20, textAlign: "center" }}>
-            {t("Forgot the password? Click here!")}
-          </Text>
+          <TextLink
+            text={t("Forgot the password?") + " "}
+            link={t("Click here")}
+            onPress={() => {
+              Linking.openURL(
+                `mailto:${AUTHOR_EMAIL}?subject=Password%20reset`
+              );
+            }}
+          />
         </VerticalContainer>
       </ContentContainer>
     </MainContainer>
