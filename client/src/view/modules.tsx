@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchStages, fetchModules, ModuleItem } from "../store/game-data";
+import React, { useCallback, useEffect } from "react";
+import { ModuleItem } from "../store/game-data";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";

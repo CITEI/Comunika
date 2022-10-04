@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../helper/api";
+import api, { setToken } from "../helper/api";
 import store from "./store";
-import { saveToken } from "../helper/token";
+import { saveToken } from "../helper/settings";
 import { StatusCodes } from "http-status-codes";
 import { AxiosError } from "axios";
 
@@ -18,7 +18,7 @@ export const login = createAsyncThunk<
   try{
     const res = await api.post("/auth", user);
     const token = res.data;
-    api.defaults.headers.common["Authorization"] = token;
+    setToken(token);
     await saveToken(token);
   } catch (error) {
     const err = error as AxiosError;

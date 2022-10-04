@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import styled from "../pre-start/themes";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
-import useHistory from "../hooks/usehistory";
 import useUserInfo from "../hooks/useuserinfo";
 import useDisabilities from "../hooks/usedisabilities";
 import RawForm from "../component/organism/form";
@@ -12,15 +11,17 @@ import t from "../pre-start/i18n";
 import RawTitle from "../component/atom/title";
 import { dp } from "../helper/resolution";
 import moment from "moment";
+import { clearToken } from "../helper/settings";
+import * as Updates from "expo-updates";
 
 const Title = styled(RawTitle)`
   margin-top: ${dp(20)}px;
   margin-bottom: ${dp(20)}px;
-`
+`;
 
 const Form = styled(RawForm)`
   margin-bottom: ${dp(20)}px;
-`
+`;
 
 const Settings: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
@@ -30,13 +31,18 @@ const Settings: React.VoidFunctionComponent = () => {
     option: disability.name,
     value: disability._id,
   }));
-  const birth = info.birth ? moment(info.birth).format("DD/MM/YYYY") : "";
+  const birth = info?.birth ? moment(info.birth).format("DD/MM/YYYY") : "";
 
-  const handleReturn = () => {
+  const handleReturn = useCallback(() => {
     navigation.pop();
-  };
+  }, [navigation]);
 
-  return (
+  const handleLogout = useCallback(async () => {
+    await clearToken();
+    await Updates.reloadAsync();
+  }, []);
+
+  return info ? (
     <MainContainer>
       <ContentContainer>
         <Title>{t("Profile")}</Title>
@@ -84,10 +90,18 @@ const Settings: React.VoidFunctionComponent = () => {
               name: "return",
               onPress: handleReturn,
             },
+            {
+              type: "button",
+              label: t("Logout"),
+              name: "logout",
+              onPress: handleLogout,
+            },
           ]}
         />
       </ContentContainer>
     </MainContainer>
+  ) : (
+    <></>
   );
 };
 

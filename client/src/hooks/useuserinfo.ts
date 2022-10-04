@@ -11,7 +11,7 @@ const useUserInfo = () => {
     if (!loaded) dispatch(fetchUserData());
   }, [loaded]);
 
-  return userData;
+  return userData.email ? userData : undefined;
 }
 
 export default useUserInfo;

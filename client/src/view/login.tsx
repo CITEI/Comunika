@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import VerticalContainer from "../component/atom/vertical-container";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { login } from "../store/auth";
+import auth, { login } from "../store/auth";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
 import Modal from "../component/molecule/modal";
@@ -14,6 +14,8 @@ import { isEmail, isPassword } from "../helper/validators";
 import TextLink from "../component/molecule/text-link";
 import { Linking } from "react-native";
 import { AUTHOR_EMAIL } from "../pre-start/constants";
+import { loadToken } from "../helper/settings";
+import { fetchUserData } from "../store/user";
 
 export interface LoginProps {}
 
@@ -21,18 +23,21 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
   const authentication = useAppSelector((state) => state.auth.authentication);
+  const storageAuth = useAppSelector((state) => state.user.flags.info);
   const [validated, setValidated] = useState(false);
-
-  const [first, setFirst] = useState(true);
   const [modalText, setModalText] = useState("");
 
   useEffect(() => {
-    if (!first) {
-      if (authentication.status) {
-        navigation.navigate("Onboarding");
-      } else setModalText(authentication.message);
-    } else setFirst(false);
-  }, [authentication]);
+    loadToken().then(() => {
+      dispatch(fetchUserData());
+    })
+  }, []);
+
+  useEffect(() => {
+    if (authentication.status || storageAuth) {
+      navigation.navigate("Onboarding");
+    } else setModalText(authentication.message || "");
+  }, [authentication, storageAuth]);
 
   const handleChange = useCallback(
     (map: Map<string, string>) => {

@@ -1,21 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Axios } from "axios";
-import jwtDecode from "jwt-decode";
 import api, { toUri } from "../helper/api";
-import { getToken } from "../helper/token";
-
-interface UserToken {
-  id: string;
-  email: string;
-  iat: number;
-  exp: number;
-}
-
-// Waiting for authentication to remove this
-const userId = async () =>
-  jwtDecode<UserToken>(
-    (await getToken({ removeBearer: true })) as unknown as string
-  ).id;
 
 interface UserInfo {
   email?: string;

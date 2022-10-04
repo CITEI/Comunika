@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import t from "../../pre-start/i18n"
+import t from "../../pre-start/i18n";
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";
@@ -8,8 +8,6 @@ import BaseTitle from "../atom/title";
 import BaseText from "../atom/text";
 import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
-import { useNavigation } from "@react-navigation/native";
-import { GameNavigatorProps } from "../../route/game";
 import { ImageSource } from "react-native-vector-icons/Icon";
 
 interface OnboardingProps {
@@ -19,6 +17,7 @@ interface OnboardingProps {
     text: string;
     title: string;
   }[];
+  onFinish?: () => void;
 }
 
 const Container = styled(ContentContainer)`
@@ -53,16 +52,16 @@ const Footer = styled.View`
 
 /** Onboarding screen */
 const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
-  const navigation = useNavigation<GameNavigatorProps>();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const slide = props.slides[currentSlide];
-  const isLast = currentSlide == (props.slides.length - 1);
+  const isLast = currentSlide == props.slides.length - 1;
 
   /** Advances to the next slide */
   const handleNext = useCallback(() => {
-    if (isLast) navigation.navigate("Main");
-    else setCurrentSlide(currentSlide + 1);
-  }, [currentSlide, navigation, props.slides.length]);
+    if (isLast) {
+      props.onFinish?.();
+    } else setCurrentSlide(currentSlide + 1);
+  }, [currentSlide, props.slides.length]);
 
   return (
     <MainContainer>
@@ -75,11 +74,16 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
       <Container>
         <Title>{slide.title}</Title>
         <Text>{slide.text}</Text>
-        <Image source={slide.image} accessibilityHint={slide.imageAlt} resizeMode="contain"/>
+        <Image
+          source={slide.image}
+          accessibilityHint={slide.imageAlt}
+          resizeMode="contain"
+        />
         <Footer>
           <Button
-            label={isLast ? t("Go to the activities"): t("Next")}
-            onPress={handleNext} />
+            label={isLast ? t("Go to the activities") : t("Next")}
+            onPress={handleNext}
+          />
         </Footer>
       </Container>
     </MainContainer>
