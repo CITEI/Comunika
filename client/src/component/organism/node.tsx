@@ -15,17 +15,6 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const Text = styled(BaseText)`
-  margin-top: ${dp(16)}px;
-  text-align: left;
-  width: 100%;
-`;
-
-const Image = styled.Image`
-  width: 100%;
-  height: ${dp(100)}px;
-`;
-
 const Node: React.FunctionComponent<NodeProps> = (props) => {
   return (
     <Container>
@@ -38,7 +27,7 @@ const Node: React.FunctionComponent<NodeProps> = (props) => {
               audio={props.audio}
             />
           ),
-          carrousel: <Carrousel slides={props.images} />,
+          carrousel: <Carrousel slides={props.images} preview={props.preview} />,
         }[props.type]
       }
       <Md>{props.text}</Md>

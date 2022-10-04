@@ -1,8 +1,10 @@
-import { dp, sp } from "../../helper/resolution";
-import React, { useCallback } from "react";
-import Icon from "react-native-vector-icons/AntDesign";
+import { dp } from "../../helper/resolution";
+import React, { useCallback, useState } from "react";
 import styled from "../../pre-start/themes";
-import { Audio } from "expo-av";
+import IconButton from "../atom/icon-button";
+import AudioButton from "../atom/audio-button";
+import { TouchableOpacity } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 interface CarrouselProps {
   /** slides definition */
@@ -14,6 +16,7 @@ interface CarrouselProps {
     /** audio uri */
     audio?: string;
   }[];
+  preview?: boolean;
 }
 
 const Container = styled.View`
@@ -25,16 +28,13 @@ const Container = styled.View`
   justify-content: center;
 `;
 
-const ArrowContainer = styled.TouchableOpacity`
+const Arrow = styled(IconButton)`
   height: 100%;
   align-items: center;
   justify-content: center;
   padding: ${dp(20)}px;
-`;
-
-const ArrowIcon = styled(Icon)`
+  background: transparent;
   color: ${(props) => props.theme.color.primary};
-  font-size: ${sp(16)}px;
 `;
 
 const Content = styled.View`
@@ -54,24 +54,20 @@ const Image = styled.Image`
   margin-bottom: ${dp(5)}px;
 `;
 
-const AudioContainer = styled.TouchableOpacity`
-  background: ${(props) => props.theme.color.primary};
-  border-radius: ${dp(5)}px;
-  padding: ${dp(5)}px;
-  padding-left: ${dp(7)}px;
-  padding-right: ${dp(7)}px;
-  align-items: center;
-  justify-content: center;
+const Preview = styled(TouchableOpacity)`
+  width: 100%;
 `;
 
-const AudioIcon = styled(ArrowIcon)`
-  color: ${(props) => props.theme.color.text};
-  font-size: ${sp(12)}px;
-`;
+const Icon = styled(Image)`
+  max-width: 30%;
+  flex: 1;
+  margin-left: ${dp(5)}px;
+  margin-right: ${dp(5)}px;
+`
 
 const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
-  const [index, setIndex] = React.useState(0);
-  const [playing, setPlaying] = React.useState(false);
+  const [preview, setPreview] = useState<boolean>(props.preview || false);
+  const [index, setIndex] = useState(0);
 
   const data = props.slides;
   const current = props.slides[index];
@@ -87,42 +83,37 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
     else setIndex(index - 1);
   }, [index]);
 
-  /** Plays an audio when the speaker button is pressed */
-  const handleAudioPress = useCallback(async () => {
-    if (current.audio && !playing) {
-      setPlaying(true);
-      await Audio.Sound.createAsync(
-        { uri: current.audio },
-        { shouldPlay: true },
-        (status) => {
-          if (status['didJustFinish']) setPlaying(false);
-        }
-      );
-    }
-  }, [playing, index]);
+  const handlePreview = useCallback(() => {
+    setPreview(false);
+  }, [preview]);
 
   return (
     <Container>
-      <ArrowContainer onPress={handlePrevious}>
-        <ArrowIcon name="caretleft" />
-      </ArrowContainer>
-      <Content>
-        {current.image && (
-          <Image
-            source={{ uri: current.image }}
-            resizeMode="contain"
-            accessibilityHint={current.imageAlt}
-          />
-        )}
-        {current.audio && (
-          <AudioContainer onPress={handleAudioPress}>
-            <AudioIcon name="sound" />
-          </AudioContainer>
-        )}
-      </Content>
-      <ArrowContainer onPress={handleNext}>
-        <ArrowIcon name="caretright" />
-      </ArrowContainer>
+      {preview ? (
+        <Preview onPress={handlePreview}>
+          {props.slides.filter(el => "image" in el).map((el, i) => (
+            <Container key={i}>
+              <Icon source={{ uri: el.image }} resizeMode="contain" />
+              {el.audio && <AudioButton audio={el.audio} />}
+            </Container>
+          ))}
+        </Preview>
+      ) : (
+        <>
+          <Arrow icon="caretleft" onPress={handlePrevious} />
+          <Content>
+            {current.image && (
+              <Image
+                source={{ uri: current.image }}
+                resizeMode="contain"
+                accessibilityHint={current.imageAlt}
+              />
+            )}
+            {current.audio && <AudioButton audio={current.audio} />}
+          </Content>
+          <Arrow icon="caretright" onPress={handleNext} />
+        </>
+      )}
     </Container>
   );
 };

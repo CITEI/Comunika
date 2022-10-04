@@ -1,6 +1,11 @@
-import {TouchableOpacity, TouchableOpacityProps} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  ViewStyle,
+} from "react-native";
 import RawIcon from "react-native-vector-icons/AntDesign";
-import React from 'react';
+import React, { useMemo } from "react";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 
@@ -16,20 +21,31 @@ const Container = styled(TouchableOpacity)`
   padding-right: ${dp(7)}px;
   align-items: center;
   justify-content: center;
+  color: ${(props) => props.theme.color.text};
 `;
 
-const Icon = styled(RawIcon)`
-  color: ${(props) => props.theme.color.text};
-  font-size: ${sp(12)}px;
+interface IconStyle {
+  color?: string;
+  fontSize?: number;
+}
+
+const Icon = styled(RawIcon)<IconStyle>`
+  font-size: ${(props) => props.fontSize || sp(12)}px;
+  color: ${(props) => props.color || props.theme.color.text};
 `;
 
 const IconButton: React.VoidFunctionComponent<IconButtonProps> = (props) => {
   const { icon, ...rest } = props;
+  const style = useMemo(
+    () => (StyleSheet.flatten(props.style) || {}) as ViewStyle & IconStyle,
+    [props.style]
+  );
+
   return (
     <Container {...rest}>
-      <Icon name={icon} />
+      <Icon name={icon} color={style.color} fontSize={style.fontSize} />
     </Container>
-  )
-}
+  );
+};
 
-export default IconButton
+export default IconButton;
