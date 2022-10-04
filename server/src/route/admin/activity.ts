@@ -156,9 +156,9 @@ const activityOptions: ResourceOptions = {
     new: {
       before: [
         buildFileUploadBefore([
-          { attribute: "nodes.$.image", extensions: ["png"] },
+          { attribute: "nodes.$.image", extensions: ["png", "gif"] },
           { attribute: "nodes.$.audio", extensions: ["ogg"] },
-          { attribute: "nodes.$.images.$.image", extensions: ["png"] },
+          { attribute: "nodes.$.images.$.image", extensions: ["png", "gif"] },
           { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
         ]),
         unflattenRequest,
