@@ -65,7 +65,7 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
         {slide.text}
       </Text>
       <Footer>
-        <Button title={t("Next")} onPress={handleNext} />
+        <Button label={t("Next")} onPress={handleNext} />
       </Footer>
     </Container>
   );

@@ -139,7 +139,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
             {props.description}
           </Description>
           {props.status == "incomplete" && (
-            <Button title={t("Start")} onPress={props.onPress} />
+            <Button label={t("Start")} onPress={props.onPress} />
           )}
         </ContentRightContainer>
       </ContentContainer>

@@ -84,11 +84,11 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         <Text>{props.no_content ? t("NoContent") : t("StageSucceeded")}</Text>
         <Footer>
           {!props.no_content && (
-            <Button title={t("Start next")} onPress={handleNext} />
+            <Button label={t("Start next")} onPress={handleNext} />
           )}
           <Button
             variant="outline"
-            title={t("Back to menu")}
+            label={t("Back to menu")}
             onPress={handleBack}
           />
         </Footer>

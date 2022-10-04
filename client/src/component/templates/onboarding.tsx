@@ -78,7 +78,7 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
         <Image source={slide.image} accessibilityHint={slide.imageAlt} resizeMode="contain"/>
         <Footer>
           <Button
-            title={isLast ? t("Go to the activities"): t("Next")}
+            label={isLast ? t("Go to the activities"): t("Next")}
             onPress={handleNext} />
         </Footer>
       </Container>

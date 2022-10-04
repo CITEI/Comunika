@@ -79,7 +79,7 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         onSelected={handleRadioSelect}
         selected={answers[index]}
       />
-      <BackButton title={t("Back")} onPress={handleBackPressed} />
+      <BackButton label={t("Back")} onPress={handleBackPressed} />
     </>
   ) : <></>;
 };
