@@ -37,7 +37,7 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
       activities={box}
       onFinish={handleFinish}
       module={module.name}
-    ></Activity>
+    />
   ) : (
     <></>
   );

@@ -9,6 +9,7 @@ import BaseTTSPlayer from "./tts-player";
 import TTSLabel from "../atom/tts-label";
 import t from "../../pre-start/i18n";
 import util from 'util'
+import { extractText } from "../../helper/markdown";
 
 interface InstructionProps {
   title: string;
@@ -68,9 +69,9 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
         <Title>{props.title}</Title>
       </Header>
       <TTSLabel />
-      <TTSPlayer text={currentNode.text} />
+      <TTSPlayer text={extractText(currentNode.text)} />
       <Node {...currentNode} />
-      <Button title={isLast ? t("Finish") : t("Next")} onPress={handleNextPressed} />
+      <Button label={isLast ? t("Finish") : t("Next")} onPress={handleNextPressed} />
     </>
   );
 };
