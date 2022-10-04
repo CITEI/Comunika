@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "../../pre-start/themes";
 import { dp } from "../../helper/resolution";
 
@@ -7,7 +7,7 @@ export interface CheckmarkProps {
   onSelected: (selected: boolean) => void;
 }
 
-const Marker = styled.TouchableOpacity.attrs((props: CheckmarkProps) => props)`
+const Marker = styled.View.attrs((props: CheckmarkProps) => props)`
   width: ${(props) => dp(13)}px;
   height: ${(props) => dp(13)}px;
   background-color: ${(props) =>
@@ -22,13 +22,7 @@ const Checkmark: React.VoidFunctionComponent<CheckmarkProps> = (props) => {
     setSelected(props.value || false);
   }, [props.value]);
 
-  const handlePress = useCallback(() => {
-    const newValue = !selected;
-    setSelected(newValue);
-    props.onSelected(newValue);
-  }, [props.onSelected, selected]);
-
-  return <Marker value={selected} onPress={handlePress} />;
+  return <Marker value={selected} />;
 };
 
 export default Checkmark;

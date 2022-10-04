@@ -1,4 +1,4 @@
-import { View, Text, ViewProps } from "react-native";
+import { View, ViewProps } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "../../pre-start/themes";
 import { dp } from "../../helper/resolution";
@@ -7,8 +7,10 @@ import InputLabel from "../atom/input-label";
 
 export interface CheckboxSetProps extends ViewProps {
   onSelectionChange: (selected: string[]) => void;
-  options: {option: string; value: string}[];
+  options: { option: string; value: string }[];
   label: string;
+  editable?: boolean;
+  selected?: string[];
 }
 
 const Container = styled(View)`
@@ -23,16 +25,17 @@ const Container = styled(View)`
 
 const Label = styled(InputLabel)`
   margin-bottom: ${(props) => dp(5)}px;
-`
+`;
 
 /** Multiple checkbox selection box */
 const CheckboxSet: React.VoidFunctionComponent<CheckboxSetProps> = (props) => {
-  const [selected, setSelected] = useState(new Set<string>());
+  const [selected, setSelected] = useState(
+    new Set<string>(props.selected || [])
+  );
 
   const handleSelected = useCallback(
     (option: string, value: boolean) => {
-      if (value)
-        setSelected(new Set(selected.add(option)));
+      if (value) setSelected(new Set(selected.add(option)));
       else {
         selected.delete(option);
         setSelected(new Set(selected));
@@ -43,7 +46,7 @@ const CheckboxSet: React.VoidFunctionComponent<CheckboxSetProps> = (props) => {
 
   useEffect(() => {
     props.onSelectionChange(Array.from(selected));
-  }, [selected, props.onSelectionChange])
+  }, [selected, props.onSelectionChange]);
 
   return (
     <Container>
@@ -53,6 +56,8 @@ const CheckboxSet: React.VoidFunctionComponent<CheckboxSetProps> = (props) => {
           label={option.option}
           key={option.value}
           onSelected={(selected) => handleSelected(option.value, selected)}
+          value={selected.has(option.value)}
+          editable={props.editable}
         />
       ))}
     </Container>

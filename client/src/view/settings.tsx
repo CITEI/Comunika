@@ -1,70 +1,93 @@
-import { View, Text } from "react-native";
-import React, { useEffect } from "react";
-import { FullView } from "../component/atom/full-view";
-import styled from "styled-components/native";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import Button from "../component/atom/button";
+import React from "react";
+import styled from "../pre-start/themes";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
-import List from "../component/molecule/list";
-import { fetchHistory } from "../store/user";
+import useHistory from "../hooks/usehistory";
+import useUserInfo from "../hooks/useuserinfo";
+import useDisabilities from "../hooks/usedisabilities";
+import RawForm from "../component/organism/form";
+import MainContainer from "../component/atom/main-container";
+import ContentContainer from "../component/atom/content-container";
+import t from "../pre-start/i18n";
+import RawTitle from "../component/atom/title";
+import { dp } from "../helper/resolution";
+import moment from "moment";
 
-const Item = styled.Text`
-  margin-top: 5px;
-`;
+const Title = styled(RawTitle)`
+  margin-top: ${dp(20)}px;
+  margin-bottom: ${dp(20)}px;
+`
 
-const BoldItem = styled.Text`
-  margin-top: 5px;
-  font-weight: bold;
-`;
-
-const Spacing = styled.View`
-  flex: 1;
-`;
+const Form = styled(RawForm)`
+  margin-bottom: ${dp(20)}px;
+`
 
 const Settings: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
-  const info = useAppSelector((state) => state.user.info);
-  const dispatch = useAppDispatch();
-  const historyLoaded = useAppSelector((state) => state.user.historyLoaded);
-  const history = useAppSelector((state) => state.user.history);
+  const info = useUserInfo();
+  const rawDisabilities = useDisabilities();
+  const disabilities = rawDisabilities.map((disability) => ({
+    option: disability.name,
+    value: disability._id,
+  }));
+  const birth = info.birth ? moment(info.birth).format("DD/MM/YYYY") : "";
 
-  useEffect(() => {
-    if (!historyLoaded) dispatch(fetchHistory());
-  }, [historyLoaded]);
-
-  const handlePress = () => {
-    navigation.navigate("Main");
+  const handleReturn = () => {
+    navigation.pop();
   };
 
   return (
-    <FullView>
-      <BoldItem>Information</BoldItem>
-      <Item>Email: {info.email}</Item>
-      <Item>Name: {info.name}</Item>
-      <BoldItem>History</BoldItem>
-      <List
-        data={history.map((el, i) => ({
-          title: `#${i} ${el.stage}`,
-          subtitle: "",
-          id: i,
-        }))}
-        onItemPress={() => {}}
-      ></List>
-      <Button title="Return" onPress={handlePress} />
-    </FullView>
-  );
-};
-
-export const SettingsButton: React.VoidFunctionComponent = () => {
-  const navigation = useNavigation<GameNavigatorProps>();
-
-  return (
-    <Button
-      title="Settings"
-      style={{ marginRight: 15 }}
-      onPress={() => navigation.navigate("Settings")}
-    />
+    <MainContainer>
+      <ContentContainer>
+        <Title>{t("Profile")}</Title>
+        <Form
+          inputs={[
+            {
+              type: "text",
+              label: t("Email"),
+              name: "email",
+              value: info.email,
+              editable: false,
+            },
+            {
+              type: "text",
+              label: t("Birth"),
+              name: "birth",
+              value: birth,
+              editable: false,
+            },
+            {
+              type: "text",
+              label: t("Guardian"),
+              name: "guardian",
+              value: info.guardian,
+              editable: false,
+            },
+            {
+              type: "text",
+              label: t("Relationship"),
+              name: "relationship",
+              value: info.relationship,
+              editable: false,
+            },
+            {
+              type: "checkboxset",
+              label: t("Comorbidities"),
+              name: "comorbidities",
+              options: disabilities,
+              editable: false,
+              selected: info.comorbidity,
+            },
+            {
+              type: "button",
+              label: t("Return"),
+              name: "return",
+              onPress: handleReturn,
+            },
+          ]}
+        />
+      </ContentContainer>
+    </MainContainer>
   );
 };
 

@@ -6,6 +6,7 @@ import Checkbox, { CheckboxProps } from "../molecule/checkbox";
 import Button, { ButtonProps } from "../atom/button";
 import DateInput, { DateInputProps } from "../molecule/date-input";
 import CheckboxSet, { CheckboxSetProps } from "./checkbox-set";
+import { ViewProps } from "react-native";
 
 interface SubmitProps extends Omit<ButtonProps, "onPress"> {
   onSubmit: (map: Map<string, string>) => void;
@@ -26,7 +27,7 @@ type InputConstructor = { name: string } & (
   | SubmitConstructor
 );
 
-interface FormProps {
+interface FormProps extends ViewProps {
   inputs: InputConstructor[];
   onChange?: (map: Map<string, any>) => void;
 }
@@ -38,6 +39,7 @@ const DoNothing = (...args) => {};
  * whenever a submit button is clicked
  */
 const Form: React.VoidFunctionComponent<FormProps> = (props) => {
+  const {inputs: constructors, onChange, ...viewProps} = props;
   const [inputs, setInputs] = useState(new Map<string, any>());
 
   const handleChange = useCallback(
@@ -133,7 +135,7 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
   };
 
   return (
-    <VerticalContainer>{props.inputs.map(generateChild)}</VerticalContainer>
+    <VerticalContainer {...viewProps} >{constructors.map(generateChild)}</VerticalContainer>
   );
 };
 

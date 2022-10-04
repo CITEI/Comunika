@@ -8,6 +8,7 @@ import { dp } from "../../helper/resolution";
 export interface CheckboxProps extends Omit<TouchableOpacityProps, "onPress"> {
   label: string;
   value?: boolean;
+  editable?: boolean;
   onSelected: (selected: boolean) => void;
 }
 
@@ -20,6 +21,7 @@ const Container = styled(TouchableOpacity)`
 `;
 
 const Checkbox: React.VoidFunctionComponent<CheckboxProps> = (props) => {
+  const editable = props.editable == undefined ? true : props.editable;
   const { onSelected, value, label, ...containerProps } = props;
   const [selected, setSelected] = useState(value || false);
 
@@ -28,10 +30,12 @@ const Checkbox: React.VoidFunctionComponent<CheckboxProps> = (props) => {
   }, [value]);
 
   const handlePress = useCallback(() => {
-    const newValue = !selected;
-    setSelected(newValue);
-    onSelected(newValue);
-  }, [selected, onSelected]);
+    if (editable) {
+      const newValue = !selected;
+      setSelected(newValue);
+      onSelected(newValue);
+    }
+  }, [selected, onSelected, editable]);
 
   return (
     <Container {...containerProps} onPress={handlePress}>

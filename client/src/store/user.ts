@@ -17,17 +17,35 @@ const userId = async () =>
     (await getToken({ removeBearer: true })) as unknown as string
   ).id;
 
+interface UserInfo {
+  email?: string;
+  birth?: string;
+  comorbidity: string[];
+  guardian?: string;
+  region?: string;
+  relationship?: string;
+}
+
+interface UserProgress {
+  module?: string;
+  stage?: string;
+}
+
 export const fetchUserData = createAsyncThunk("user/data", async () => {
   const data = (await api.get(`/user`)).data;
   return {
     info: {
       email: data.email,
-      name: data.name,
-    },
+      birth: data.birth,
+      comorbidity: data.comorbidity,
+      guardian: data.guardian,
+      region: data.region,
+      relationship: data.relationship,
+    } as UserInfo,
     progress: {
       module: data.progress.module,
       stage: data.progress.stage,
-    },
+    } as UserProgress,
   };
 });
 
@@ -162,14 +180,13 @@ export default createSlice({
   name: "user",
   initialState: {
     info: {
-      name: undefined as string | undefined,
-      email: undefined as string | undefined,
-    },
+      comorbidity: [],
+    } as UserInfo,
     progress: {
       module: undefined as string | undefined,
       stage: undefined as string | undefined,
       box: [] as Activity[] | undefined,
-    },
+    } as UserProgress & { box?: Activity[] },
     history: [] as { stage: string }[],
     flags: {
       box: false,

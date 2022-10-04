@@ -55,5 +55,11 @@
     "Invalid credentials": "Credenciais inválidas",
     "User not found": "Usuário não encontrado",
     "Already registered?": "Já possui cadastro?",
-    "Click here": "Clique aqui"
+    "Click here": "Clique aqui",
+    "Profile": "Perfil",
+    "Return": "Retornar",
+    "Birth": "Nascimento",
+    "Guardian": "Responsável",
+    "Relationship": "Grau de parentesco",
+    "Comorbidities": "Comorbidades",
 }
