@@ -3,15 +3,14 @@ import { Box } from "@adminjs/design-system";
 import { BasePropertyProps } from "adminjs";
 import urlJoin from "url-join";
 
-
 /**
  * Required because adminjs doesn't support custom libs
  */
 const EXTENSIONS = {
   image: new Set(["png", "jpg", "jpeg", "gif"]),
   video: new Set(["mp4", "webm"]),
-  audio: new Set(["mp3", "wav", "ogg"])
-}
+  audio: new Set(["mp3", "wav", "ogg"]),
+};
 
 /**
  * Gets the mime type from a file path extension.
@@ -19,7 +18,8 @@ const EXTENSIONS = {
 export function getMimeType(filepath: string): string | undefined {
   const extension = filepath.split(".").pop() || "";
   for (const type of Object.keys(EXTENSIONS))
-    if (EXTENSIONS[type].has(extension)) return `${type}/${extension}`;
+    if (EXTENSIONS[type as keyof typeof EXTENSIONS].has(extension))
+      return `${type}/${extension}`;
   return undefined;
 }
 
