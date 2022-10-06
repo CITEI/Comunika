@@ -308,7 +308,7 @@ export function buildFileDeleteAfter(
  */
 export function bundleFromView(...paths: string[]): string {
   return AdminJS.bundle(
-    path.join(...[PROJECT_PATH, "src", "view", "admin", ...paths])
+    path.join(...[PROJECT_PATH, "view", "admin", ...paths])
   );
 }
 

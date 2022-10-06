@@ -12,7 +12,7 @@ import childProcess from 'child_process';
         // Remove current build
         await remove('./dist/');
         // Copy front-end files
-        await copy('./public', './dist/public');
+        await copy('./src/public', './dist/public');
         // Copy production env file
         await copy('./src/pre-start/env/production.env', './dist/pre-start/env/production.env');
         // Copy back-end files

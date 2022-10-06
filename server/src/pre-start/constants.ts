@@ -38,7 +38,7 @@ if (!temp_root_password)
 export const ORIGIN = process.env.ORIGIN || "http://localhost:3000";
 
 export const ROOT_PASSWORD = temp_root_password;
-export const PROJECT_PATH = dirname(dirname(__dirname))
+export const PROJECT_PATH = dirname(__dirname)
 export const STATIC_DIR = 'public'
 export const PUBLIC_PATH = join(PROJECT_PATH, STATIC_DIR)
 
