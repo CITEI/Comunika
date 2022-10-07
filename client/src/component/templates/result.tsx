@@ -12,10 +12,11 @@ import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
 import util from "util";
 import t from "../../pre-start/i18n";
+import { EvaluateStatus } from "../../store/user";
 
 interface ResultProps {
   stage: StageItem;
-  no_content: boolean;
+  status: EvaluateStatus | "ended";
 }
 
 const Container = styled(ContentContainer)`
@@ -47,6 +48,18 @@ const Footer = styled.View`
   width: 100%;
 `;
 
+const TITLE_MESSAGES: {[key in ResultProps["status"]]: string} = {
+  "approved": t("You made to %s!"),
+  "ended": t("You finished %s"),
+  "reproved": t("Let's reinforce %s again"),
+};
+
+const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
+  "approved": t("StageSucceeded"),
+  "ended": t("NoContent"),
+  "reproved": t("StageFailed"),
+};
+
 /** Templated result screen */
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
@@ -72,7 +85,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
       <Container>
         <Title>
           {util.format(
-            props.no_content ? t("You finished %s") : t("You made to %s!"),
+            TITLE_MESSAGES[props.status],
             props.stage.name
           )}
         </Title>
@@ -81,9 +94,9 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
           accessibilityHint={props.stage.imageAlt}
           resizeMode="contain"
         />
-        <Text>{props.no_content ? t("NoContent") : t("StageSucceeded")}</Text>
+        <Text>{CONTENT_MESSAGES[props.status]}</Text>
         <Footer>
-          {!props.no_content && (
+          {props.status != "ended" && (
             <Button label={t("Start next")} onPress={handleNext} />
           )}
           <Button

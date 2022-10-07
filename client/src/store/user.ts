@@ -13,6 +13,8 @@ interface UserInfo {
 interface UserProgress {
   module?: string;
   stage?: string;
+  box?: Activity[];
+  evaluation: EvaluateStatus;
 }
 
 export const fetchUserData = createAsyncThunk("user/data", async () => {
@@ -137,8 +139,8 @@ export const fetchBox = createAsyncThunk(
 
 /** Grade status of a stage evaluation */
 export enum EvaluateStatus {
-  Approved,
-  Reproved,
+  Approved = "approved",
+  Reproved = "reproved",
 }
 
 /** Submits user answers to evaluation */
@@ -170,6 +172,7 @@ export default createSlice({
       module: undefined as string | undefined,
       stage: undefined as string | undefined,
       box: [] as Activity[] | undefined,
+      evaluation: EvaluateStatus.Approved,
     } as UserProgress & { box?: Activity[] },
     history: [] as { stage: string }[],
     flags: {
@@ -204,6 +207,7 @@ export default createSlice({
     builder.addCase(evaluate.fulfilled, (state, action) => {
       state.flags.box = false;
       state.flags.history = false;
+      state.progress.evaluation = action.payload;
     });
     builder.addCase(fetchHistory.fulfilled, (state, action) => {
       state.history = action.payload;

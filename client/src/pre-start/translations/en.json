@@ -6,4 +6,5 @@
     "General2": "3 | Check if the child is willing to perform the activities: If the child is not sleepy, hungry or under the effect of medication.\n\n4| Avoid anticipating the answer! Give time for the child to participate in the activity according to the child pace.",
     "StageSucceeded": "Based on your answers, we concluded it is time to move on to the next stage.",
     "NoContent": "Congratulations! You have completed all the app activities",
+    "StageFailed": "Based on your answers, we concluded it is better to reinforce some topics."
 }
