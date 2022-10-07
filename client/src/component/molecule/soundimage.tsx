@@ -15,7 +15,7 @@ export interface SoundImageProps {
 
 const Container = styled(ImageBackground)`
   width: 100%;
-  height: ${(props) => dp(125)}px;
+  height: ${(props) => dp(100)}px;
   background-color: ${(props) => props.theme.color.secondary};
   display: flex;
   align-items: flex-start;
