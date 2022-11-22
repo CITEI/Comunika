@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "EducaZika",
-    "slug": "EducaZika",
+    "name": "Comunika",
+    "slug": "Comunika",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.citei.Comunika"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "bb0c2e89-d186-485d-af81-68330cf76ff4"
+      }
     }
   }
 }

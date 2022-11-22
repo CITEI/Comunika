@@ -1,0 +1,12 @@
+{
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "API_DOMAIN": "http://20.38.46.236:3000"
+      }
+    }
+  }
+}
