@@ -81,8 +81,9 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
             source={logo}
             style={{
               height: dp(20),
-              width: dp(88),
+              width: dp(96),
             }}
+            resizeMode="contain"
           ></Image>
         ) : (
           <Spacer></Spacer>

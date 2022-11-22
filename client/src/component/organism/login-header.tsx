@@ -13,8 +13,8 @@ const Header = styled.View`
 `
 
 const Logo = styled.Image`
-  width: ${dp(98)}px;
-  height: ${dp(41)}px;
+  width: ${dp(200)}px;
+  height: ${dp(40)}px;
   margin-bottom: ${dp(39)}px;
   margin-top: ${dp(25)}px;
 `
@@ -22,7 +22,7 @@ const Logo = styled.Image`
 const LoginHeader: React.VoidFunctionComponent = () => {
   return (
     <Header>
-      <Logo source={logo} />
+      <Logo source={logo} resizeMode="contain" />
       <Title>{t("Welcome!")}</Title>
     </Header>
   )
