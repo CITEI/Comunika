@@ -91,7 +91,7 @@ const Register: React.VoidFunctionComponent = () => {
             { type: "text", label: t("Region you live"), name: "region" },
             {
               type: "checkboxset",
-              label: t("Child's comorbidity level"),
+              label: t("Child's disabilities"),
               name: "comorbidity",
               options: disabilities.map((el) => ({
                 option: el.name,
