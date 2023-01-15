@@ -8,7 +8,7 @@
     "stop:docker": "docker-compose down",
     "stop:dev": "npm run stop:docker",
     "start:docker": "npm run stop:dev && docker-compose up",
-    "start:watch": "tsnd --respawn --transpile-only --watch src src/index.ts",
+    "start:watch": "ts-node-dev --respawn --transpile-only --watch src src/index.ts",
     "start:dev": "npm run start:docker -- -d && npm run start:watch",
     "test": "jest --runInBand",
     "test:watch": "npm test -- --watch"
@@ -92,7 +92,7 @@
     "jsonwebtoken": "^8.5.1",
     "module-alias": "^2.2.2",
     "moment": "^2.29.3",
-    "mongoose": "^6.2.4",
+    "mongoose": "^6.8.3",
     "morgan": "^1.10.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
