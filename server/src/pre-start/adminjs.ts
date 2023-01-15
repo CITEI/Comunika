@@ -75,7 +75,7 @@ const adminJs = new AdminJS({
   branding: {
     companyName: APP_NAME,
     logo: new URL(join(STATIC_DIR, "logo.png"), ORIGIN).href,
-    softwareBrothers: false,
+    withMadeWithLove: false,
   },
   version: {
     app: API_VERSION,
