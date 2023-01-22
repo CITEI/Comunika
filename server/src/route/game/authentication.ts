@@ -6,6 +6,9 @@ import passport from "passport";
 import { UserInput, UserDocument } from "../../model/user";
 import { userAuthenticationService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
+import resetMessageSend from "../../service/email";
+import { codeService } from "../../service/code";
+import { content } from "../../html/index";
 
 const router = Router();
 
@@ -121,6 +124,41 @@ router.get(
     return res
       .status(StatusCodes.UNAUTHORIZED)
       .send(ReasonPhrases.UNAUTHORIZED);
+  }
+);
+
+router.put(
+  "/passreset",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      code: Joi.string().max(6).required(),
+      password: CustomJoi.RequiredString(),
+    },
+  }),
+  async (req, res) => {
+    const { email, code, password } = req.body;
+    console.log({ email, code, password });
+
+    if (!(await userService.exists({ email: email })))
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(ReasonPhrases.UNAUTHORIZED);
+
+    console.log(1);
+
+    if (!(await codeService.validate({ email, code })))
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(ReasonPhrases.UNAUTHORIZED);
+
+    await codeService.delete({ email });
+
+    await userService.findAndResetPass({ password, email });
+
+    return res.status(StatusCodes.ACCEPTED).send(ReasonPhrases.ACCEPTED);
   }
 );
 
