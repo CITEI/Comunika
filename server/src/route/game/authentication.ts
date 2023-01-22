@@ -60,9 +60,45 @@ router.get(
   }
 );
 
-router.get('/disabilities', async (req, res) => {
-  const disabilities = await disabilityService.findAll()
-  res.status(StatusCodes.OK).send(disabilities)
-})
+
+router.post(
+  "/passreset/sendcode",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+    },
+  }),
+  async (req, res) => {
+    const { email } = req.body;
+
+    if (!(await userService.exists({ email: email })))
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .send(ReasonPhrases.UNAUTHORIZED);
+
+    if (await codeService.exists({ email: email }))
+      return res.status(StatusCodes.CONTINUE).send(ReasonPhrases.CONTINUE);
+
+    console.log(await codeService.exists({ email: email }));
+
+    const code = String(
+      Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
+    );
+
+    await codeService.create({ code, email });
+
+    return await resetMessageSend(
+      email,
+      {
+        title: "Comunika",
+        html: content({ code }),
+      },
+      res
+    );
+  }
+);
+
 
 export default router;
