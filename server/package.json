@@ -96,6 +96,7 @@
     "moment": "^2.29.3",
     "mongoose": "^6.8.3",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.0",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -112,6 +113,7 @@
     "winston": "^3.7.2"
   },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@shelf/jest-mongodb": "^2.2.1",
