@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 import { StageDocument } from "./stage";
 import { ActivityDocument } from "./activity";
+import { answerProps } from "@service/code";
 
 interface BoxActivityInput {
-  answers: boolean[];
+  answers: answerProps[];
   activity: mongoose.PopulatedDoc<ActivityDocument>;
 }
 
@@ -32,11 +33,16 @@ export const BoxSchema = new mongoose.Schema(
           ref: "Activity",
           required: true,
         },
-        answers: [{ type: Boolean, required: true }],
+        answers: [
+          {
+            answer: { type: Boolean, required: true },
+            description: { type: String, required: false, default: "" },
+          },
+        ],
       },
     ],
   },
   { _id: false }
 );
 
-export interface BoxDocument extends BoxInput {}
+export type BoxDocument = BoxInput;
