@@ -3,9 +3,18 @@ import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
-import { User, UserDocument, UserInput } from "../model/user";
+import {
+  User,
+  UserDocument,
+  UserInput,
+  UserProgressInput,
+} from "../model/user";
 import { stageService } from "./stage";
-import { ObjectNotFoundError, ValidationError } from "./errors";
+import {
+  ObjectNotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from "./errors";
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { Activity, ActivityDocument } from "../model/activity";
@@ -13,10 +22,16 @@ import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
 import { ModuleDocument } from "src/model/module";
 import { StageDocument } from "src/model/stage";
+import { hashPassword } from "../model/utils";
 
 export enum EvaluationStatus {
   Approved,
   Reproved,
+}
+
+export interface answerProps {
+  answer: number;
+  description: string;
 }
 
 class UserService extends BasicService<UserDocument> {
@@ -148,7 +163,7 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async calculateGrade(
     user: UserDocument,
-    answers: boolean[][]
+    answers: answerProps[][]
   ): Promise<number> {
     let grade = 0;
     // update box answers
@@ -162,9 +177,10 @@ class UserService extends BasicService<UserDocument> {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number =
+        const count: number =
           user.progress.box.activities[i].activity.questionCount;
-        let true_count = el.reduce((acc, cur) => +cur + acc, 0);
+        const true_count = el.reduce((acc, cur) => +cur.answer + acc, 0);
+
         if (el.length <= count && el.length >= 0) {
           user.progress.box.activities[i].answers = el;
           total += count;
@@ -221,7 +237,7 @@ class UserService extends BasicService<UserDocument> {
     answers,
   }: {
     id: string;
-    answers: Array<Array<boolean>>;
+    answers: answerProps[][];
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
@@ -271,7 +287,7 @@ class UserService extends BasicService<UserDocument> {
       }
 
       if (nextStage) {
-        box = await this.createBox({ stage: nextStage!._id });
+        box = await this.createBox({ stage: nextStage._id });
         await User.findByIdAndUpdate(id, {
           $set: {
             "progress.module": nextModule,
@@ -308,7 +324,7 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    { stage: string; activities: { answers: boolean[]; name: string }[] }[]
+    { stage: string; activities: { answers: answerProps[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.stage", "name");
@@ -335,6 +351,27 @@ class UserService extends BasicService<UserDocument> {
       select:
         "email guardian relationship birth region comorbidity progress.stage progress.module",
     });
+  }
+
+  async findAndResetPass({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<true | null> {
+    try {
+      await User.findOneAndUpdate(
+        { email },
+        { password: await hashPassword(password) },
+        {
+          new: true,
+        }
+      );
+      return true;
+    } catch (e) {
+      throw new UnauthorizedError();
+    }
   }
 }
 
