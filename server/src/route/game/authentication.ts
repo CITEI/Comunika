@@ -100,5 +100,28 @@ router.post(
   }
 );
 
+router.get(
+  "/passreset/validatecode",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      code: Joi.string().max(6).required(),
+    },
+  }),
+  async (req, res) => {
+    const { email, code } = req.body;
+
+    console.log(code);
+
+    if (await codeService.validate({ email, code }))
+      return res.status(StatusCodes.OK).send(ReasonPhrases.OK);
+
+    return res
+      .status(StatusCodes.UNAUTHORIZED)
+      .send(ReasonPhrases.UNAUTHORIZED);
+  }
+);
 
 export default router;
