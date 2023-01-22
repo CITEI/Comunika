@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { StageDocument } from "./stage";
 import { ActivityDocument } from "./activity";
-import { answerProps } from "@service/code";
+import { answerProps } from "@service/user";
 
 interface BoxActivityInput {
   answers: answerProps[];
