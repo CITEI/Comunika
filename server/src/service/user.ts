@@ -19,6 +19,11 @@ export enum EvaluationStatus {
   Reproved,
 }
 
+export interface answerProps {
+  answer: number;
+  description: string;
+}
+
 class UserService extends BasicService<UserDocument> {
   constructor() {
     super({ model: User });
@@ -148,7 +153,7 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async calculateGrade(
     user: UserDocument,
-    answers: boolean[][]
+    answers: answerProps[][]
   ): Promise<number> {
     let grade = 0;
     // update box answers
@@ -162,9 +167,10 @@ class UserService extends BasicService<UserDocument> {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number =
+        const count: number =
           user.progress.box.activities[i].activity.questionCount;
-        let true_count = el.reduce((acc, cur) => +cur + acc, 0);
+        const true_count = el.reduce((acc, cur) => +cur.answer + acc, 0);
+
         if (el.length <= count && el.length >= 0) {
           user.progress.box.activities[i].answers = el;
           total += count;
@@ -221,7 +227,7 @@ class UserService extends BasicService<UserDocument> {
     answers,
   }: {
     id: string;
-    answers: Array<Array<boolean>>;
+    answers: answerProps[][];
   }): Promise<EvaluationStatus> {
     const user = await this.find({
       id,
@@ -271,7 +277,7 @@ class UserService extends BasicService<UserDocument> {
       }
 
       if (nextStage) {
-        box = await this.createBox({ stage: nextStage!._id });
+        box = await this.createBox({ stage: nextStage._id });
         await User.findByIdAndUpdate(id, {
           $set: {
             "progress.module": nextModule,
@@ -308,7 +314,7 @@ class UserService extends BasicService<UserDocument> {
   }: {
     id: string;
   }): Promise<
-    { stage: string; activities: { answers: boolean[]; name: string }[] }[]
+    { stage: string; activities: { answers: answerProps[]; name: string }[] }[]
   > {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.stage", "name");
