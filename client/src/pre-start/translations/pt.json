@@ -33,6 +33,7 @@
     "Finish": "Finalizar",
     "Yes": "Sim",
     "No": "Não",
+    "Others": "Outros",
     "Back": "Voltar",
     "Question %s/%s": "Pergunta %s/%s",
     "You made to %s!": "Você chegou ao %s!",
@@ -65,5 +66,9 @@
     "Relationship": "Grau de parentesco",
     "Comorbidities": "Comorbidades",
     "Logout": "Sair",
-    "Forgot the password?" : "Esqueceu a senha?"
+    "Forgot the password?": "Esqueceu a senha?",
+    "Recover": "Recuperar",
+    "Verify code": "Codigo de verificação",
+    "repeat the password": "Repita a senha",
+    "Forgot password?": "Esqueceu a senha?"
 }
