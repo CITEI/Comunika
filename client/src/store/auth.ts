@@ -42,6 +42,28 @@ export const register = createAsyncThunk(
   }
 );
 
+export const resetpass = createAsyncThunk(
+  "/auth/passreset",
+  async ({
+    email,
+    code,
+    password,
+  }: {
+    email: string;
+    code: string;
+    password: string;
+  }) => {
+    try {
+      const data = await api.put("/auth/passreset", { email, code, password });
+      return parseInt(data.status, 10);
+    } catch (err) {
+      return isRejectedWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
 interface Disability {
   _id: string;
   name: string;
