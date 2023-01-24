@@ -64,6 +64,20 @@ export const resetpass = createAsyncThunk(
   }
 );
 
+export const sendcode = createAsyncThunk(
+  "/auth/passreset/sendcode",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const data = await api.post("/auth/passreset/sendcode", { email });
+      return parseInt(data.status, 10);
+    } catch (err) {
+      return rejectWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
 interface Disability {
   _id: string;
   name: string;
