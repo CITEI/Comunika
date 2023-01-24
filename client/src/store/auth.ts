@@ -78,6 +78,28 @@ export const sendcode = createAsyncThunk(
   }
 );
 
+export const codeverify = createAsyncThunk(
+  "auth/passreset/validatecode",
+  async (
+    { email, code }: { email: string; code: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const data = await api.get("/auth/passreset/validatecode", {
+        data: {
+          email,
+          code,
+        },
+      });
+      return parseInt(data.status, 10);
+    } catch (err) {
+      return rejectWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
 interface Disability {
   _id: string;
   name: string;
