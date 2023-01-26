@@ -88,8 +88,6 @@ router.post(
     if (await codeService.exists({ email: email }))
       return res.status(StatusCodes.CONTINUE).send(ReasonPhrases.CONTINUE);
 
-    console.log(await codeService.exists({ email: email }));
-
     const code = String(
       Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
     );
@@ -144,14 +142,11 @@ router.put(
   }),
   async (req, res) => {
     const { email, code, password } = req.body;
-    console.log({ email, code, password });
 
     if (!(await userService.exists({ email: email })))
       return res
         .status(StatusCodes.UNAUTHORIZED)
         .send(ReasonPhrases.UNAUTHORIZED);
-
-    console.log(1);
 
     if (!(await codeService.validate({ email, code })))
       return res
