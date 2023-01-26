@@ -3,9 +3,18 @@ import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
-import { User, UserDocument, UserInput } from "../model/user";
+import {
+  User,
+  UserDocument,
+  UserInput,
+  UserProgressInput,
+} from "../model/user";
 import { stageService } from "./stage";
-import { ObjectNotFoundError, ValidationError } from "./errors";
+import {
+  ObjectNotFoundError,
+  UnauthorizedError,
+  ValidationError,
+} from "./errors";
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { Activity, ActivityDocument } from "../model/activity";
@@ -13,6 +22,7 @@ import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
 import { ModuleDocument } from "src/model/module";
 import { StageDocument } from "src/model/stage";
+import { hashPassword } from "../model/utils";
 
 export enum EvaluationStatus {
   Approved,
@@ -341,6 +351,27 @@ class UserService extends BasicService<UserDocument> {
       select:
         "email guardian relationship birth region comorbidity progress.stage progress.module",
     });
+  }
+
+  async findAndResetPass({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<true | null> {
+    try {
+      await User.findOneAndUpdate(
+        { email },
+        { password: await hashPassword(password) },
+        {
+          new: true,
+        }
+      );
+      return true;
+    } catch (e) {
+      throw new UnauthorizedError();
+    }
   }
 }
 
