@@ -1,4 +1,4 @@
-import { EvaluationStatus, userService } from "../../service/code";
+import { EvaluationStatus, userService } from "../../service/user";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
@@ -49,6 +49,7 @@ router.get("/history", async (req: Request, res: Response) => {
 
 router.get("/", async (req: Request, res: Response) => {
   const id = (req.user as UserDocument)._id;
+  console.log(id);
   res.status(StatusCodes.OK).send(await userService.findUserData({ id }));
 });
 
