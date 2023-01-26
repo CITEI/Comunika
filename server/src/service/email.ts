@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { Response } from "express";
+import { GMAIL_EMAIL, GMAIL_PASSWORD } from "../pre-start/constants";
 
 interface content {
   title: string;
@@ -14,14 +15,14 @@ export default async function resetMessageSend(
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASSWORD,
+      user: GMAIL_EMAIL,
+      pass: GMAIL_PASSWORD,
     },
   });
 
   try {
     const info = await transporter.sendMail({
-      from: "moodle-uab@ufrrj.br", // sender address
+      from: GMAIL_EMAIL, // sender address
       to: toEmail, // list of receivers
       subject: content.title, // Subject line
       html: content.html, // html body
