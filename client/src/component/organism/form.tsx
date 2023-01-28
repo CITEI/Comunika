@@ -8,6 +8,9 @@ import DateInput, { DateInputProps } from "../molecule/date-input";
 import CheckboxSet, { CheckboxSetProps } from "./checkbox-set";
 import { ViewProps } from "react-native";
 
+import styled from "../../pre-start/themes";
+import { dp } from "../../helper/resolution";
+
 interface SubmitProps extends Omit<ButtonProps, "onPress"> {
   onSubmit: (map: Map<string, string>) => void;
 }
@@ -20,6 +23,7 @@ type InputConstructor = { name: string } & (
   | ({ type: "checkbox" } & PartialSingle<CheckboxProps, "onSelected">)
   | ({ type: "button" } & ButtonProps)
   | ({ type: "date" } & PartialSingle<DateInputProps, "onChangeDate">)
+  | ({ type: "code" } & { input: InputProps; button: ButtonProps })
   | ({ type: "checkboxset" } & PartialSingle<
       CheckboxSetProps,
       "onSelectionChange"
@@ -34,12 +38,17 @@ interface FormProps extends ViewProps {
 
 const DoNothing = (...args) => {};
 
+const BoxColumn = styled.View`
+  display: flex;
+  flex-direction: row;
+`;
+
 /**
  * Creates a vertical list of inputs and sends their values to a function
  * whenever a submit button is clicked
  */
 const Form: React.VoidFunctionComponent<FormProps> = (props) => {
-  const {inputs: constructors, onChange, ...viewProps} = props;
+  const { inputs: constructors, onChange, ...viewProps } = props;
   const [inputs, setInputs] = useState(new Map<string, any>());
 
   const handleChange = useCallback(
@@ -129,13 +138,48 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
           />
         );
       }
+
+      case "code": {
+        const { input, button } = rest as {
+          input: InputProps;
+          button: ButtonProps;
+        };
+        return (
+          <BoxColumn>
+            <Input
+              {...input}
+              style={{
+                width: 250,
+                marginRight: dp(4),
+
+                textAlign: "center",
+                textAlignVertical: "center",
+              }}
+              onChangeText={(txt) =>
+                handleChange(name, txt, input.onChangeText)
+              }
+            />
+            <Button
+              {...button}
+              style={{
+                flex: 1,
+                marginTop: dp(24),
+                marginLeft: dp(4),
+                height: dp(36),
+              }}
+            />
+          </BoxColumn>
+        );
+      }
       default:
         throw new Error("Invalid input type");
     }
   };
 
   return (
-    <VerticalContainer {...viewProps} >{constructors.map(generateChild)}</VerticalContainer>
+    <VerticalContainer {...viewProps}>
+      {constructors.map(generateChild)}
+    </VerticalContainer>
   );
 };
 

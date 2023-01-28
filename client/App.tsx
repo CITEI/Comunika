@@ -1,5 +1,6 @@
 import store from "./src/store/store";
 import Login from "./src/view/login";
+import ForgotPass from "./src/view/forgot-pass";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,39 +28,47 @@ export default function App() {
       <FontLoader>
         <ThemeProvider theme={defaultTheme}>
           <NavigationContainer>
-              <Stack.Navigator
-                initialRouteName="Login"
-                screenOptions={{ headerShown: false }}
-              >
-                <Stack.Screen
-                  component={Login}
-                  name="Login"
-                  options={{ title: APP_NAME }}
-                />
-                <Stack.Screen
-                  component={Register}
-                  name="Register"
-                  options={{ title: APP_NAME }}
-                />
-                <Stack.Screen
-                  component={Onboarding}
-                  name="Onboarding"
-                  options={{ title: APP_NAME }}
-                />
-                <Stack.Screen
-                  component={Main}
-                  name="Main"
-                  options={{
-                    title: APP_NAME,
-                    headerRight: SettingsButton,
-                  }}
-                />
-                <Stack.Screen component={Stages} name="Stages" />
-                <Stack.Screen component={Game} name="Game" />
-                <Stack.Screen component={Result} name="Result" />
-                <Stack.Screen component={Settings} name="Settings" />
-                <Stack.Screen component={Transition} name="Transition" />
-              </Stack.Navigator>
+            <Stack.Navigator
+              initialRouteName="Login"
+              screenOptions={{ headerShown: false }}
+            >
+              <Stack.Screen
+                component={Login}
+                name="Login"
+                options={{ title: APP_NAME }}
+              />
+              <Stack.Screen
+                component={Register}
+                name="Register"
+                options={{ title: APP_NAME }}
+              />
+              <Stack.Screen
+                component={Onboarding}
+                name="Onboarding"
+                options={{ title: APP_NAME }}
+              />
+              <Stack.Screen
+                component={Main}
+                name="Main"
+                options={{
+                  title: APP_NAME,
+                  headerRight: SettingsButton,
+                }}
+              />
+              <Stack.Screen
+                component={ForgotPass}
+                name="ForgotPass"
+                options={{
+                  title: APP_NAME,
+                  headerRight: SettingsButton,
+                }}
+              />
+              <Stack.Screen component={Stages} name="Stages" />
+              <Stack.Screen component={Game} name="Game" />
+              <Stack.Screen component={Result} name="Result" />
+              <Stack.Screen component={Settings} name="Settings" />
+              <Stack.Screen component={Transition} name="Transition" />
+            </Stack.Navigator>
           </NavigationContainer>
           <FlashMessage position="bottom" />
         </ThemeProvider>

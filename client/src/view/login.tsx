@@ -30,7 +30,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   useEffect(() => {
     loadToken().then(() => {
       dispatch(fetchUserData());
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -59,6 +59,10 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
 
   const handleRegister = () => {
     navigation.navigate("Register");
+  };
+
+  const handleForgot = () => {
+    navigation.navigate({ name: "ForgotPass" });
   };
 
   return (
@@ -95,11 +99,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
           <TextLink
             text={t("Forgot the password?") + " "}
             link={t("Click here")}
-            onPress={() => {
-              Linking.openURL(
-                `mailto:${AUTHOR_EMAIL}?subject=Password%20reset`
-              );
-            }}
+            onPress={handleForgot}
           />
         </VerticalContainer>
       </ContentContainer>
