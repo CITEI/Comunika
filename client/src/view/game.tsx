@@ -9,16 +9,21 @@ import useBox from "../hooks/usebox";
 
 interface GameProps {}
 
+export interface answersProps {
+  answer: boolean;
+  description: string;
+}
+
 /** Main game screen */
 const Game: React.VoidFunctionComponent<GameProps> = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
   const box = useBox();
   const module = useUserModule();
-  const [answers, setAnswers] = useState<boolean[][]>([]);
+  const [answers, setAnswers] = useState<answersProps[][]>([]);
 
   /** Saves answers for sending */
-  const handleFinish = useCallback((answers: boolean[][]) => {
+  const handleFinish = useCallback((answers: answersProps[][]) => {
     setAnswers(answers);
   }, []);
 
@@ -33,11 +38,7 @@ const Game: React.VoidFunctionComponent<GameProps> = () => {
   }, [box]);
 
   return box && module ? (
-    <Activity
-      activities={box}
-      onFinish={handleFinish}
-      module={module.name}
-    />
+    <Activity activities={box} onFinish={handleFinish} module={module.name} />
   ) : (
     <></>
   );

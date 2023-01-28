@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api, { toUri } from "../helper/api";
+import { answersProps } from "../view/game";
 
 interface UserInfo {
   email?: string;
@@ -146,7 +147,7 @@ export enum EvaluateStatus {
 /** Submits user answers to evaluation */
 export const evaluate = createAsyncThunk(
   "user/evaluate",
-  async (answers: boolean[][]) => {
+  async (answers: answersProps[][]) => {
     const res = (await api.post(`/user/box`, { answers })).data;
     if (res.status == "approved") return EvaluateStatus.Approved;
     else return EvaluateStatus.Reproved;

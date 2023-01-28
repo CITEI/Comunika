@@ -33,6 +33,7 @@
     "Finish": "Finalizar",
     "Yes": "Sim",
     "No": "Não",
+    "Others": "Outros",
     "Back": "Voltar",
     "Question %s/%s": "Pergunta %s/%s",
     "You made to %s!": "Você chegou ao %s!",
@@ -41,6 +42,7 @@
     "NoContent": "Parabéns! Você concluiu todas as atividades do app",
     "StageFailed": "Com base nas suas respostas, concluímos que é necessário reforçar alguns tópicos.",
     "Start next": "Iniciar próximo",
+    "Next question": "Próxima pergunta",
     "Back to menu": "Voltar ao menu",
     "Finish %s activities to unlock this %s": "Finalize as atividades do %s para desbloquear este %s.",
     "This %s contains %s activities to be done with the child": "Este %s contém %s atividades a serem realizadas com a criança.",
@@ -65,5 +67,10 @@
     "Relationship": "Grau de parentesco",
     "Comorbidities": "Comorbidades",
     "Logout": "Sair",
-    "Forgot the password?" : "Esqueceu a senha?"
+    "Forgot the password?": "Esqueceu a senha?",
+    "Recover": "Recuperar",
+    "Verify code": "Codigo de verificação",
+    "repeat the password": "Repita a senha",
+    "Forgot password?": "Esqueceu a senha?",
+    "Describe below what other behaviors the child demonstrated:": "Descreva abaixo quais outros comportamentos a criança demonstrou:"
 }
