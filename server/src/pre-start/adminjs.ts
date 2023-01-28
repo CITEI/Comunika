@@ -15,6 +15,7 @@ import { Disability } from "../model/disability";
 import { adminOptions } from "../route/admin/admin";
 import { adminAuthenticationService } from "../service/admin";
 import { join } from "path";
+import { Components, componentLoader } from "../view/Components";
 
 AdminJS.registerAdapter(AdminJSMongoose);
 
@@ -72,10 +73,22 @@ const adminJs = new AdminJS({
       },
     },
   ] as Array<ResourceWithOptions>,
+  pages: {
+    ExportData: {
+      // name, will be used to build an URL
+      component: Components.ExportData,
+      handler: async (request, response) => {
+        const data = await userService.findAllUsersProgress();
+
+        return data;
+      },
+    },
+  },
+  componentLoader,
   branding: {
     companyName: APP_NAME,
     logo: new URL(join(STATIC_DIR, "logo.png"), ORIGIN).href,
-    softwareBrothers: false,
+    withMadeWithLove: false,
   },
   version: {
     app: API_VERSION,

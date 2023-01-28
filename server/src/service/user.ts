@@ -67,6 +67,18 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
+   * Finds an Users progress
+   */
+  async findAllUsersProgress(): Promise<any> {
+    const data = await User.find({}, "comorbidity birth region progress");
+
+    if (data) {
+      return data;
+    }
+    throw new ObjectNotFoundError({ schema: User });
+  }
+
+  /**
    * Checks if an user exists by its id or email
    */
   async exists({
