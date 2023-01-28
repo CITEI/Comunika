@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Activity } from "../store/user";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchBox } from "../store/user";
 
