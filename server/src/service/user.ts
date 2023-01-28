@@ -30,7 +30,7 @@ export enum EvaluationStatus {
 }
 
 export interface answerProps {
-  answer: number;
+  answer: boolean;
   description: string;
 }
 
