@@ -15,14 +15,16 @@ export const login = createAsyncThunk<
   { email: string; password: string },
   { rejectValue: string }
 >("auth/login", async (user, { rejectWithValue }) => {
-  try{
+  try {
     const res = await api.post("/auth", user);
     const token = res.data;
     setToken(token);
     await saveToken(token);
   } catch (error) {
     const err = error as AxiosError;
-    return rejectWithValue(ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE);
+    return rejectWithValue(
+      ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+    );
   }
 });
 
@@ -57,7 +59,7 @@ export const resetpass = createAsyncThunk(
       const data = await api.put("/auth/passreset", { email, code, password });
       return parseInt(data.status, 10);
     } catch (err) {
-      return isRejectedWithValue(
+      return rejectWithValue(
         ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
       );
     }
