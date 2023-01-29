@@ -78,8 +78,8 @@ const Settings: React.VoidFunctionComponent = () => {
             },
             {
               type: "checkboxset",
-              label: t("Comorbidities"),
-              name: "comorbidities",
+              label: t("Deficiency"),
+              name: "Deficiency",
               options: disabilities,
               editable: false,
               selected: info.comorbidity,
