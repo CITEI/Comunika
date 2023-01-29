@@ -63,7 +63,7 @@
     "Birth": "Nascimento",
     "Guardian": "Responsável",
     "Relationship": "Grau de parentesco",
-    "Comorbidities": "Comorbidades",
+    "Deficiency": "Deficiência",
     "Logout": "Sair",
-    "Forgot the password?" : "Esqueceu a senha?"
+    "Forgot the password?": "Esqueceu a senha?"
 }
