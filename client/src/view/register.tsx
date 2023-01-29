@@ -26,7 +26,9 @@ const validators = {
 };
 
 const Register: React.VoidFunctionComponent = () => {
-  const authenticated = useAppSelector((state) => state.auth.authentication.status);
+  const authenticated = useAppSelector(
+    (state) => state.auth.authentication.status
+  );
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
   const disabilities = useDisabilities();
@@ -51,7 +53,7 @@ const Register: React.VoidFunctionComponent = () => {
         guardian: map.get("guardian"),
         relationship: map.get("relationship"),
         birth: map.get("birth"),
-        comorbidity: map.get("comorbidity"),
+        comorbidity: map.get("deficiency"),
         region: map.get("region"),
       } as any;
       dispatch(register(data));
@@ -64,8 +66,7 @@ const Register: React.VoidFunctionComponent = () => {
   }, [navigation]);
 
   useEffect(() => {
-    if (authenticated)
-      navigation.navigate("Onboarding");
+    if (authenticated) navigation.navigate("Onboarding");
   }, [authenticated]);
 
   return (
@@ -92,7 +93,7 @@ const Register: React.VoidFunctionComponent = () => {
             {
               type: "checkboxset",
               label: t("Child's disabilities"),
-              name: "comorbidity",
+              name: "deficiency",
               options: disabilities.map((el) => ({
                 option: el.name,
                 value: el._id,
