@@ -31,14 +31,21 @@ class UserService extends BasicService<UserDocument> {
     const user = new User(payload);
     let module = await moduleService.findHead();
     user.progress.box = new Map();
-    while (module) {
-      user.progress.box.set(
-        module.id,
-        await this.createBox({ "module": module.id })
-      );
-      if(!module.next) break;
-      module = await moduleService.find({by: { _id: module.next}});
+    
+    if (module) {
+      user.progress.availableModules.push(module.id);
+
+      while (true) {
+        user.progress.box.set(
+          module.id,
+          await this.createBox({ "module": module.id })
+        );
+        if (!module.next) break;
+
+        module = await moduleService.find({ by: { _id: module.next } });
+      }
     }
+
     await user.save();
     return user;
   }
@@ -159,10 +166,10 @@ class UserService extends BasicService<UserDocument> {
 
     const grade = this.calculateGrade(box, answers);
     if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user);
+      this.approve(user, module);
       return EvaluationStatus.Approved;
     } else {
-      this.reprove(user);
+      this.reprove(user, module);
       return EvaluationStatus.Reproved;
     }
   }
@@ -204,14 +211,14 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Updates the user to approve the current box
    */
-  protected async approve(user: UserDocument) {
+  protected async approve(user: UserDocument, module: string) {
     const id = user._id;
     await User.findByIdAndUpdate(id, {
-      $set: {
-        "progress.box": null,
-      },
       $push: {
-        "progress.history": user.progress.box,
+        "progress.history": user.progress.box.get(module),
+      },
+      $set: {
+        [`progress.box.${module}`]: null,
       },
     });
   }
@@ -219,15 +226,15 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Updates the user to reprove the current box
    */
-  protected async reprove(user: UserDocument) {
+  protected async reprove(user: UserDocument, module: string) {
     await User.findByIdAndUpdate(user._id, {
       $set: {
-        "progress.box": await this.createBox({
-          stage: user.progress.stage,
-          attempt: user.progress.box.attempt + 1,
+        [`progress.box.${module}`]: await this.createBox({
+          module: module,
+          attempt: user.progress.box.get(module)!.attempt + 1,
         }),
       },
-      $push: { "progress.history": user.progress.box },
+      $push: { "progress.history": user.progress.box.get(module) },
     });
   }
 
