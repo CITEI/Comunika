@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, {Types} from "mongoose";
 import { ObjectNotFoundError } from "../errors";
 import { BasicService } from "./basic";
 
@@ -47,15 +47,15 @@ export class LinkedListService<
   /**
    * Returns the metadata document from the db
    */
-  protected async findMeta(input?: I): Promise<M | null> {
+  protected async findMeta(): Promise<M | null> {
     return this.metaModel.findOne().exec();
   }
 
   /**
    * Obtains the linked list metadata document
    */
-  protected async getMeta(input?: I): Promise<M> {
-    const meta = await this.findMeta(input);
+  protected async getMeta(): Promise<M> {
+    const meta = await this.findMeta();
     if (meta) return meta;
     else if (this.createMeta) return await this.initMeta();
     else throw new ObjectNotFoundError({ schema: this.metaModel });
@@ -66,7 +66,7 @@ export class LinkedListService<
    */
   protected async getHead(meta: M): Promise<D | null> {
     if (!meta.populated("childrenHead")) await meta.populate("childrenHead");
-    return meta.childrenHead || null;
+    return meta.childrenHead as D || null;
   }
 
   /**
@@ -74,36 +74,35 @@ export class LinkedListService<
    */
   protected async getTail(meta: M): Promise<D | null> {
     if (!meta.populated("childrenTail")) await meta.populate("childrenTail");
-    return meta.childrenTail || null;
+    return meta.childrenTail as D || null;
   }
 
   /**
    * Returns the first element of a linked list
    */
-  async findHead(input?: I): Promise<D | null> {
-    return await this.getHead(await this.getMeta(input));
+  async findHead(): Promise<D | null> {
+    return await this.getHead(await this.getMeta());
   }
 
   /**
    * Creates a new linked list object and appends it to the end
    */
   async create(input: I): Promise<D> {
-    const meta = await this.getMeta(input);
+    const meta = await this.getMeta();
     const last = await this.getTail(meta);
-
-    let doc = new this.model(input);
+    const doc = new this.model(input);
 
     const session = await mongoose.startSession();
-    await session.startTransaction();
+    session.startTransaction();
 
     try {
       await doc.save({ session });
 
       // updates meta and linked list itself
       meta.childrenTail = doc;
-      if (meta.childrenHead) {
-        last!.next = doc;
-        await last!.save({ session });
+      if (last) {
+        last.next = doc;
+        await last.save({ session });
       } else meta.childrenHead = doc;
       await meta.save({ session });
 
@@ -122,21 +121,22 @@ export class LinkedListService<
    * Removes a linked list from the db
    */
   async delete({ id }: { id: string }) {
-    let current = await this.model.findById(id).exec();
+    const current = await this.model.findById(id).exec();
 
     if (current) {
       const parent = await this.model.findOne({ next: { $eq: id } }).exec();
-      const meta = await this.getMeta(current);
+      const meta = await this.getMeta();
 
       // Changes must be sync
       const session = await mongoose.connection.startSession();
-      await session.startTransaction();
+      session.startTransaction();
 
       try {
         if (parent != null) {
           // it is not the first
           parent.next = current.next;
-          if (current._id.equals(meta.childrenTail)) {
+          const current_id: Types.ObjectId = current._id;
+          if (current_id.equals(meta.childrenTail as Types.ObjectId)) {
             // it is the last element of the linked list
             meta.childrenTail = parent;
             await meta.save({ session });
@@ -166,16 +166,16 @@ export class LinkedListService<
   /**
    * Returns the first element of a linked list
    */
-  async findFirst(input?: I): Promise<D | null> {
-    return await this.getHead(await this.getMeta(input));
+  async findFirst(): Promise<D | null> {
+    return await this.getHead(await this.getMeta());
   }
 
   /**
    * Finds the successor given a LinkedList id
    */
   async findNext({ id }: { id: string }): Promise<D | null> {
-    let current = await this.model.findById(id).populate("next").exec();
-    if (current) return current.next || null;
+    const current = await this.model.findById(id).populate("next").exec();
+    if (current) return current.next as D || null;
     else throw new ObjectNotFoundError({ schema: this.model });
   }
 
@@ -185,13 +185,14 @@ export class LinkedListService<
   async swap({ from, to }: { from: string; to: string }) {
     // RB -> B -> RD -> D
     // B <-> D
-    let [b, d] = await Promise.all([
+
+    const [b, d] = await Promise.all([
       this.model.findById(from).exec(),
       this.model.findById(to).exec(),
     ]);
 
     if (b && d) {
-      let [rb, rd] = await Promise.all([
+      const [rb, rd] = await Promise.all([
         this.model.findOne({ next: from }).exec(),
         this.model.findOne({ next: to }).exec(),
       ]);
@@ -219,7 +220,7 @@ export class LinkedListService<
       } else {
         // RB -> B -> RD -> D -> null
         // RB -> D -> RD -> B -> null
-        let aux = b.next;
+        const aux = b.next;
         b.next = d.next; // <- null
         d.next = aux; // <- RD
         if (rb) {
@@ -255,7 +256,8 @@ export class LinkedListService<
       session.startTransaction();
 
       try {
-        for (let doc of toupdate) await doc.save({ session }); // avoided Promise.all in order to reduce transient transaction errors
+        // avoided Promise.all in order to reduce transient transaction errors
+        for (const doc of toupdate) await doc.save({ session }); 
         await session.commitTransaction();
         await session.endSession();
       } catch (e) /* istanbul ignore next */ {
