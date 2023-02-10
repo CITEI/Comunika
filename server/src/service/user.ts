@@ -4,14 +4,11 @@ import {
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/user";
-import { stageService } from "./stage";
 import { ObjectNotFoundError, ValidationError } from "./errors";
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
-import { Activity, ActivityDocument } from "../model/activity";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
-import { ModuleDocument } from "src/model/module";
 
 export enum EvaluationStatus {
   Approved,
