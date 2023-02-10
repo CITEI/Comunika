@@ -36,7 +36,7 @@ class UserService extends BasicService<UserDocument> {
     while (module) {
       user.progress.box.set(
         module.id as string,
-        await this.createBox({ "module": module.id })
+        await this.createBox({ module: module.id })
       );
       user.progress.available.set(module._id as string, head)
       if (!module.next) break;
