@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { StageDocument } from "./stage";
+import { ModuleDocument } from "./module";
 import { ActivityDocument } from "./activity";
 
 interface BoxActivityInput {
@@ -8,16 +8,16 @@ interface BoxActivityInput {
 }
 
 export interface BoxInput {
-  stage: mongoose.PopulatedDoc<StageDocument>;
+  module: mongoose.PopulatedDoc<ModuleDocument>;
   activities: BoxActivityInput[];
   attempt: number;
 }
 
 export const BoxSchema = new mongoose.Schema(
   {
-    stage: {
+    module: {
       type: mongoose.Types.ObjectId,
-      ref: "Stage",
+      ref: "Module",
       required: false,
     },
     attempt: {

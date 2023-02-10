@@ -21,7 +21,7 @@ export class ServerError extends Error {
   }
 
   get body(): { [key: string]: any } {
-    let body: { [key: string]: any } = {
+    const body: { [key: string]: any } = {
       name: this.name,
       message: this.message,
     };

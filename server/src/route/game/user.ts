@@ -12,9 +12,14 @@ router.use(passport.authenticate("jwt", { session: false }));
 
 router.get(
   "/box",
+  celebrate({
+    body: {
+      module: Joi.string().required()
+    }
+  }),
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
-    const box = await userService.findBox({ id });
+    const box = await userService.findBox({ "id": id, "module": req.body.module });
     res.status(StatusCodes.OK).send(box);
   }
 );

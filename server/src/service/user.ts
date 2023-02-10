@@ -30,12 +30,11 @@ class UserService extends BasicService<UserDocument> {
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
     user.progress.module = await moduleService.findHead();
-    user.progress.stage = await stageService.findHead({
-      module: user.progress.module,
-    });
-    user.progress.box = await this.createBox({
-      stage: user.progress.stage,
-    });
+    user.progress.box = new Map();
+    user.progress.box.set(
+      user.progress.module.id as string, 
+      await this.createBox({ "module": user.progress.module.id })
+    );
     await user.save();
     return user;
   }
@@ -81,13 +80,13 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Creates a box given a user with defined progress.stage
+   * Creates a box given a user with defined progress.
    */
   protected async createBox({
-    stage,
+    module,
     attempt,
   }: {
-    stage: string;
+    module: string;
     attempt?: number;
   }): Promise<BoxInput> {
     attempt = attempt || 0;
@@ -95,8 +94,8 @@ class UserService extends BasicService<UserDocument> {
     let activities = Array<string>();
 
     if (attempt <= 1) {
-      activities = await stageService.sampleActivities({
-        id: stage,
+      activities = await moduleService.sampleActivities({
+        id: module,
         quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
         alternative,
       });
@@ -107,14 +106,14 @@ class UserService extends BasicService<UserDocument> {
 
       activities = _.shuffle(
         (
-          await stageService.sampleActivities({
-            id: stage,
+          await moduleService.sampleActivities({
+            id: module,
             quantity: regularQuantity,
             alternative: false,
           })
         ).concat(
-          await stageService.sampleActivities({
-            id: stage,
+          await moduleService.sampleActivities({
+            id: module,
             quantity: alternativeQuantity,
             alternative: true,
           })
@@ -123,7 +122,7 @@ class UserService extends BasicService<UserDocument> {
     }
 
     const box: BoxInput = {
-      stage: stage,
+      module: module,
       attempt: attempt,
       activities: activities.map((el: any) => ({ activity: el, answers: [] })),
     };
@@ -228,7 +227,7 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box
    */
-  async findBox({ id }: { id: string }): Promise<{
+  async findBox({ id, module }: { id: string, module: string }): Promise<{
     activities?: ActivityDocument[];
     attempt?: number;
     stage: StageDocument;
