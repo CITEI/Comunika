@@ -222,7 +222,9 @@ class UserService extends BasicService<UserDocument> {
         "progress.history": box,
       },
       $set: {
-        [`progress.box.${module}`]: null,
+        [`progress.box.${module}`]: await this.createBox({
+          module: module,
+        }),
         [`progress.available.${box.module.next as string}`]: true,
       },
     });
@@ -252,63 +254,19 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box for all modules.
    */
-  async findBox({ id }: { id: string }): Promise<Map<string, {
-    activities?: ActivityDocument[];
-    attempt?: number;
-    module: ModuleDocument;
-  }>> {
+  async findBox({ id }: { id: string }): Promise<{ 
+    available: Map<string, boolean>;
+    box: Map<string, BoxDocument>;
+  }> {
     const user = await this.find({
       id,
-      select: "progress.box progress.module",
+      select: "progress",
     });
 
-    let box = user.progress.box;
-    if (box == null) {
-      // reach the end of the game in that moment
-
-      let nextStage = await stageService.findNext({ id: user.progress.stage });
-      let nextModule: ModuleDocument | null = user.progress.module;
-      if (!nextStage) {
-        // reached the last stage of a module
-
-        nextModule = await moduleService.findNext({
-          id: user.progress.module,
-        });
-        if (nextModule)
-          // if next module, get its first stage
-          nextStage = await stageService.findHead({
-            module: nextModule,
-          });
-      }
-
-      if (nextStage) {
-        box = await this.createBox({ stage: nextStage!._id });
-        await User.findByIdAndUpdate(id, {
-          $set: {
-            "progress.module": nextModule,
-            "progress.stage": nextStage,
-            "progress.box": box,
-          },
-        });
-      }
+    return {
+      available: user.progress.available,
+      box: user.progress.box
     }
-
-    if (box) {
-      await user.populate({
-        path: "progress.box.activities.activity",
-        model: Activity,
-      });
-      return {
-        activities: user.progress.box.activities.map((el) => el.activity),
-        attempt: user.progress.box.attempt,
-        stage: user.progress.stage,
-        module: user.progress.module,
-      };
-    } else
-      return {
-        stage: user.progress.stage,
-        module: user.progress.module,
-      };
   }
 
   /**
