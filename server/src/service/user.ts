@@ -177,8 +177,7 @@ class UserService extends BasicService<UserDocument> {
     box: BoxDocument,
     answers: boolean[][]
   ): number {
-    console.log(box);
-
+    
     let grade = 0;
     // update box answers
     if (box.activities.length == answers.length) {
