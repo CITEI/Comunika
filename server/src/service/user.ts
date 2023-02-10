@@ -239,12 +239,11 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Returns the current box, with all modules inside.
+   * Returns the current box for all modules.
    */
-  async findBox({ id }: { id: string, module: string }): Promise<Map<string, {
+  async findBox({ id }: { id: string }): Promise<Map<string, {
     activities?: ActivityDocument[];
     attempt?: number;
-    stage: StageDocument;
     module: ModuleDocument;
   }>> {
     const user = await this.find({
