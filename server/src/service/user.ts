@@ -12,7 +12,6 @@ import { Activity, ActivityDocument } from "../model/activity";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
 import { ModuleDocument } from "src/model/module";
-import { StageDocument } from "src/model/stage";
 
 export enum EvaluationStatus {
   Approved,
@@ -31,19 +30,16 @@ class UserService extends BasicService<UserDocument> {
     const user = new User(payload);
     let module = await moduleService.findHead();
     user.progress.box = new Map();
-    
-    if (module) {
-      user.progress.availableModules.push(module.id);
 
-      while (true) {
-        user.progress.box.set(
-          module.id,
-          await this.createBox({ "module": module.id })
-        );
-        if (!module.next) break;
+    if (module) user.progress.availableModules.push(module.id as string);
 
-        module = await moduleService.find({ by: { _id: module.next } });
-      }
+    while (module) {
+      user.progress.box.set(
+        module.id as string,
+        await this.createBox({ "module": module.id })
+      );
+      if (!module.next) break;
+      module = await moduleService.find({ by: { _id: module.next } });
     }
 
     await user.save();
