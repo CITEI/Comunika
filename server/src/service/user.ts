@@ -29,12 +29,16 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    user.progress.module = await moduleService.findHead();
+    let module = await moduleService.findHead();
     user.progress.box = new Map();
-    user.progress.box.set(
-      user.progress.module.id as string, 
-      await this.createBox({ "module": user.progress.module.id })
-    );
+    while (module) {
+      user.progress.box.set(
+        module.id,
+        await this.createBox({ "module": module.id })
+      );
+      if(!module.next) break;
+      module = await moduleService.find({by: { _id: module.next}});
+    }
     await user.save();
     return user;
   }
@@ -131,29 +135,57 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
+   * Checks if a user has passed, and decides the next step of the game
+   * for it
+   */
+  async evaluate(
+    id: string,
+    module: string,
+    answers: Array<Array<boolean>>
+  ): Promise<EvaluationStatus> {
+    const user = await this.find({
+      id,
+      select: "progress.box",
+    });
+
+    await user.populate({
+      path: "progress.box.$*.activities.activity",
+      select: "questionCount",
+      model: "Activity",
+    });
+
+    const box = user.progress.box.get(module);
+    if (!box) throw new ObjectNotFoundError({ schema: 'Box' })
+
+    const grade = this.calculateGrade(box, answers);
+    if (grade >= GAME_MIN_GRADE_PCT) {
+      this.approve(user);
+      return EvaluationStatus.Approved;
+    } else {
+      this.reprove(user);
+      return EvaluationStatus.Reproved;
+    }
+  }
+
+  /**
    * Calculates the grade of a user box given its answers
    */
-  protected async calculateGrade(
-    user: UserDocument,
+  protected calculateGrade(
+    box: BoxDocument,
     answers: boolean[][]
-  ): Promise<number> {
+  ): number {
+    console.log(box);
+
     let grade = 0;
     // update box answers
-    if (user.progress.box.activities.length == answers.length) {
-      // get total answers
-      await user.populate({
-        path: "progress.box.activities.activity",
-        select: "questionCount",
-        model: "Activity",
-      });
+    if (box.activities.length == answers.length) {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number =
-          user.progress.box.activities[i].activity.questionCount;
-        let true_count = el.reduce((acc, cur) => +cur + acc, 0);
+        const count: number = box.activities[i].activity.questionCount;
+        const true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          user.progress.box.activities[i].answers = el;
+          box.activities[i].answers = el;
           total += count;
           hits += true_count;
         } else
@@ -200,42 +232,17 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Checks if a user has passed, and decides the next step of the game
-   * for it
+   * Returns the current box, with all modules inside.
    */
-  async evaluate({
-    id,
-    answers,
-  }: {
-    id: string;
-    answers: Array<Array<boolean>>;
-  }): Promise<EvaluationStatus> {
-    const user = await this.find({
-      id,
-      select: "progress.box progress.stage progress.module",
-    });
-    const grade = await this.calculateGrade(user, answers);
-    if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user);
-      return EvaluationStatus.Approved;
-    } else {
-      this.reprove(user);
-      return EvaluationStatus.Reproved;
-    }
-  }
-
-  /**
-   * Returns the current box
-   */
-  async findBox({ id, module }: { id: string, module: string }): Promise<{
+  async findBox({ id }: { id: string, module: string }): Promise<Map<string, {
     activities?: ActivityDocument[];
     attempt?: number;
     stage: StageDocument;
     module: ModuleDocument;
-  }> {
+  }>> {
     const user = await this.find({
       id,
-      select: "progress.box progress.module progress.stage",
+      select: "progress.box progress.module",
     });
 
     let box = user.progress.box;

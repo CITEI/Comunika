@@ -6,7 +6,7 @@ import {
 } from "../pre-start/constants";
 import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "./utils";
-import { ProgressDocument, ProgressSchema } from "./progress";
+import { ProgressInput, ProgressSchema } from "./progress";
 
 /** Interface for creating a new user */
 export interface UserInput {
@@ -53,7 +53,7 @@ export const UserSchema = new mongoose.Schema({
 
 // Hashes password before saving to db
 UserSchema.pre("save", async function (next) {
-  this.password = await hashPassword(this.password);
+  this.password = await hashPassword(this.password as string);
   next();
 });
 
@@ -63,12 +63,12 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.passwordMatches = async function (
   pass: string
 ): Promise<boolean> {
-  return passwordsMatch(pass, this.password);
+  return passwordsMatch(pass, this.password as string);
 };
 
 /** Interface for retrieving user registers */
 export interface UserDocument extends mongoose.Document, UserInput {
-  progress: ProgressDocument;
+  progress: ProgressInput;
   passwordMatches(pass: string): Promise<boolean>;
 }
 

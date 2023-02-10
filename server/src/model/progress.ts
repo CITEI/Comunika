@@ -1,20 +1,18 @@
 import mongoose from "mongoose";
 import { BoxDocument, BoxSchema } from "./box";
-import { ModuleDocument } from "./module";
 
 export interface ProgressInput {
-  module: mongoose.PopulatedDoc<ModuleDocument>;
+  availableModules: Array<string>;
   box: Map<string, BoxDocument>;
   history: BoxDocument[];
 }
 
 export const ProgressSchema = new mongoose.Schema(
   {
-    module: {
-      type: mongoose.Types.ObjectId,
-      ref: "Module",
-      required: true,
-      default: null,
+    availableModules: {
+      type: Array<string>,
+      require: true,
+      default: [],
     },
     box: {
       type: Map,
@@ -32,5 +30,3 @@ export const ProgressSchema = new mongoose.Schema(
   },
   { _id: false }
 );
-
-export interface ProgressDocument extends ProgressInput {}

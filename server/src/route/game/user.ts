@@ -12,11 +12,6 @@ router.use(passport.authenticate("jwt", { session: false }));
 
 router.get(
   "/box",
-  celebrate({
-    body: {
-      module: Joi.string().required()
-    }
-  }),
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
     const box = await userService.findBox({ "id": id, "module": req.body.module });
@@ -28,12 +23,15 @@ router.post(
   "/box",
   celebrate({
     body: {
+      module: Joi.string().required(),
       answers: Joi.array().items(Joi.array().items(Joi.boolean())).required(),
     },
   }),
   async (req: Request, res: Response) => {
-    const id = (req.user as UserDocument)._id;
-    switch (+(await userService.evaluate({ id, ...req.body }))) {
+    const body: {module: string, answers: Array<Array<boolean>>} = req.body; 
+    const id: string = (req.user as UserDocument)._id;
+    
+    switch (await userService.evaluate(id, body.module, body.answers)) {
       case EvaluationStatus.Approved:
         res.status(StatusCodes.OK).send({ status: "approved" });
         break;
