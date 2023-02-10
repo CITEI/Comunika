@@ -29,16 +29,19 @@ class UserService extends BasicService<UserDocument> {
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
     let module = await moduleService.findHead();
+    let head = true;
     user.progress.box = new Map();
-
-    if (module) user.progress.availableModules.push(module.id as string);
+    user.progress.available = new Map();
 
     while (module) {
       user.progress.box.set(
         module.id as string,
         await this.createBox({ "module": module.id })
       );
+      user.progress.available.set(module._id as string, head)
       if (!module.next) break;
+      
+      head = false;
       module = await moduleService.find({ by: { _id: module.next } });
     }
 
@@ -151,11 +154,15 @@ class UserService extends BasicService<UserDocument> {
       select: "progress.box",
     });
 
-    await user.populate({
+    await user.populate([{
       path: "progress.box.$*.activities.activity",
       select: "questionCount",
       model: "Activity",
-    });
+    }, { 
+      path: "progress.box.$*.module", 
+      select:"next", 
+      model: "Module" 
+    }]);
 
     const box = user.progress.box.get(module);
     if (!box) throw new ObjectNotFoundError({ schema: 'Box' })
@@ -177,7 +184,7 @@ class UserService extends BasicService<UserDocument> {
     box: BoxDocument,
     answers: boolean[][]
   ): number {
-    
+
     let grade = 0;
     // update box answers
     if (box.activities.length == answers.length) {
@@ -207,13 +214,16 @@ class UserService extends BasicService<UserDocument> {
    * Updates the user to approve the current box
    */
   protected async approve(user: UserDocument, module: string) {
+    const box = user.progress.box.get(module) as BoxDocument;
+
     const id = user._id;
     await User.findByIdAndUpdate(id, {
       $push: {
-        "progress.history": user.progress.box.get(module),
+        "progress.history": box,
       },
       $set: {
         [`progress.box.${module}`]: null,
+        [`progress.available.${box.module.next as string}`]: true,
       },
     });
   }
@@ -222,14 +232,20 @@ class UserService extends BasicService<UserDocument> {
    * Updates the user to reprove the current box
    */
   protected async reprove(user: UserDocument, module: string) {
+    const box = user.progress.box.get(module) as BoxDocument;
+
     await User.findByIdAndUpdate(user._id, {
       $set: {
         [`progress.box.${module}`]: await this.createBox({
           module: module,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           attempt: user.progress.box.get(module)!.attempt + 1,
         }),
+        [`progress.available.${box.module.next as string}`]: true,
       },
-      $push: { "progress.history": user.progress.box.get(module) },
+      $push: {
+        "progress.history": box,
+      },
     });
   }
 
@@ -298,22 +314,19 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the evaluated boxes history
    */
-  async findHistory({
-    id,
-  }: {
-    id: string;
-  }): Promise<
-    { stage: string; activities: { answers: boolean[]; name: string }[] }[]
-  > {
+  async findHistory({ id }: { id: string }): Promise<{
+    module: string;
+    activities: { answers: boolean[]; name: string }[]
+  }[]> {
     const user = await this.find({ id, select: "progress.history" });
-    await user.populate("progress.history.stage", "name");
+    await user.populate("progress.history.module", "name");
     await user.populate({
       path: "progress.history.activities.activity",
       model: "Activity",
       select: "name",
     });
     return user.progress.history.map((box) => ({
-      stage: box.stage.name,
+      module: box.module.name,
       activities: box.activities.map((activity) => ({
         answers: activity.answers,
         name: activity.activity.name,
