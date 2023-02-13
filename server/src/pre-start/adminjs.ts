@@ -7,8 +7,6 @@ import userOptions from "../route/admin/user";
 import { Module } from "../model/module";
 import moduleOptions from "../route/admin/module";
 import { Activity } from "../model/activity";
-import stageOptions from "../route/admin/stage";
-import { Stage } from "../model/stage";
 import activityOptions from "../route/admin/activity";
 import { Admin } from "../model/admin";
 import { Disability } from "../model/disability";
@@ -55,13 +53,6 @@ const adminJs = new AdminJS({
       options: {
         navigation: gameNavigation,
         ...moduleOptions,
-      },
-    },
-    {
-      resource: Stage,
-      options: {
-        navigation: gameNavigation,
-        ...stageOptions,
       },
     },
     {
