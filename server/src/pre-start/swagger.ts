@@ -2,14 +2,16 @@ import swaggerJSDoc, { Options } from "swagger-jsdoc";
 import { BASE_PATH } from "./constants";
 
 const opts: Options = {
-  swaggerDefinition: {
+  definition: {
+    openapi: "3.0.0",
     info: {
       title: "EducaZikaAPI",
       version: "0.0.1",
+      description: "API for the Comunika App."
     },
-    basePath: BASE_PATH,
+    servers: [{url: "http://localhost:4000/api/v1"}]
   },
-  apis: ['src/route/*.ts'],
+  apis: ['src/route/*/*.ts'],
 };
 
 export default swaggerJSDoc(opts);
