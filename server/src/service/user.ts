@@ -308,7 +308,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "email guardian relationship birth region comorbidity progress.module",
+        "email guardian relationship birth region disabilities progress.module",
     });
   }
 }

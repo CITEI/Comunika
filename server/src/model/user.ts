@@ -16,7 +16,7 @@ export interface UserInput {
   relationship: string;
   birth: Date;
   region: string;
-  comorbidity: string;
+  disabilities: string;
 }
 
 export const UserSchema = new mongoose.Schema({
@@ -40,7 +40,7 @@ export const UserSchema = new mongoose.Schema({
   relationship: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   birth: { type: Date, required: true },
   region: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  comorbidity: [
+  disabilities: [
     {
       type: mongoose.Types.ObjectId,
       ref: "Disability",

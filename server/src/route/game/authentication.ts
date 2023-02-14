@@ -19,7 +19,7 @@ router.post(
       relationship: CustomJoi.RequiredString(),
       birth: Joi.date().required(),
       region: CustomJoi.RequiredString(),
-      comorbidity: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
     },
   }),
   async (req: Request, res: Response) => {
