@@ -9,9 +9,9 @@ const opts: Options = {
       version: "0.0.1",
       description: "API for the Comunika App."
     },
-    servers: [{url: "http://localhost:4000/api/v1"}]
+    servers: [{url: "http://localhost:3000/api/v1"}]
   },
-  apis: ['src/route/*/*.ts'],
+  apis: ['src/swagger/*.yaml'],
 };
 
 export default swaggerJSDoc(opts);
