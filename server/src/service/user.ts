@@ -163,23 +163,23 @@ class UserService extends BasicService<UserDocument> {
 
     const box = user.progress.box.find(e => e.module.id == module);
 
-    const grade = this.calculateGrade(box, answers);
+    const grade = this.calculateGrade(box!, answers);
 
-    if (box.module.next) {
+    if (box!.module.next) {
       await User.findByIdAndUpdate(user._id, {
         $set: {
           [`progress.available.$[item].value`]: true
         },
       }, {
-        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
+        arrayFilters: [{ "item.id": box!.module.next._id.toString() }]
       });
     }
 
     if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user, box);
+      this.approve(user, box!);
       return EvaluationStatus.Approved;
     } else {
-      this.reprove(user, box);
+      this.reprove(user, box!);
       return EvaluationStatus.Reproved;
     }
   }
@@ -267,9 +267,10 @@ class UserService extends BasicService<UserDocument> {
       select: "progress",
     });
 
-    if (!user.progress.box) {
-      user.progress.box
-    }
+    await user.populate([{
+      path: "progress.box.activities.activity",
+      model: "Activity",
+    }]);
 
     return {
       available: user.progress.available,
