@@ -1,4 +1,5 @@
-import { BoxDocument, BoxInput } from "../model/box";
+import { BoxDocument, BoxInput, BoxSchema } from "../model/box";
+import { Available } from '../model/progress';
 import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
@@ -25,24 +26,22 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    let module = await moduleService.findHead();
-    const headId: string = module!._id;
+    const modules = await moduleService.findAll();
 
-    user.progress.box = new Map();
-    user.progress.available = new Map();
+    user.progress.box = [];
+    user.progress.available = [];
 
-    while (module) {
-      user.progress.box.set(
-        module._id as string,
+    for (const module of modules) {
+      user.progress.box.push(
         await this.createBox({ module: module.id })
       );
-      user.progress.available.set(module._id as string, false)
-      if (!module.next) break;
-
-      module = await moduleService.find({ by: { _id: module.next } });
+      user.progress.available.push({
+        id: module._id,
+        value: false,
+      });
     }
 
-    user.progress.available.set(headId, true);
+    user.progress.available[0].value = true;
 
     await user.save();
     return user;
@@ -154,24 +153,33 @@ class UserService extends BasicService<UserDocument> {
     });
 
     await user.populate([{
-      path: "progress.box.$*.activities.activity",
+      path: "progress.box.activities.activity",
       select: "questionCount",
       model: "Activity",
     }, {
-      path: "progress.box.$*.module",
-      select: "next",
+      path: "progress.box.module",
       model: "Module"
     }]);
 
-    const box = user.progress.box.get(module);
-    if (!box) throw new ObjectNotFoundError({ schema: 'Box' })
+    const box = user.progress.box.find(e => e.module.id == module);
 
     const grade = this.calculateGrade(box, answers);
+
+    if (box.module.next) {
+      await User.findByIdAndUpdate(user._id, {
+        $set: {
+          [`progress.available.$[item].value`]: true
+        },
+      }, {
+        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
+      });
+    }
+
     if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user, module);
+      this.approve(user, box);
       return EvaluationStatus.Approved;
     } else {
-      this.reprove(user, module);
+      this.reprove(user, box);
       return EvaluationStatus.Reproved;
     }
   }
@@ -212,41 +220,38 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Updates the user to approve the current box
    */
-  protected async approve(user: UserDocument, module: string) {
-    const box = user.progress.box.get(module);
-
+  protected async approve(user: UserDocument, box: BoxDocument) {
     const id = user._id;
     await User.findByIdAndUpdate(id, {
+      $set: {
+        [`progress.box.$[item]`]: await this.createBox({
+          module: box.module.id,
+        }),
+      },
       $push: {
         "progress.history": box,
       },
-      $set: {
-        [`progress.box.${module}`]: await this.createBox({
-          module: module,
-        }),
-        [`progress.available.${box!.module.next as string}`]: true,
-      },
+    }, {
+      arrayFilters: [{ "item.module": box.module._id }]
     });
   }
 
   /**
    * Updates the user to reprove the current box
    */
-  protected async reprove(user: UserDocument, module: string) {
-    const box = user.progress.box.get(module);
-
+  protected async reprove(user: UserDocument, box: BoxDocument) {
     await User.findByIdAndUpdate(user._id, {
       $set: {
-        [`progress.box.${module}`]: await this.createBox({
-          module: module,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          attempt: user.progress.box.get(module)!.attempt + 1,
-        }),
-        [`progress.available.${box!.module.next as string}`]: true,
+        [`progress.box.$[item]`]: await this.createBox({
+          module: box.module.id,
+          attempt: box.attempt + 1,
+        })
       },
       $push: {
         "progress.history": box,
       },
+    }, {
+      arrayFilters: [{ "item.module": box.module._id }]
     });
   }
 
@@ -254,13 +259,17 @@ class UserService extends BasicService<UserDocument> {
    * Returns the current box for all modules.
    */
   async findBox({ id }: { id: string }): Promise<{
-    available: Map<string, boolean>;
-    box: Map<string, BoxDocument>;
+    available: Available[];
+    box: BoxDocument[];
   }> {
     const user = await this.find({
       id,
       select: "progress",
     });
+
+    if (!user.progress.box) {
+      user.progress.box
+    }
 
     return {
       available: user.progress.available,
