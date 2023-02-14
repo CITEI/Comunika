@@ -1,0 +1,53 @@
+paths:
+  /user:
+    get:
+      tags:
+        - User
+      summary: Retorna dados não-sensíveis do usuário.
+      responses:
+        '200':
+          description: Recebe dados do usuário.
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        guardian:
+          type: string
+        relationship:
+          type: string
+        birth:
+          type: string
+        region:
+          type: string
+        disabilities:
+          type: array
+          items:
+            type: string
+            minLength: 24
+            maxLength: 24
+        progress:
+          type: object
+          properties:
+            availableModules:
+              type: array
+              items:
+                type: object
+                properties:
+                  id: 
+                    type: string
+                  value:
+                    type: boolean
+
+security:
+  - Bearer: []
