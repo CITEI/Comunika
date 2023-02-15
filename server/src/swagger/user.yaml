@@ -1,12 +1,73 @@
 paths:
-  /user:
+  /user/:
     get:
       tags:
         - User
       summary: Retorna dados não-sensíveis do usuário.
       responses:
         '200':
-          description: Recebe dados do usuário.
+          description: Envia os dados do usuário.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/User'
+        '403':
+          description: Token inválido.
+  
+  /user/history:
+    get:
+      tags:
+        - User
+      summary: Retorna o histórico de todas as atividades e suas respostas
+      responses:
+        '200':
+          description: Envia o histórico
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/AnswerHistory'
+        '403':
+          description: Token inválido.
+
+  /user/box:
+    get:
+      tags:
+        - User
+      summary: Retorna a box do usuário
+      responses:
+        '200':
+          description: Envia a box.
+          content:
+              application/json:
+                schema:
+                  $ref: '#components/schemas/Box'
+        '403':
+          description: Token inválido.
+
+    post:
+      tags:
+        - User
+      summary: Envia as respostas para as perguntas de uma atividade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answer'
+                
+      responses:
+        '200':
+          description: Diz "Approved" ou "Reproved"
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Approved
+        '403':
+          description: Token inválido.
+        '400':
+          description: Request inválido.
+
 
 components:
   securitySchemes:
@@ -16,6 +77,37 @@ components:
       bearerFormat: JWT
 
   schemas:
+    AnswerHistory:
+      type: object
+      properties:
+        module:
+          type: string
+          example: ID do módulo
+        activity:
+          type: string
+          example: ID da atividade
+        answers:
+          type: array
+          example: [[true, true, true], [true, true]]
+          items:
+            type: array
+            items:
+              type: boolean
+
+    Answer:
+      type: object
+      properties:
+        module:
+          type: string
+          example: ID do módulo
+        answers:
+          type: array
+          example: [[true, true, true], [true, true]]
+          items:
+            type: array
+            items:
+              type: boolean
+
     User:
       type: object
       properties:
@@ -34,8 +126,7 @@ components:
           type: array
           items:
             type: string
-            minLength: 24
-            maxLength: 24
+            example: ID da Disability
         progress:
           type: object
           properties:
@@ -46,8 +137,59 @@ components:
                 properties:
                   id: 
                     type: string
+                    example: ID do módulo
                   value:
                     type: boolean
-
+      
+    Box:
+      type: array
+      items:
+        type: object
+        properties:
+          module:
+            type: string
+            example: ID do módulo
+          activities:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: ID da atividade
+                name:
+                  type: string
+                  example: Nome da atividade
+                nodes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      text:
+                        type: string
+                        example: Texto da atividade
+                      image:
+                        type: string
+                      imageAlt:
+                        type: string
+                        example: Descrição da imagem
+                      type:
+                        type: string
+                        example: Tipo do node (Text/Carrousel)
+                questionCount:
+                  type: number
+                  example: 1
+                questionNodes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      question:
+                        type: string
+                        example: Corpo da pergunta
+                      notes:
+                        type: string
+                        example: Notas da pergunta
+                
 security:
   - Bearer: []

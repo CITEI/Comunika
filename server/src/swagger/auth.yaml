@@ -12,7 +12,7 @@ paths:
               $ref: '#/components/schemas/UserLogin'
       responses:
         '200':
-          description: Enviará um Bearer Token.
+          description: Envia o Bearer Token.
         '401':
           description: Credenciais inválidas.
 
@@ -24,7 +24,7 @@ paths:
       summary: Logar com Bearer Token
       responses:
         '200':
-          description: Enviará um bearer Token.
+          description: Envia um novo bearer Token.
         '401':
           description: Credenciais inválidas.
       
