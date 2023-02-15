@@ -4,6 +4,8 @@ paths:
       tags:
         - User
       summary: Retorna dados não-sensíveis do usuário.
+      security:
+        - Bearer: []
       responses:
         '200':
           description: Envia os dados do usuário.
@@ -19,6 +21,8 @@ paths:
       tags:
         - User
       summary: Retorna o histórico de todas as atividades e suas respostas
+      security:
+        - Bearer: []
       responses:
         '200':
           description: Envia o histórico
@@ -34,6 +38,8 @@ paths:
       tags:
         - User
       summary: Retorna a box do usuário
+      security:
+        - Bearer: []
       responses:
         '200':
           description: Envia a box.
@@ -48,6 +54,8 @@ paths:
       tags:
         - User
       summary: Envia as respostas para as perguntas de uma atividade
+      security:
+        - Bearer: []
       requestBody:
         required: true
         content:
@@ -190,6 +198,3 @@ components:
                       notes:
                         type: string
                         example: Notas da pergunta
-                
-security:
-  - Bearer: []
