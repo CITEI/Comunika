@@ -177,11 +177,12 @@ class UserService extends BasicService<UserDocument> {
    * Updates the available field of the next module in the user's progress
    */
   protected async makeNextAvailable(user: UserDocument, box: BoxDocument) {
-    if (!user.progress.box.some(e => e.module.id == box.module.next.id)) {
+    const next = box.module.next._id.toString();
+    if (!user.progress.box.some(e => e.module.id == next)) {
       await User.findByIdAndUpdate(user._id, {
         $push: {
           "progress.available": {
-            id: box.module.next._id.toString(),
+            id: next,
             value: true
           }
         },
@@ -192,7 +193,7 @@ class UserService extends BasicService<UserDocument> {
           [`progress.available.$[item].value`]: true
         },
       }, {
-        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
+        arrayFilters: [{ "item.id": next }]
       });
     }
   }
