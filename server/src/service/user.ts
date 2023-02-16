@@ -260,7 +260,7 @@ class UserService extends BasicService<UserDocument> {
    */
   async findBox({ id, module }: { id: string, module?: string }): Promise<{
     available?: Available[];
-    box: BoxDocument[] | BoxDocument;
+    box: BoxDocument[] | BoxDocument | undefined;
   }> {
     const user = await this.find({
       id,
