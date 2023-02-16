@@ -266,8 +266,8 @@ class UserService extends BasicService<UserDocument> {
         if (!moduleService.exists({ _id: module })) {
           throw new ObjectNotFoundError({ schema: "Module" });
         }
+        
         const newBox = await this.createBox({ module: module });
-
         user.progress.box.push(newBox);
 
         await User.findByIdAndUpdate(user._id, {
