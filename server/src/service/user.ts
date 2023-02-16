@@ -5,7 +5,7 @@ import {
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/user";
-import { ObjectNotFoundError, ValidationError } from "./errors";
+import { ObjectNotFoundError, ValidationError, BoxNotFoundError } from './errors';
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { AuthenticationService } from "./utils/authentication";
@@ -163,23 +163,25 @@ class UserService extends BasicService<UserDocument> {
 
     const box = user.progress.box.find(e => e.module.id == module);
 
-    const grade = this.calculateGrade(box!, answers);
+    if(!box) throw new BoxNotFoundError({module: module});
 
-    if (box!.module.next) {
+    const grade = this.calculateGrade(box, answers);
+
+    if (box.module.next) {
       await User.findByIdAndUpdate(user._id, {
         $set: {
           [`progress.available.$[item].value`]: true
         },
       }, {
-        arrayFilters: [{ "item.id": box!.module.next._id.toString() }]
+        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
       });
     }
 
     if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user, box!);
+      this.approve(user, box);
       return EvaluationStatus.Approved;
     } else {
-      this.reprove(user, box!);
+      this.reprove(user, box);
       return EvaluationStatus.Reproved;
     }
   }
@@ -260,34 +262,42 @@ class UserService extends BasicService<UserDocument> {
    */
   async findBox({ id, module }: { id: string, module?: string }): Promise<{
     available?: Available[];
-    box: BoxDocument[] | BoxDocument | undefined;
+    box?: BoxDocument[] | BoxDocument;
   }> {
-    const user = await this.find({
+    let user: UserDocument | null = await this.find({
       id,
       select: "progress",
     });
 
-    await user.populate([{
-      path: "progress.box.activities.activity",
-      model: "Activity",
-    }, {
-      path: "progress.box.module",
-      select: "_id, name",
-      model: "Module"
-    }]);
+    if (module) {
+      if (!user.progress.box.some(e => e.module._id.toString() === module)) {
+        if (!moduleService.exists({ _id: module })) {
+          throw new ObjectNotFoundError({ schema: "Module" });
+        }
+        const newBox = await this.createBox({ module: module });
 
-    if(module) {
-      return {
-        box: user.progress.box.find(e => e.module.id === module)
+        user.progress.box.push(newBox);
+
+        await User.findByIdAndUpdate(user._id, {
+          $push: {
+            "progress.box": newBox
+          },
+        });
       }
+
+      await user.populate([{
+        path: "progress.box.activities.activity",
+        model: "Activity",
+      }]);
+
+      const box = user.progress.box.find(e => e.module._id.toString() === module);
+      return { box: box }
     }
     else {
       return {
         available: user.progress.available,
-        box: user.progress.box
       }
     }
-    
   }
 
   /**
