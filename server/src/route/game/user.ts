@@ -45,17 +45,8 @@ router.post(
   async (req: Request, res: Response) => {
     const body: {module: string, answers: Array<Array<boolean>>} = req.body; 
     const id: string = (req.user as UserDocument)._id;
-    
-    switch (await userService.evaluate(id, body.module, body.answers)) {
-      case EvaluationStatus.Approved:
-        res.status(StatusCodes.OK).send({ status: "approved" });
-        break;
-      case EvaluationStatus.Reproved:
-        res.status(StatusCodes.OK).send({ status: "reproved" });
-        break;
-      default:
-        throw new InternalServerError();
-    }
+    const grade = await userService.evaluate(id, body.module, body.answers);
+    res.status(StatusCodes.OK).send({ grade: grade });
   }
 );
 

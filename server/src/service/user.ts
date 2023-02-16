@@ -146,7 +146,7 @@ class UserService extends BasicService<UserDocument> {
     id: string,
     module: string,
     answers: Array<Array<boolean>>
-  ): Promise<EvaluationStatus> {
+  ): Promise<number> {
     const user = await this.find({
       id,
       select: "progress.box",
@@ -162,28 +162,51 @@ class UserService extends BasicService<UserDocument> {
     }]);
 
     const box = user.progress.box.find(e => e.module.id == module);
-
-    if(!box) throw new BoxNotFoundError({module: module});
+    if (!box) throw new BoxNotFoundError({ module: module });
 
     const grade = this.calculateGrade(box, answers);
+    const approved = grade >= GAME_MIN_GRADE_PCT;
 
-    if (box.module.next) {
-      await User.findByIdAndUpdate(user._id, {
-        $set: {
-          [`progress.available.$[item].value`]: true
-        },
-      }, {
-        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
-      });
-    }
+    
+    if (box.module.next) await this.makeNextAvailable(user, box);
+    await this.createNextBox(user, box, approved);
 
-    if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user, box);
-      return EvaluationStatus.Approved;
-    } else {
-      this.reprove(user, box);
-      return EvaluationStatus.Reproved;
-    }
+    return grade;
+  }
+
+  /**
+   * Updates the available field of the next module in the user's progress
+   */
+  protected async makeNextAvailable(user: UserDocument, box: BoxDocument) {
+    // TODO: 
+    // Esse código não funciona no caso de um módulo não existente em user porém que está em .next
+    // Após a mudança de lógica da linked list isso será resolvido.
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        [`progress.available.$[item].value`]: true
+      },
+    }, {
+      arrayFilters: [{ "item.id": box.module.next._id.toString() }]
+    });
+  }
+
+  /**
+   * Creates the next box for the user using approved status
+   */
+  protected async createNextBox(user: UserDocument, box: BoxDocument, approved: boolean) {
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        [`progress.box.$[item]`]: await this.createBox({
+          module: box.module.id,
+          attempt: approved ? 0 : box.attempt + 1,
+        }),
+      },
+      $push: {
+        "progress.history": box,
+      },
+    }, {
+      arrayFilters: [{ "item.module": box.module._id }]
+    });
   }
 
   /**
@@ -217,44 +240,6 @@ class UserService extends BasicService<UserDocument> {
         fields: [{ name: "answers", problem: "missing" }],
       });
     return grade;
-  }
-
-  /**
-   * Updates the user to approve the current box
-   */
-  protected async approve(user: UserDocument, box: BoxDocument) {
-    const id = user._id;
-    await User.findByIdAndUpdate(id, {
-      $set: {
-        [`progress.box.$[item]`]: await this.createBox({
-          module: box.module.id,
-        }),
-      },
-      $push: {
-        "progress.history": box,
-      },
-    }, {
-      arrayFilters: [{ "item.module": box.module._id }]
-    });
-  }
-
-  /**
-   * Updates the user to reprove the current box
-   */
-  protected async reprove(user: UserDocument, box: BoxDocument) {
-    await User.findByIdAndUpdate(user._id, {
-      $set: {
-        [`progress.box.$[item]`]: await this.createBox({
-          module: box.module.id,
-          attempt: box.attempt + 1,
-        })
-      },
-      $push: {
-        "progress.history": box,
-      },
-    }, {
-      arrayFilters: [{ "item.module": box.module._id }]
-    });
   }
 
   /**
