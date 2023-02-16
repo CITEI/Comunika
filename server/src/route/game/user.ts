@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { InternalServerError } from "../../service/errors";
 import passport from "passport";
 import { UserDocument } from "src/model/user";
+import { CustomJoi } from '../utils/custom_joi';
 
 const router = Router();
 
@@ -14,7 +15,21 @@ router.get(
   "/box",
   async (req: Request, res: Response) => {
     const id = (req.user as UserDocument)._id;
-    const box = await userService.findBox({ "id": id, "module": req.body.module });
+    const box = await userService.findBox({ "id": id });
+    res.status(StatusCodes.OK).send(box);
+  }
+);
+
+router.get(
+  "/box/:id",
+  celebrate({
+    params: {
+      id: CustomJoi.ObjectId().required(),
+    },
+  }),
+  async (req: Request, res: Response) => {
+    const id = (req.user as UserDocument)._id;
+    const box = await userService.findBox({ "id": id, "module": req.params.id });
     res.status(StatusCodes.OK).send(box);
   }
 );

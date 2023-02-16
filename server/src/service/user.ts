@@ -258,9 +258,9 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Returns the current box for all modules.
    */
-  async findBox({ id }: { id: string }): Promise<{
-    available: Available[];
-    box: BoxDocument[];
+  async findBox({ id, module }: { id: string, module?: string }): Promise<{
+    available?: Available[];
+    box: BoxDocument[] | BoxDocument;
   }> {
     const user = await this.find({
       id,
@@ -270,12 +270,24 @@ class UserService extends BasicService<UserDocument> {
     await user.populate([{
       path: "progress.box.activities.activity",
       model: "Activity",
+    }, {
+      path: "progress.box.module",
+      select: "_id, name",
+      model: "Module"
     }]);
 
-    return {
-      available: user.progress.available,
-      box: user.progress.box
+    if(module) {
+      return {
+        box: user.progress.box.find(e => e.module.id === module)
+      }
     }
+    else {
+      return {
+        available: user.progress.available,
+        box: user.progress.box
+      }
+    }
+    
   }
 
   /**
