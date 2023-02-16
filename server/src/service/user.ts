@@ -167,7 +167,6 @@ class UserService extends BasicService<UserDocument> {
     const grade = this.calculateGrade(box, answers);
     const approved = grade >= GAME_MIN_GRADE_PCT;
 
-    
     if (box.module.next) await this.makeNextAvailable(user, box);
     await this.createNextBox(user, box, approved);
 
@@ -178,16 +177,24 @@ class UserService extends BasicService<UserDocument> {
    * Updates the available field of the next module in the user's progress
    */
   protected async makeNextAvailable(user: UserDocument, box: BoxDocument) {
-    // TODO: 
-    // Esse código não funciona no caso de um módulo não existente em user porém que está em .next
-    // Após a mudança de lógica da linked list isso será resolvido.
-    await User.findByIdAndUpdate(user._id, {
-      $set: {
-        [`progress.available.$[item].value`]: true
-      },
-    }, {
-      arrayFilters: [{ "item.id": box.module.next._id.toString() }]
-    });
+    if (!user.progress.box.some(e => e.module.id == box.module.next.id)) {
+      await User.findByIdAndUpdate(user._id, {
+        $push: {
+          "progress.available": {
+            id: box.module.next._id.toString(),
+            value: true
+          }
+        },
+      });
+    } else {
+      await User.findByIdAndUpdate(user._id, {
+        $set: {
+          [`progress.available.$[item].value`]: true
+        },
+      }, {
+        arrayFilters: [{ "item.id": box.module.next._id.toString() }]
+      });
+    }
   }
 
   /**
