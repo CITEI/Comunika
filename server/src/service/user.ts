@@ -10,10 +10,11 @@ import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
+import { ModuleDocument } from '../model/module';
 
-export enum EvaluationStatus {
-  Approved,
-  Reproved,
+interface UserModules extends ModuleDocument {
+  _doc?: any;
+  available?: boolean;
 }
 
 class UserService extends BasicService<UserDocument> {
@@ -138,6 +139,38 @@ class UserService extends BasicService<UserDocument> {
     return box;
   }
 
+  async findModules(id: string): Promise<UserModules[]> {
+    const user: UserDocument = await this.find({
+      id,
+      select: "progress",
+    });
+
+    const modules: UserModules[] = await moduleService.findAll();
+    let available = user.progress.available;
+
+    if (modules.length != available.length) {
+      const newAvailable: Available[] = [];
+
+      for (const module of modules) {
+        const found = available.find(a => a.id == module._id);
+        if (!found) newAvailable.push({ id: module._id, value: false });
+        else newAvailable.push(found);
+      }
+    
+      available = newAvailable;
+    }
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        "progress.available": available,
+      }
+    })
+
+    return modules.map(m => ({ ...m._doc, 
+      available: available.find(a => a.id == m._id)!.value
+    }));
+  }
+
   /**
    * Checks if a user has passed, and decides the next step of the game
    * for it
@@ -149,7 +182,7 @@ class UserService extends BasicService<UserDocument> {
   ): Promise<number> {
     const user = await this.find({
       id,
-      select: "progress.box",
+      select: "progress",
     });
 
     await user.populate([{
@@ -178,24 +211,15 @@ class UserService extends BasicService<UserDocument> {
    */
   protected async makeNextAvailable(user: UserDocument, box: BoxDocument) {
     const next = box.module.next._id.toString();
-    if (!user.progress.box.some(e => e.module.id == next)) {
-      await User.findByIdAndUpdate(user._id, {
-        $push: {
-          "progress.available": {
-            id: next,
-            value: true
-          }
-        },
-      });
-    } else {
-      await User.findByIdAndUpdate(user._id, {
-        $set: {
-          [`progress.available.$[item].value`]: true
-        },
-      }, {
-        arrayFilters: [{ "item.id": next }]
-      });
-    }
+    if (user.progress.available.find(a => a.id == next)!.value == true) return;
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        [`progress.available.$[item].value`]: true
+      },
+    }, {
+      arrayFilters: [{ "item.id": next }]
+    });
   }
 
   /**
@@ -289,6 +313,7 @@ class UserService extends BasicService<UserDocument> {
     else {
       return {
         available: user.progress.available,
+        box: user.progress.box,
       }
     }
   }

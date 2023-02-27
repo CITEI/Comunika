@@ -1,8 +1,7 @@
-import { EvaluationStatus, userService } from "../../service/user";
+import { userService } from "../../service/user";
 import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { InternalServerError } from "../../service/errors";
 import passport from "passport";
 import { UserDocument } from "src/model/user";
 import { CustomJoi } from '../utils/custom_joi';
@@ -10,6 +9,15 @@ import { CustomJoi } from '../utils/custom_joi';
 const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
+
+router.get(
+  "/modules", 
+  async (req: Request, res: Response) => {
+    const id = (req.user as UserDocument)._id;
+    const modules = await userService.findModules(id);
+    res.status(StatusCodes.OK).send(modules);
+  }
+);
 
 router.get(
   "/box",
