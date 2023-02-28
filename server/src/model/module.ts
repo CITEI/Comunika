@@ -14,7 +14,7 @@ export const ModuleSchema = new mongoose.Schema({
   imageAlt: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   activities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
   alternativeActivities: [{ type: mongoose.Types.ObjectId, ref: "Activity", required: true }],
-  next: {
+  previous: {
     type: mongoose.Types.ObjectId,
     default: null,
     index: true, // required to avoid doubly linked list
@@ -25,7 +25,7 @@ export const ModuleSchema = new mongoose.Schema({
 export interface ModuleDocument extends mongoose.Document, ModuleInput {
   activities: mongoose.PopulatedDoc<ActivityDocument>[];
   alternativeActivities: mongoose.PopulatedDoc<ActivityDocument>[];
-  next: mongoose.PopulatedDoc<ModuleDocument> | null;
+  previous: mongoose.PopulatedDoc<ModuleDocument> | null;
 }
 
 export const Module = mongoose.model<ModuleDocument>("Module", ModuleSchema);

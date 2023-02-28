@@ -1,4 +1,3 @@
-import { Game, GameDocument } from "../model/game";
 import { ModuleDocument, Module } from "../model/module";
 import { ActivityInput, ActivityDocument, Activity } from "../model/activity";
 import { activityService } from "./activity";
@@ -6,13 +5,11 @@ import { LinkedListService } from "./utils/linkedlist";
 import underscore from "underscore";
 import { ObjectNotFoundError } from "./errors";
 
-export default class ModuleService extends LinkedListService<ModuleDocument, GameDocument> {
+export default class ModuleService extends LinkedListService<ModuleDocument> {
   constructor() {
     super({
       model: Module,
       select: "name image imageAlt next",
-      metaModel: Game,
-      createMeta: true,
     });
   }
 

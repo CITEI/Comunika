@@ -199,8 +199,9 @@ class UserService extends BasicService<UserDocument> {
 
     const grade = this.calculateGrade(box, answers);
     const approved = grade >= GAME_MIN_GRADE_PCT;
+    const nextModule = await moduleService.findNext(box.module._id);
 
-    if (box.module.next) await this.makeNextAvailable(user, box);
+    if (nextModule) await this.makeNextAvailable(user, box, nextModule);
     await this.createNextBox(user, box, approved);
 
     return grade;
@@ -209,8 +210,8 @@ class UserService extends BasicService<UserDocument> {
   /**
    * Updates the available field of the next module in the user's progress
    */
-  protected async makeNextAvailable(user: UserDocument, box: BoxDocument) {
-    const next = box.module.next._id.toString();
+  protected async makeNextAvailable(user: UserDocument, box: BoxDocument, nextModule: ModuleDocument) {
+    const next = nextModule._id;
     if (user.progress.available.find(a => a.id == next)!.value == true) return;
 
     await User.findByIdAndUpdate(user._id, {
