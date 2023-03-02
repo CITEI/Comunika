@@ -30,7 +30,7 @@ export class BasicService<
    * Obtains all stored documents
    */
   findAll(): Promise<Array<D>> {
-    return this.model.find({}).select(this.select).exec();
+    return this.model.find().exec();
   }
 
   /**

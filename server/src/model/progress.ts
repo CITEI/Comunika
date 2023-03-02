@@ -2,36 +2,32 @@ import mongoose from "mongoose";
 import { BoxDocument, BoxSchema } from "./box";
 
 export interface ProgressInput {
-  available: Available[];
-  box: BoxDocument[];
+  box: Map<string, BoxType>;
   history: BoxDocument[];
 }
 
-export interface Available {
-  id: string,
-  value: boolean
+export interface BoxType {
+  done: boolean;
+  data: BoxDocument;
 }
 
 export const ProgressSchema = new mongoose.Schema(
   {
-    available: [{
-      id: {
-        type: String, 
-        required: true
+    box: {
+      type: Map,
+      default: new Map(),
+      of: {
+        _id: false,
+        done: {
+          type: Boolean,
+          required: true
+        },
+        data: {
+          type: BoxSchema,
+          required: false
+        },
       },
-      value: {
-        type: Boolean,
-        required: true,
-        default: null,
-      }
-    }],
-    box: [
-      {
-        type: BoxSchema,
-        required: true,
-        default: []
-      }
-    ],
+    },
     history: [
       {
         type: BoxSchema,

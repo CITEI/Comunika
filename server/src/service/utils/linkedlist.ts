@@ -50,12 +50,12 @@ export class LinkedListService<
 
     if (current) {
       const previous = current.previous;
-      const parent = await this.model.findOne({ previous: { $eq: id } }).exec();
+      const next = await this.model.findOne({ previous: { $eq: id } }).exec();
 
       try {
-        if (parent != null) {
-          parent.previous = previous;
-          await parent.save();
+        if (next != null) {
+          next.previous = previous;
+          await next.save();
         }
         await current.delete();
       } catch (error) {
