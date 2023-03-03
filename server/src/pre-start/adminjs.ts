@@ -2,8 +2,6 @@ import AdminJS, { ResourceOptions, ResourceWithOptions } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import AdminJSMongoose from "@adminjs/mongoose";
 import { ADMIN_SECRET, API_VERSION, APP_NAME, ORIGIN, STATIC_DIR } from "./constants";
-import { User } from "../model/user";
-import userOptions from "../route/admin/user";
 import { Module } from "../model/module";
 import moduleOptions from "../route/admin/module";
 import { Activity } from "../model/activity";

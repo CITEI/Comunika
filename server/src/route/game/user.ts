@@ -20,15 +20,6 @@ router.get(
 );
 
 router.get(
-  "/box",
-  async (req: Request, res: Response) => {
-    const id = (req.user as UserDocument)._id;
-    const box = await userService.findBox({ "id": id });
-    res.status(StatusCodes.OK).send(box);
-  }
-);
-
-router.get(
   "/box/:id",
   celebrate({
     params: {
