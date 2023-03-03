@@ -21,7 +21,7 @@ router.get(
     },
   }),
   async (req: Request, res: Response) => {
-    const next = await moduleService.findNext({ id: req.params.id });
+    const next = await moduleService.findNext(req.params.id);
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
   }
