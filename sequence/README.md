@@ -27,7 +27,7 @@ interface Auth {
 }
 ```
 ---
-## Jogo
+## Dashboard
 ```mermaid
 sequenceDiagram
     User->>App: Loga no App
@@ -35,7 +35,7 @@ sequenceDiagram
     Note over App,API: Token necessário
     API->>DB: Pede os modules do usuário
     DB-->>API: Modules[]
-    API-->>App: Modules[]
+    API-->>App: Modules[] com available
     App->>App: Verifica quais módulos estão disponíveis
     App-->>User: Renderiza
     User->>App: Seleciona o módulo
@@ -67,7 +67,7 @@ interface Box {
 }
 ```
 ---
-## Responder atividade
+## Responder módulo
 ```mermaid
 sequenceDiagram
     User->>App: Responde as perguntas
