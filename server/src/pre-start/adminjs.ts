@@ -36,13 +36,6 @@ const adminJs = new AdminJS({
       },
     },
     {
-      resource: User,
-      options: {
-        navigation: peopleNavigation,
-        ...userOptions,
-      },
-    },
-    {
       resource: Disability,
       options: {
         navigation: peopleNavigation,
