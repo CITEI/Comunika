@@ -20,12 +20,26 @@ export class LinkedListService<
     super({ model, select });
   }
 
+  async orderList(list: D[]) {
+    const orderedList = [];
+
+    // This will be the first item in the list
+    let next: D | null = list.find(item => item.previous == null) ?? null;
+    while (next != null) {
+      orderedList.push(next);
+      next = await this.findNext(next._id);
+    }
+
+    return orderedList;
+  }
+
   /**
    * Creates a new linked list object and appends it to the end
    */
   async create(input: I): Promise<D> {
     const doc = new this.model(input);
-    const all = await this.findAll();
+    let all = await this.findAll();
+    all = await this.orderList(all);
 
     try {
       if (all.length == 0) {
