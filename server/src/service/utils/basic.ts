@@ -29,8 +29,8 @@ export class BasicService<
   /**
    * Obtains all stored documents
    */
-  findAll(input?: I): Promise<Array<D>> {
-    return this.model.find({}).select(this.select).exec();
+  findAll(): Promise<Array<D>> {
+    return this.model.find().exec();
   }
 
   /**

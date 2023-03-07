@@ -29,7 +29,7 @@ export const ActivitySchema = new mongoose.Schema({
   ],
 });
 
-ActivitySchema.pre("save", async function (next) {
+ActivitySchema.pre("save", function (next) {
   this.questionCount = this.questionNodes.length;
   next();
 });

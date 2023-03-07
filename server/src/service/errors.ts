@@ -21,7 +21,7 @@ export class ServerError extends Error {
   }
 
   get body(): { [key: string]: any } {
-    let body: { [key: string]: any } = {
+    const body: { [key: string]: any } = {
       name: this.name,
       message: this.message,
     };
@@ -66,6 +66,12 @@ export class ObjectNotFoundError extends NotFoundError {
     super({
       message: `${schema} not found`,
     });
+  }
+}
+
+export class BoxNotFoundError extends NotFoundError {
+  constructor({ module }: { module: string }) {
+    super({ message: `[${module}] does not exist inside user's box.` })
   }
 }
 
@@ -132,7 +138,7 @@ export class InvalidExtensionError extends ServerError {
  * Thrown when an user cannot access some route
  */
 export class UnauthorizedError extends ServerError {
-  constructor(args?: {message?: string}) {
+  constructor(args?: { message?: string }) {
     super({
       name: "Unauthorized",
       message: args?.message || "User doesn't have privileges to continue",

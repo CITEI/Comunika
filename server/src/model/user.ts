@@ -6,7 +6,7 @@ import {
 } from "../pre-start/constants";
 import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "./utils";
-import { ProgressDocument, ProgressSchema } from "./progress";
+import { ProgressInput, ProgressSchema } from "./progress";
 
 /** Interface for creating a new user */
 export interface UserInput {
@@ -16,7 +16,7 @@ export interface UserInput {
   relationship: string;
   birth: Date;
   region: string;
-  comorbidity: string;
+  disabilities: string;
 }
 
 export const UserSchema = new mongoose.Schema({
@@ -40,7 +40,7 @@ export const UserSchema = new mongoose.Schema({
   relationship: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   birth: { type: Date, required: true },
   region: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  comorbidity: [
+  disabilities: [
     {
       type: mongoose.Types.ObjectId,
       ref: "Disability",
@@ -53,7 +53,7 @@ export const UserSchema = new mongoose.Schema({
 
 // Hashes password before saving to db
 UserSchema.pre("save", async function (next) {
-  this.password = await hashPassword(this.password);
+  this.password = await hashPassword(this.password as string);
   next();
 });
 
@@ -63,12 +63,12 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods.passwordMatches = async function (
   pass: string
 ): Promise<boolean> {
-  return passwordsMatch(pass, this.password);
+  return passwordsMatch(pass, this.password as string);
 };
 
 /** Interface for retrieving user registers */
 export interface UserDocument extends mongoose.Document, UserInput {
-  progress: ProgressDocument;
+  progress: ProgressInput;
   passwordMatches(pass: string): Promise<boolean>;
 }
 

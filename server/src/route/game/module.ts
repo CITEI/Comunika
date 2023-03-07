@@ -2,7 +2,6 @@ import { moduleService } from "../../service/module";
 import { celebrate } from "celebrate";
 import { Router, Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { moduleStageRouter } from "./stage";
 import { CustomJoi } from "../utils/custom_joi";
 import passport from "passport";
 
@@ -22,16 +21,10 @@ router.get(
     },
   }),
   async (req: Request, res: Response) => {
-    const next = await moduleService.findNext({ id: req.params.id });
+    const next = await moduleService.findNext(req.params.id);
     if (next) res.status(StatusCodes.OK).json(next);
     else res.status(StatusCodes.NO_CONTENT).send(ReasonPhrases.NO_CONTENT);
   }
-);
-
-router.use(
-  "/:module/stage",
-  celebrate({ params: { module: CustomJoi.ObjectId().required() } }),
-  moduleStageRouter
 );
 
 export default router;

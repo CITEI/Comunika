@@ -1,22 +1,21 @@
-import { BoxDocument, BoxInput } from "../model/box";
+import { BoxDocument } from "../model/box";
 import {
   GAME_MIN_GRADE_PCT,
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/user";
-import { stageService } from "./stage";
-import { ObjectNotFoundError, ValidationError } from "./errors";
+import { ObjectNotFoundError, ValidationError, BoxNotFoundError } from './errors';
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
-import { Activity, ActivityDocument } from "../model/activity";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
-import { ModuleDocument } from "src/model/module";
-import { StageDocument } from "src/model/stage";
 
-export enum EvaluationStatus {
-  Approved,
-  Reproved,
+interface UserModules {
+  id: string;
+  name: string;
+  imageAlt: string;
+  image: string;
+  available?: boolean;
 }
 
 class UserService extends BasicService<UserDocument> {
@@ -29,13 +28,6 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    user.progress.module = await moduleService.findHead();
-    user.progress.stage = await stageService.findHead({
-      module: user.progress.module,
-    });
-    user.progress.box = await this.createBox({
-      stage: user.progress.stage,
-    });
     await user.save();
     return user;
   }
@@ -81,22 +73,22 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Creates a box given a user with defined progress.stage
+   * Creates a box given a user with defined progress.
    */
   protected async createBox({
-    stage,
+    module,
     attempt,
   }: {
-    stage: string;
+    module: string;
     attempt?: number;
-  }): Promise<BoxInput> {
+  }): Promise<BoxDocument> {
     attempt = attempt || 0;
     const alternative = attempt > 0;
     let activities = Array<string>();
 
     if (attempt <= 1) {
-      activities = await stageService.sampleActivities({
-        id: stage,
+      activities = await moduleService.sampleActivities({
+        id: module,
         quantity: GAME_ACTIVITY_SAMPLE_QUANTITY,
         alternative,
       });
@@ -107,14 +99,14 @@ class UserService extends BasicService<UserDocument> {
 
       activities = _.shuffle(
         (
-          await stageService.sampleActivities({
-            id: stage,
+          await moduleService.sampleActivities({
+            id: module,
             quantity: regularQuantity,
             alternative: false,
           })
         ).concat(
-          await stageService.sampleActivities({
-            id: stage,
+          await moduleService.sampleActivities({
+            id: module,
             quantity: alternativeQuantity,
             alternative: true,
           })
@@ -122,8 +114,8 @@ class UserService extends BasicService<UserDocument> {
       );
     }
 
-    const box: BoxInput = {
-      stage: stage,
+    const box: BoxDocument = {
+      module: module,
       attempt: attempt,
       activities: activities.map((el: any) => ({ activity: el, answers: [] })),
     };
@@ -132,29 +124,100 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
+   * Returns all modules and their availability for a user
+   */
+  async findModules(id: string): Promise<UserModules[]> {
+    const user: UserDocument = await this.find({
+      id,
+      select: "progress",
+    });
+
+    const modules = await moduleService.findAll();
+
+    return modules.map(module => {
+      let available;
+
+      if (!module.previous) available = true;
+      else {
+        const box = user.progress.box.get(module.previous._id);
+        available = box ? box.done : false;
+      }
+
+      return {
+        id: module.id,
+        name: module.name,
+        imageAlt: module.imageAlt,
+        image: module.image,
+        available: available,
+      };
+    });
+  }
+
+  /**
+   * Evaluates users result, creates a new box and marks the module as done.
+   */
+  async evaluate(
+    id: string,
+    module: string,
+    answers: Array<Array<boolean>>
+  ): Promise<number> {
+    const user = await this.find({
+      id,
+      select: "progress",
+    });
+
+    await user.populate([{
+      path: `progress.box.${module}.data.activities.activity`,
+      select: "questionCount",
+      model: "Activity",
+    }, {
+      path: `progress.box.${module}.data.module`,
+      select: "id",
+      model: "Module"
+    }]);
+
+    const box = user.progress.box.get(module);
+    if (!box) throw new BoxNotFoundError({ module: module });
+
+    const grade = this.calculateGrade(box.data, answers);
+    const approved = grade >= GAME_MIN_GRADE_PCT;
+    const newBox = await this.createBox({
+      module: box.data.module.id,
+      attempt: approved ? 0 : box.data.attempt + 1
+    });
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        [`progress.box.${module}`]: {
+          done: true,
+          data: newBox
+        }
+      },
+      $push: {
+        [`progress.history`]: box.data
+      }
+    });
+
+    return grade;
+  }
+
+  /**
    * Calculates the grade of a user box given its answers
    */
-  protected async calculateGrade(
-    user: UserDocument,
+  protected calculateGrade(
+    box: BoxDocument,
     answers: boolean[][]
-  ): Promise<number> {
+  ): number {
     let grade = 0;
     // update box answers
-    if (user.progress.box.activities.length == answers.length) {
-      // get total answers
-      await user.populate({
-        path: "progress.box.activities.activity",
-        select: "questionCount",
-        model: "Activity",
-      });
+    if (box.activities.length == answers.length) {
       let total = 0;
       let hits = 0;
       answers.forEach((el, i) => {
-        let count: number =
-          user.progress.box.activities[i].activity.questionCount;
-        let true_count = el.reduce((acc, cur) => +cur + acc, 0);
+        const count: number = box.activities[i].activity.questionCount;
+        const true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          user.progress.box.activities[i].answers = el;
+          box.activities[i].answers = el;
           total += count;
           hits += true_count;
         } else
@@ -171,142 +234,54 @@ class UserService extends BasicService<UserDocument> {
   }
 
   /**
-   * Updates the user to approve the current box
+   * Finds a box for a user, creating it if it doesn't exist
    */
-  protected async approve(user: UserDocument) {
-    const id = user._id;
-    await User.findByIdAndUpdate(id, {
-      $set: {
-        "progress.box": null,
-      },
-      $push: {
-        "progress.history": user.progress.box,
-      },
-    });
-  }
-
-  /**
-   * Updates the user to reprove the current box
-   */
-  protected async reprove(user: UserDocument) {
-    await User.findByIdAndUpdate(user._id, {
-      $set: {
-        "progress.box": await this.createBox({
-          stage: user.progress.stage,
-          attempt: user.progress.box.attempt + 1,
-        }),
-      },
-      $push: { "progress.history": user.progress.box },
-    });
-  }
-
-  /**
-   * Checks if a user has passed, and decides the next step of the game
-   * for it
-   */
-  async evaluate({
-    id,
-    answers,
-  }: {
-    id: string;
-    answers: Array<Array<boolean>>;
-  }): Promise<EvaluationStatus> {
-    const user = await this.find({
+  async findBox({ id, module }: { id: string, module: string }): Promise<
+    BoxDocument
+  > {
+    let user: UserDocument | null = await this.find({
       id,
-      select: "progress.box progress.stage progress.module",
-    });
-    const grade = await this.calculateGrade(user, answers);
-    if (grade >= GAME_MIN_GRADE_PCT) {
-      this.approve(user);
-      return EvaluationStatus.Approved;
-    } else {
-      this.reprove(user);
-      return EvaluationStatus.Reproved;
-    }
-  }
-
-  /**
-   * Returns the current box
-   */
-  async findBox({ id }: { id: string }): Promise<{
-    activities?: ActivityDocument[];
-    attempt?: number;
-    stage: StageDocument;
-    module: ModuleDocument;
-  }> {
-    const user = await this.find({
-      id,
-      select: "progress.box progress.module progress.stage",
+      select: "progress",
     });
 
-    let box = user.progress.box;
-    if (box == null) {
-      // reach the end of the game in that moment
+    // Check if the box ins't yet created
+    if (!user.progress.box.get(module)) {
+      const newBox = await this.createBox({ module: module });
+      // This is necessary because the call to populate below woudn't work otherwise
+      user.progress.box.set(module, {done: false, data: newBox});
 
-      let nextStage = await stageService.findNext({ id: user.progress.stage });
-      let nextModule: ModuleDocument | null = user.progress.module;
-      if (!nextStage) {
-        // reached the last stage of a module
-
-        nextModule = await moduleService.findNext({
-          id: user.progress.module,
-        });
-        if (nextModule)
-          // if next module, get its first stage
-          nextStage = await stageService.findHead({
-            module: nextModule,
-          });
-      }
-
-      if (nextStage) {
-        box = await this.createBox({ stage: nextStage!._id });
-        await User.findByIdAndUpdate(id, {
-          $set: {
-            "progress.module": nextModule,
-            "progress.stage": nextStage,
-            "progress.box": box,
-          },
-        });
-      }
-    }
-
-    if (box) {
-      await user.populate({
-        path: "progress.box.activities.activity",
-        model: Activity,
+      await User.findByIdAndUpdate(user._id, {
+        $set: {
+          [`progress.box.${module}`]: { done: false, data: newBox }
+        },
       });
-      return {
-        activities: user.progress.box.activities.map((el) => el.activity),
-        attempt: user.progress.box.attempt,
-        stage: user.progress.stage,
-        module: user.progress.module,
-      };
-    } else
-      return {
-        stage: user.progress.stage,
-        module: user.progress.module,
-      };
+    }
+
+    await user.populate([{
+      path: `progress.box.${module}.data.activities.activity`,
+      model: "Activity",
+    }]);
+
+    const box = user.progress.box.get(module);
+    return box!.data;
   }
 
   /**
    * Returns the evaluated boxes history
    */
-  async findHistory({
-    id,
-  }: {
-    id: string;
-  }): Promise<
-    { stage: string; activities: { answers: boolean[]; name: string }[] }[]
-  > {
+  async findHistory({ id }: { id: string }): Promise<{
+    module: string;
+    activities: { answers: boolean[]; name: string }[]
+  }[]> {
     const user = await this.find({ id, select: "progress.history" });
-    await user.populate("progress.history.stage", "name");
+    await user.populate("progress.history.module", "name");
     await user.populate({
       path: "progress.history.activities.activity",
       model: "Activity",
       select: "name",
     });
     return user.progress.history.map((box) => ({
-      stage: box.stage.name,
+      module: box.module.name,
       activities: box.activities.map((activity) => ({
         answers: activity.answers,
         name: activity.activity.name,
@@ -321,7 +296,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "email guardian relationship birth region comorbidity progress.stage progress.module",
+        "email guardian relationship birth region disabilities progress.module",
     });
   }
 }
