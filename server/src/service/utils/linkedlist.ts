@@ -20,17 +20,25 @@ export class LinkedListService<
     super({ model, select });
   }
 
-  async orderList(list: D[]) {
-    const orderedList = [];
+
+  /**
+   * Returns the last document in the list
+   */
+  async findLast(l?: D[]): Promise<D | null> {
+    // if no list is provided it will fetch all the documents
+    const list = l ?? await this.findAll();
 
     // This will be the first item in the list
     let next: D | null = list.find(item => item.previous == null) ?? null;
+
     while (next != null) {
-      orderedList.push(next);
-      next = await this.findNext(next._id);
+      let found = list.find(item => item.previous == next!.id);
+      // if found is underfined then we have reached the end of the list
+      if (!found) break;
+      else next = found;
     }
 
-    return orderedList;
+    return next;
   }
 
   /**
@@ -38,14 +46,12 @@ export class LinkedListService<
    */
   async create(input: I): Promise<D> {
     const doc = new this.model(input);
-    let all = await this.findAll();
-    all = await this.orderList(all);
+    const last = await this.findLast();
 
     try {
-      if (all.length == 0) {
+      if (!last) {
         doc.previous = null;
       } else {
-        const last = all.pop();
         doc.previous = last;
       }
       doc.save();
@@ -63,12 +69,11 @@ export class LinkedListService<
     const current = await this.model.findById(id).exec();
 
     if (current) {
-      const previous = current.previous;
-      const next = await this.model.findOne({ previous: { $eq: id } }).exec();
+      const next = await this.findNext(current.id);
 
       try {
         if (next != null) {
-          next.previous = previous;
+          next.previous = current.previous;
           await next.save();
         }
         await current.delete();
@@ -86,5 +91,4 @@ export class LinkedListService<
     if (doc) return doc;
     else return null;
   }
-
 }

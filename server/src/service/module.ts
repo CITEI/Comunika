@@ -9,7 +9,7 @@ export default class ModuleService extends LinkedListService<ModuleDocument> {
   constructor() {
     super({
       model: Module,
-      select: "name image imageAlt next",
+      select: "name image imageAlt previous",
     });
   }
 
