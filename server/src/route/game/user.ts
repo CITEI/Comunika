@@ -34,17 +34,18 @@ router.get(
 );
 
 router.post(
-  "/box",
+  "/box/:id",
   celebrate({
+    params: {
+      id: CustomJoi.ObjectId().required(),
+    },
     body: {
-      module: Joi.string().required(),
       answers: Joi.array().items(Joi.array().items(Joi.alternatives().try(Joi.string(), Joi.boolean()))).required(),
     },
   }),
-  async (req: Request, res: Response) => {
-    const body: {module: string, answers: Array<Array<boolean>>} = req.body; 
+  async (req: Request, res: Response) => { 
     const id: string = (req.user as UserDocument)._id;
-    const grade = await userService.evaluate(id, body.module, body.answers);
+    const grade = await userService.evaluate(id, req.params.id, req.body.answers);
     res.status(StatusCodes.OK).send({ grade: grade });
   }
 );
