@@ -16,6 +16,21 @@ paths:
         '403':
           description: Token inválido.
   
+  /user/modules:
+    get:
+      tags:
+        - User
+      summary: Retorna os módulos do app junto com a disponibilidade para o usuário
+      security:
+       - Bearer: []
+      responses:
+        '200':
+          description: Envia os módulos juntos com available
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Modules'
+
   /user/history:
     get:
       tags:
@@ -33,11 +48,20 @@ paths:
         '403':
           description: Token inválido.
 
-  /user/box:
+  /user/box/{module}:
     get:
+      parameters: 
+        - in: path
+          name: module
+          required: true
+          schema:
+            type: string
+            minLength: 24
+            maxLength: 24
+          description: O id do módulo
       tags:
         - User
-      summary: Retorna a box do usuário
+      summary: Retorna a box de um dos módulos para o usuário
       security:
         - Bearer: []
       responses:
@@ -51,6 +75,15 @@ paths:
           description: Token inválido.
 
     post:
+      parameters: 
+          - in: path
+            name: module
+            required: true
+            schema:
+              type: string
+              minLength: 24
+              maxLength: 24
+            description: O id do módulo
       tags:
         - User
       summary: Envia as respostas para as perguntas de uma atividade
@@ -65,12 +98,12 @@ paths:
                 
       responses:
         '200':
-          description: Diz "Approved" ou "Reproved"
+          description: Responde a quantidade de SIM nas answers [0 - 1]
           content:
             text/plain:
               schema:
                 type: string
-                example: Approved
+                example: 0.7
         '403':
           description: Token inválido.
         '400':
@@ -85,6 +118,26 @@ components:
       bearerFormat: JWT
 
   schemas:
+    Modules:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ID do módulo
+        name:
+          type: string
+          example: Nome do módulo
+        imageAlt:
+          type: string
+          example: Descrição da imagem
+        imagem:
+          type: string
+          example: caminho/para/a/imagem
+        available:
+          type: boolean
+          description: Se o módulo está disponível para o usuário
+          example: true
+
     AnswerHistory:
       type: object
       properties:
@@ -105,9 +158,6 @@ components:
     Answer:
       type: object
       properties:
-        module:
-          type: string
-          example: ID do módulo
         answers:
           type: array
           example: [[true, true, true], [true, true]]
@@ -150,51 +200,52 @@ components:
                     type: boolean
       
     Box:
-      type: array
-      items:
-        type: object
-        properties:
-          module:
-            type: string
-            example: ID do módulo
-          activities:
-            type: array
-            items:
-              type: object
-              properties:
-                id:
-                  type: string
-                  example: ID da atividade
-                name:
-                  type: string
-                  example: Nome da atividade
-                nodes:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      text:
-                        type: string
-                        example: Texto da atividade
-                      image:
-                        type: string
-                      imageAlt:
-                        type: string
-                        example: Descrição da imagem
-                      type:
-                        type: string
-                        example: Tipo do node (Text/Carrousel)
-                questionCount:
-                  type: number
-                  example: 1
-                questionNodes:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      question:
-                        type: string
-                        example: Corpo da pergunta
-                      notes:
-                        type: string
-                        example: Notas da pergunta
+      type: object
+      properties:
+        module:
+          type: string
+          example: ID do módulo
+        attempt:
+          type: number
+          example: Quantidade de tentativas no módulo
+        activities:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: ID da atividade
+              name:
+                type: string
+                example: Nome da atividade
+              nodes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      example: Texto da atividade
+                    image:
+                      type: string
+                    imageAlt:
+                      type: string
+                      example: Descrição da imagem
+                    type:
+                      type: string
+                      example: Tipo do node (Text/Carrousel)
+              questionCount:
+                type: number
+                example: 1
+              questionNodes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    question:
+                      type: string
+                      example: Corpo da pergunta
+                    notes:
+                      type: string
+                      example: Notas da pergunta
