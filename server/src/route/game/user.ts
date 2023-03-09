@@ -38,7 +38,7 @@ router.post(
   celebrate({
     body: {
       module: Joi.string().required(),
-      answers: Joi.array().items(Joi.array().items(Joi.boolean())).required(),
+      answers: Joi.array().items(Joi.array().items(Joi.alternatives().try(Joi.string(), Joi.boolean()))).required(),
     },
   }),
   async (req: Request, res: Response) => {

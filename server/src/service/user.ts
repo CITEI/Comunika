@@ -9,8 +9,9 @@ import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
+import e from "express";
 
-interface UserModules {
+export interface UserModules {
   id: string;
   name: string;
   imageAlt: string;
@@ -159,7 +160,7 @@ class UserService extends BasicService<UserDocument> {
   async evaluate(
     id: string,
     module: string,
-    answers: Array<Array<boolean>>
+    answers: Array<Array<boolean | string>>
   ): Promise<number> {
     const user = await this.find({
       id,
@@ -206,7 +207,7 @@ class UserService extends BasicService<UserDocument> {
    */
   protected calculateGrade(
     box: BoxDocument,
-    answers: boolean[][]
+    answers: Array<Array<boolean | string>>
   ): number {
     let grade = 0;
     // update box answers
@@ -215,9 +216,12 @@ class UserService extends BasicService<UserDocument> {
       let hits = 0;
       answers.forEach((el, i) => {
         const count: number = box.activities[i].activity.questionCount;
+        // If there's a string in there it will be considered as true
+        const elWithString = el;
+        el = el.map(i => typeof i == 'string' ? true : i);
         const true_count = el.reduce((acc, cur) => +cur + acc, 0);
         if (el.length <= count && el.length >= 0) {
-          box.activities[i].answers = el;
+          box.activities[i].answers = elWithString;
           total += count;
           hits += true_count;
         } else
@@ -239,7 +243,7 @@ class UserService extends BasicService<UserDocument> {
   async findBox({ id, module }: { id: string, module: string }): Promise<
     BoxDocument
   > {
-    let user: UserDocument | null = await this.find({
+    const user: UserDocument | null = await this.find({
       id,
       select: "progress",
     });
@@ -271,7 +275,7 @@ class UserService extends BasicService<UserDocument> {
    */
   async findHistory({ id }: { id: string }): Promise<{
     module: string;
-    activities: { answers: boolean[]; name: string }[]
+    activities: { answers: (boolean | string)[]; name: string }[]
   }[]> {
     const user = await this.find({ id, select: "progress.history" });
     await user.populate("progress.history.module", "name");
