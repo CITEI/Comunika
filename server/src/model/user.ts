@@ -14,6 +14,7 @@ export interface UserInput {
   password: string;
   guardian: string;
   relationship: string;
+  createdAt: Date;
   birth: Date;
   region: string;
   disabilities: string;
@@ -29,6 +30,10 @@ export const UserSchema = new mongoose.Schema({
       validator: isEmail,
       message: "Please enter a valid email address",
     },
+  },
+  createdAt: {
+    type: Date,
+    required: true
   },
   password: {
     type: String,
