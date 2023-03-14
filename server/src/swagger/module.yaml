@@ -1,0 +1,53 @@
+paths:
+  /module:
+    get:
+      tags:
+        - Modules
+      summary: Retorna todos os módulos do app
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Envia os módulos
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/AllModules'
+
+  /module/{id}/next:
+    get:
+      tags:
+        - Modules
+      summary: Retorna o próximo módulo dado ID
+      security:
+        - Bearer: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            minLength: 24
+            maxLength: 24
+          description: O id do módulo
+      responses:
+        '200':
+          description: Envia o próximo módulo
+
+components:
+  schemas:
+    AllModules:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ID do módulo
+        name:
+          type: string
+          example: Nome do módulo
+        imageAlt:
+          type: string
+          example: Descrição da imagem
+        imagem:
+          type: string
+          example: caminho/para/a/imagem  

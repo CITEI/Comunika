@@ -1,0 +1,108 @@
+paths:
+  /auth:
+    post:
+      tags:
+        - Authentication
+      summary: Logar com email e senha.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Envia o Bearer Token.
+        '401':
+          description: Credenciais inválidas.
+
+    get:
+      tags:
+        - Authentication
+      security:
+        - Bearer: []  
+      summary: Logar com Bearer Token
+      responses:
+        '200':
+          description: Envia um novo bearer Token.
+        '401':
+          description: Credenciais inválidas.
+      
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Registra um novo usuário no banco de dados.
+      requestBody:
+        description: Conteúdo necessário para criação do usuário.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+
+      responses:
+        '200':
+          description: Usuário criado com sucesso
+
+components:
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWTs
+
+  schemas:
+    UserLogin:
+      type: object
+      properties:
+        email: 
+          type: string
+          format: email
+
+        password:
+          type: string
+          format: password
+
+    UserRegister:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email válido
+
+        password:
+          type: string
+          example: password123
+          format: password
+          description: Senha
+
+        guardian:
+          type: string
+          example: Paula
+          description: Nome do responsável
+
+        relationship:
+          type: string
+          example: "Mãe"
+          description: Relação com o responsável
+
+        birth:
+          type: string
+          example: 1675691266
+          description: Timestamp da data de nascimento.
+
+        region:
+          type: string
+          description: Cidade
+          example: São Paulo
+
+        disabilities:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            example: "637ad0ee8f85bbed1578185d"
+            minLength: 24
+            maxLength: 24
