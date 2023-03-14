@@ -10,6 +10,8 @@ import {
 
 export const uri = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}`;
 
+mongoose.set('strictQuery', true);
+
 let mongo = mongoose
   .connect(uri, {
     dbName: DB_DATABASE,

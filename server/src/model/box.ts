@@ -1,9 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { SchemaTypes } from "mongoose";
 import { ModuleDocument } from "./module";
 import { ActivityDocument } from "./activity";
 
 interface BoxActivityInput {
-  answers: boolean[];
+  answers: (string | boolean)[];
   activity: mongoose.PopulatedDoc<ActivityDocument>;
 }
 
@@ -42,7 +42,7 @@ export const BoxSchema = new mongoose.Schema(
           ref: "Activity",
           required: true,
         },
-        answers: [{ type: Boolean, required: true }],
+        answers: [{ type: SchemaTypes.Mixed, required: true }],
       },
     ],
   },
