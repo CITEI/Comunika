@@ -28,7 +28,6 @@ class UserService extends BasicService<UserDocument> {
    */
   async create(payload: UserInput): Promise<UserDocument> {
     const user = new User(payload);
-    user.createdAt = new Date();
     await user.save();
     return user;
   }
@@ -116,7 +115,7 @@ class UserService extends BasicService<UserDocument> {
     }
 
     const box: BoxDocument = {
-      module: module, 
+      module: module,
       attempt: attempt,
       createdAt: new Date(),
       activities: activities.map((el: any) => ({ activity: el, answers: [] })),
@@ -302,7 +301,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "email guardian relationship birth region disabilities progress.module",
+        "createdAt updatedAt email guardian relationship birth region disabilities progress.module",
     });
   }
 }
