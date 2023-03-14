@@ -11,10 +11,20 @@ export interface BoxInput {
   module: mongoose.PopulatedDoc<ModuleDocument>;
   activities: BoxActivityInput[];
   attempt: number;
+  createdAt: Date;
+  completedAt?: Date;
 }
 
 export const BoxSchema = new mongoose.Schema(
   {
+    createdAt: {
+      type: Date,
+      required: true
+    },
+    completedAt: {
+      type: Date,
+      required: false
+    },
     module: {
       type: mongoose.Types.ObjectId,
       ref: "Module",

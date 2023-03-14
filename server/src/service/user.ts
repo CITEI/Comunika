@@ -117,6 +117,7 @@ class UserService extends BasicService<UserDocument> {
     const box: BoxDocument = {
       module: module,
       attempt: attempt,
+      createdAt: new Date(),
       activities: activities.map((el: any) => ({ activity: el, answers: [] })),
     };
 
@@ -185,6 +186,8 @@ class UserService extends BasicService<UserDocument> {
       module: box.data.module.id,
       attempt: approved ? 0 : box.data.attempt + 1
     });
+
+    box.data.completedAt = new Date();
 
     await User.findByIdAndUpdate(user._id, {
       $set: {
@@ -281,6 +284,8 @@ class UserService extends BasicService<UserDocument> {
       select: "name",
     });
     return user.progress.history.map((box) => ({
+      createdAt: box.createdAt,
+      completedAt: box.completedAt,
       module: box.module.name,
       activities: box.activities.map((activity) => ({
         answers: activity.answers,
@@ -296,7 +301,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "email guardian relationship birth region disabilities progress.module",
+        "createdAt updatedAt email guardian relationship birth region disabilities progress.module",
     });
   }
 }

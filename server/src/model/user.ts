@@ -49,6 +49,8 @@ export const UserSchema = new mongoose.Schema({
     },
   ],
   progress: { type: ProgressSchema, required: true, default: () => ({}) },
+}, {
+  timestamps: true
 });
 
 // Hashes password before saving to db
