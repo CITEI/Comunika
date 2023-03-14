@@ -1,4 +1,4 @@
-import mongoose, { SchemaTypes } from "mongoose";
+import mongoose from "mongoose";
 import { ModuleDocument } from "./module";
 import { ActivityDocument } from "./activity";
 
@@ -42,7 +42,7 @@ export const BoxSchema = new mongoose.Schema(
           ref: "Activity",
           required: true,
         },
-        answers: [{ type: SchemaTypes.Mixed, required: true }],
+        answers: [{ type: mongoose.Schema.Types.Mixed, required: true }],
       },
     ],
   },
