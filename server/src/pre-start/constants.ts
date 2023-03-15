@@ -1,5 +1,6 @@
 import {dirname, join} from "path";
 
+export const PASS_RESET_EXPIRATION = 60; // 1 hour
 export const JWT_EXPIRATION = process.env.JWT_EXPIRATION_TIME || "14d";
 export const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const JWT_ALGORITHM = "HS256";

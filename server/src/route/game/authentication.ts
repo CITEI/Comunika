@@ -4,8 +4,9 @@ import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import passport from "passport";
 import { UserInput, UserDocument } from "../../model/user";
-import { userAuthenticationService } from "../../service/user";
+import { userAuthenticationService, userService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
+import { tokenService } from "../../service/token";
 
 const router = Router();
 
@@ -27,6 +28,25 @@ router.post(
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
+
+router.post("/reset-password", celebrate({
+  body: {
+    email: Joi.string().required()
+  }
+}), async (req, res) => {
+  const { email } = req.body;
+  const userFound = await userService.exists({ email: email })
+
+  if (!userFound) {
+    res.status(StatusCodes.UNAUTHORIZED);
+    res.send(ReasonPhrases.UNAUTHORIZED);
+  }
+
+  const token = await tokenService.create({ email: email });
+
+  res.status(StatusCodes.OK);
+  res.send(token);
+});
 
 router.post(
   "/",
