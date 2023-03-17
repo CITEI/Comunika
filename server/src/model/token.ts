@@ -25,15 +25,6 @@ const TokenSchema = new mongoose.Schema({
   }
 });
 
-TokenSchema.pre('save', async function (next) {
-  this.token = await hashPassword(this.token as string);
-  next();
-});
-
-TokenSchema.methods.tokenMatches = async function (token: string): Promise<boolean> {
-  return passwordsMatch(token, this.token);
-}
-
 export interface TokenDocument extends mongoose.Document, TokenInput { }
 
 export const Token = mongoose.model<TokenDocument>('Token', TokenSchema);

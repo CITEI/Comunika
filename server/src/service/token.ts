@@ -20,7 +20,7 @@ class TokenService extends BasicService<TokenDocument> {
   }
 
   async generateToken(): Promise<string> {
-    return crypto.randomBytes(32).toString('hex');
+    return crypto.randomBytes(6).toString('hex');
   }
 }
 

@@ -1,3 +1,5 @@
+import { PASS_RESET_EXPIRATION } from '../pre-start/constants';
+
 export function content({ token }: { token: string }) {
   const color = "#FF2869";
 
@@ -353,7 +355,7 @@ export function content({ token }: { token: string }) {
                         <td align="center" valign="top" style="padding:0;Margin:0;width:560px">
                         <table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                           <tr style="border-collapse:collapse">
-                            <td bgcolor="transparent" align="center" data-darkreader-inline-bgcolor style="padding:0;Margin:0;padding-bottom:5px;padding-top:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;font-size:14px" data-darkreader-inline-color"><b style="color:${color}">Código válido por 10 minutos.</b></p></td>
+                            <td bgcolor="transparent" align="center" data-darkreader-inline-bgcolor style="padding:0;Margin:0;padding-bottom:5px;padding-top:10px"><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif;line-height:21px;font-size:14px" data-darkreader-inline-color"><b style="color:${color}">Código válido por ${PASS_RESET_EXPIRATION/60} minutos.</b></p></td>
                           </tr>
                         </table></td>
                       </tr>
