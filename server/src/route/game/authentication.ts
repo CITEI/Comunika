@@ -32,7 +32,7 @@ router.post(
 
 router.post("/reset-password/send", celebrate({
   body: {
-    email: Joi.string().email().required()
+    email: Joi.string().email({ tlds: { allow: false } }).required()
   }
 }), async (req, res) => {
   const { email } = req.body;
@@ -44,7 +44,7 @@ router.post("/reset-password/send", celebrate({
 
   if (await tokenService.exists({ email: email })) {
     res.status(StatusCodes.CONTINUE);
-    return res.send(StatusCodes.CONTINUE);
+    return res.send(ReasonPhrases.CONTINUE);
   }
 
   const token = await tokenService.generateToken();
@@ -52,6 +52,44 @@ router.post("/reset-password/send", celebrate({
 
   return await sendResetToken(email, token, res);
 });
+
+router.post("/reset-password/validate", celebrate({
+  body: {
+    email: Joi.string().email({ tlds: { allow: false } }).required(),
+    token: Joi.string().required(),
+  }
+}), async (req, res) => {
+  const { email, token } = req.body;
+
+  if (await tokenService.validate(email, token)) {
+    res.status(StatusCodes.OK);
+    return res.send(ReasonPhrases.OK);
+  }
+
+  res.status(StatusCodes.UNAUTHORIZED);
+  return res.send(ReasonPhrases.UNAUTHORIZED);
+});
+
+router.post("/reset-password", celebrate({
+  body: {
+    email: Joi.string().email({ tlds: { allow: false } }).required(),
+    token: Joi.string().required(),
+    password: CustomJoi.RequiredString(),
+  },
+}), async (req, res) => {
+  const { email, token, password } = req.body;
+
+  if (!(await tokenService.validate(email, token))) {
+    res.status(StatusCodes.UNAUTHORIZED);
+    return res.send(ReasonPhrases.UNAUTHORIZED);
+  }
+
+  await tokenService.delete({ email });
+  await userService.resetPassword(email, password);
+
+  res.status(StatusCodes.ACCEPTED);
+  return res.send(ReasonPhrases.ACCEPTED);
+})
 
 router.post(
   "/",

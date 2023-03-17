@@ -22,6 +22,12 @@ class TokenService extends BasicService<TokenDocument> {
   async generateToken(): Promise<string> {
     return crypto.randomBytes(6).toString('hex');
   }
+
+  async validate(email: string, token: string): Promise<boolean> {
+    const tokenDocument = await Token.findOne({ email }).exec(); 
+    if (tokenDocument?.token == token) return true;
+    else return false;
+  }
 }
 
 export const tokenService = new TokenService();

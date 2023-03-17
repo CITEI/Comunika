@@ -4,12 +4,12 @@ import {
   GAME_ACTIVITY_SAMPLE_QUANTITY,
 } from "../pre-start/constants";
 import { User, UserDocument, UserInput } from "../model/user";
-import { ObjectNotFoundError, ValidationError, BoxNotFoundError } from './errors';
+import { ObjectNotFoundError, ValidationError, BoxNotFoundError, UnauthorizedError } from './errors';
 import { moduleService } from "./module";
 import { BasicService } from "./utils/basic";
 import { AuthenticationService } from "./utils/authentication";
 import _ from "underscore";
-import e from "express";
+import { hashPassword } from "../model/utils";
 
 export interface UserModules {
   id: string;
@@ -71,6 +71,17 @@ class UserService extends BasicService<UserDocument> {
   }): Promise<boolean> {
     if (id) return super.exists({ _id: id });
     else return (await User.exists({ email }).exec()) == null ? false : true;
+  }
+
+  async resetPassword(email: string, password: string): Promise<true | null> {
+    try {
+      await User.findOneAndUpdate({ email }, {
+        password: await hashPassword(password)
+      });
+      return true
+    } catch (error) {
+      throw new UnauthorizedError();
+    }
   }
 
   /**
