@@ -14,15 +14,12 @@ class TokenService extends BasicService<TokenDocument> {
    * @returns The created token
    */
   async create(payload: TokenInput): Promise<TokenDocument> {
-    if (!payload.token) {
-      payload.token = await this.generateToken();
-    }
     const token = new Token(payload);
     await token.save();
     return token;
   }
 
-  protected async generateToken(): Promise<string> {
+  async generateToken(): Promise<string> {
     return crypto.randomBytes(32).toString('hex');
   }
 }

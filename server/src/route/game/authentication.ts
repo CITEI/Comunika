@@ -7,6 +7,7 @@ import { UserInput, UserDocument } from "../../model/user";
 import { userAuthenticationService, userService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
 import { tokenService } from "../../service/token";
+import { sendResetToken } from "../../service/email";
 
 const router = Router();
 
@@ -29,23 +30,27 @@ router.post(
   }
 );
 
-router.post("/reset-password", celebrate({
+router.post("/reset-password/send", celebrate({
   body: {
-    email: Joi.string().required()
+    email: Joi.string().email().required()
   }
 }), async (req, res) => {
   const { email } = req.body;
-  const userFound = await userService.exists({ email: email })
 
-  if (!userFound) {
+  if (!(await userService.exists({ email: email }))) {
     res.status(StatusCodes.UNAUTHORIZED);
-    res.send(ReasonPhrases.UNAUTHORIZED);
+    return res.send(ReasonPhrases.UNAUTHORIZED);
   }
 
-  const token = await tokenService.create({ email: email });
+  if (await tokenService.exists({ email: email })) {
+    res.status(StatusCodes.CONTINUE);
+    return res.send(StatusCodes.CONTINUE);
+  }
 
-  res.status(StatusCodes.OK);
-  res.send(token);
+  const token = await tokenService.generateToken();
+  await tokenService.create({ email: email, token: token });
+
+  return await sendResetToken(email, token, res);
 });
 
 router.post(
