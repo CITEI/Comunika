@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { PASS_RESET_EXPIRATION } from '../pre-start/constants';
-import { hashPassword, passwordsMatch } from './utils';
 
 export interface TokenInput {
   email: string;
@@ -18,12 +17,13 @@ const TokenSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  expiresAt: {
+  createdAt: {
     type: Date,
-    default: new Date().getTime() + PASS_RESET_EXPIRATION * 1000,
-    expires: PASS_RESET_EXPIRATION
+    default: Date.now,
   }
 });
+
+TokenSchema.index({ createdAt: 1 }, { expireAfterSeconds: PASS_RESET_EXPIRATION });
 
 export interface TokenDocument extends mongoose.Document, TokenInput { }
 
