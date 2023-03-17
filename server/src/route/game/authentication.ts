@@ -47,7 +47,7 @@ router.post("/reset-password/send", celebrate({
     return res.send(ReasonPhrases.CONTINUE);
   }
 
-  const token = await tokenService.generateToken();
+  const token = await tokenService.generateToken(6);
   await tokenService.create({ email: email, token: token });
 
   return await sendResetToken(email, token, res);
