@@ -149,6 +149,7 @@ class UserService extends BasicService<UserDocument> {
 
     return modules.map(module => {
       let available;
+      const thisBox = user.progress.box.get(module._id);
 
       if (!module.previous) available = true;
       else {
@@ -162,6 +163,8 @@ class UserService extends BasicService<UserDocument> {
         imageAlt: module.imageAlt,
         image: module.image,
         available: available,
+        done: thisBox ? thisBox.done : false,
+        previous: module.previous,
       };
     });
   }
