@@ -7,16 +7,14 @@ import useUserStage from "../hooks/useuserstage";
 import useUserStages from "../hooks/useuserstages";
 import useBox from "../hooks/usebox";
 import { StageItem } from "../store/game-data";
+import useModules from "../hooks/useModules";
 
 interface StagesProps {}
 
 /** Screen that displays the list of stages */
-const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
+function Stages () {
   const navigation = useNavigation<GameNavigatorProps>();
-  const stages = useUserStages();
-  const stage = useUserStage();
-  const box = useBox();
-  const index = stages.findIndex((el) => el._id == stage?._id);
+  const modules = useModules();
 
   /** Goes to the game screen */
   const handlePress = useCallback(
@@ -26,18 +24,13 @@ const Stages: React.VoidFunctionComponent<StagesProps> = (props) => {
         activityIndex: 1,
       });
     },
-    [stages]
+    [modules]
   );
 
-  return stage && index >= 0 ? (
+  return modules.length >= 0 ? (
     <Cards
-      current={index}
-      unit={t("stage")}
-      data={stages}
+      data={modules}
       onPress={handlePress}
-      title={t("Stages")}
-      progress={0}
-      total={box ? box.length : 0}
     />
   ) : (
     <></>

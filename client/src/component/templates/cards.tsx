@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Toolbar from "../organism/toolbar";
 import MainContainer from "../atom/main-container";
 import BaseTitle from "../atom/title";
@@ -8,37 +8,20 @@ import Card from "../molecule/card";
 import BaseContentContainer from "../atom/content-container";
 import util from "util";
 import t from "../../pre-start/i18n";
+import { Module } from "../../store/modules";
+import { StorageBox } from "../../store/local/GameStorage";
 
-interface CardData {
-  /** Card image uri */
-  image: string;
-  /** Card image alt text */
-  imageAlt: string;
-  /** Card title */
-  name: string;
-  /** Card description */
-  description: string;
-  /** Card status. If incomplete, progress and total must be provided */
-  status?: "completed" | "incomplete" | "locked";
-  [key: string]: any;
-}
-
-interface CardsProps<T> {
+interface CardsProps {
   /** Title displayed over the cards */
   title: string;
   /** Singular name of the card unit */
   unit: string;
   /** Card button press handler */
-  onPress: (id: T) => void;
+  onPress: (id) => void;
   /** Card data */
-  data: T[];
-  /** index of the current in progress card */
-  current: number;
-  /** Card activities progress */
-  progress?: number;
-  /** Card total number of activities. If total equals progress, it means
-   * no incomplete cards */
-  total?: number;
+  data: Module[];
+  /** Local Storage Box */
+  boxes: StorageBox;
 }
 
 const ContentContainer = styled(BaseContentContainer)`
@@ -51,11 +34,7 @@ const Title = styled(BaseTitle)`
 `;
 
 /** Screen that shows a list of clickable cards */
-const Cards = (props) => {
-  const total = props.total == undefined ? 1 : props.total;
-  const progress = props.progress == undefined ? 0 : props.progress;
-  const ended = total == progress;
-
+const Cards = (props: CardsProps) => {
   return (
     <MainContainer>
       <Toolbar
@@ -67,26 +46,20 @@ const Cards = (props) => {
       <ContentContainer>
         <Title>{props.title}</Title>
         {props.data.map((data, i) => {
-          const status =
-            ended || i < props.current
-              ? "completed"
-              : i == props.current
-              ? "incomplete"
-              : "locked";
+          const box = props.boxes[data.id] ?? undefined;
+          const status = box ? "ongoing" : data.done ? "completed" : (data.available ? "incomplete" : "locked");
+          const length = box?.data.activities.length;
 
           let description = "";
-          if (status == "completed")
-            description = util.format(t('This %s is already completed'), props.unit);
-          else if (status == "incomplete")
-            description = util.format(t(
-              'This %s contains %s activities to be done with the child'
-            ), props.unit, total);
+
+          if (!box) {
+            if (status == "completed") description = 'Clique no botão para refazer este módulo.';
+            else if (status == 'incomplete') description = 'Clique no botão para começar este módulo.';
+            else description = t('Finish the previous module to unlock this one');
+          }
           else {
-            const previous = props.data[i - 1].name.toLowerCase();
-            description = util.format(
-              t('Finish %s activities to unlock this %s'),
-              previous, props.unit
-            );
+            if (length > 1) description = `Este módulo contém ${length} atividades a serem realizadas com a criança.`
+            else description = `Este módulo contém 1 atividade a ser realizada com a criança.`
           }
 
           return (
@@ -95,8 +68,8 @@ const Cards = (props) => {
               description={description}
               image={data.image}
               imageAlt={data.imageAlt}
-              progress={progress}
-              total={total}
+              progress={box?.answers.length}
+              total={box?.data.activities.length}
               status={status}
               onPress={useCallback(() => props.onPress(data), [props.onPress])}
               key={i}

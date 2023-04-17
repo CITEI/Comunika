@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StageItem } from "../../store/game-data";
+import { Module } from "../../store/modules";
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";
@@ -12,11 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
 import util from "util";
 import t from "../../pre-start/i18n";
-import { EvaluateStatus } from "../../store/user";
-
+import useModules from "../../hooks/useModules";
 interface ResultProps {
-  stage: StageItem;
-  status: EvaluateStatus | "ended";
+  module: Module;
+  status: number;
 }
 
 const Container = styled(ContentContainer)`
@@ -47,22 +46,22 @@ const Text = styled(BaseText)`
 const Footer = styled.View`
   width: 100%;
 `;
-
+/**
 const TITLE_MESSAGES: {[key in ResultProps["status"]]: string} = {
-  "approved": t("You made to %s!"),
   "ended": t("You finished %s"),
-  "reproved": t("Let's reinforce %s again"),
 };
 
 const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
   "approved": t("StageSucceeded"),
   "ended": t("NoContent"),
   "reproved": t("StageFailed"),
-};
+}; */
 
 /** Templated result screen */
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
+  const modules = useModules();
+  const next = modules.find(el => el.previous === props.module.id);
 
   /** Goes back to the modules screen */
   const handleBack = useCallback(() => {
@@ -71,7 +70,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
 
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
-    navigation.replace("Game");
+    navigation.replace("Transition", {module: next!, activityIndex: 1});
   }, []);
 
   return (
@@ -85,20 +84,18 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
       <Container>
         <Title>
           {util.format(
-            TITLE_MESSAGES[props.status],
-            props.stage.name
+            "You finished %s!",
+            props.module.name
           )}
         </Title>
         <Image
-          source={{ uri: props.stage.image }}
-          accessibilityHint={props.stage.imageAlt}
+          source={{ uri: props.module.image }}
+          accessibilityHint={props.module.imageAlt}
           resizeMode="contain"
         />
-        <Text>{CONTENT_MESSAGES[props.status]}</Text>
+        <Text>{'StageSucceeded'}</Text>
         <Footer>
-          {props.status != "ended" && (
-            <Button label={t("Start next")} onPress={handleNext} />
-          )}
+          {next && <Button label={t("Start next")} onPress={handleNext} />} 
           <Button
             variant="outline"
             label={t("Back to menu")}

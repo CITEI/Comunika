@@ -1,18 +1,18 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { fetchModules } from '../store/game-data';
+import { fetchModules } from '../store/modules';
 
-/** Gets the app modules */
-const useModules = () => {
+/** Gets the user modules */
+const useModules = (reload?: boolean) => {
   const dispatch = useAppDispatch();
-  const loaded = useAppSelector((state) => state.gameData.modules.loaded);
-  const modules = useAppSelector((state) => state.gameData.modules.data);
+  const result = useAppSelector((state) => state.user.result);
+  const modules = useAppSelector((state) => state.modules.data);
 
   useEffect(() => {
-    if (!loaded) dispatch(fetchModules());
-  }, [loaded]);
+    dispatch(fetchModules());
+  }, [result]);
 
   return modules;
 }
 
-export default useModules
+export default useModules;

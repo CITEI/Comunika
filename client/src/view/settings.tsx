@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import styled from "../pre-start/themes";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
-import useUserInfo from "../hooks/useuserinfo";
+import useUserInfo from "../hooks/useUserInfo";
 import useDisabilities from "../hooks/usedisabilities";
 import RawForm from "../component/organism/form";
 import MainContainer from "../component/atom/main-container";

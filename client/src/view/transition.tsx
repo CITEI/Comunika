@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MainContainer from "../component/atom/main-container";
 import Toolbar from "../component/organism/toolbar";
 import BaseTitle from "../component/atom/title";
@@ -9,7 +9,10 @@ import { useRoute } from "@react-navigation/native";
 import { GameProps } from "../route/game";
 import ContentContainer from "../component/atom/content-container";
 import GeneralInstructions from "../component/organism/general-instructions";
+import { GameNavigatorProps } from "../route/game";
+import { useNavigation } from "@react-navigation/native";
 import t from "../pre-start/i18n";
+import useBox from "../hooks/useBox";
 
 interface TransitionProps {}
 
@@ -34,15 +37,24 @@ const Image = styled.Image`
   margin-top: ${dp(76)}px;
 `;
 
-/** Screen used as a transition between stages screen and activity screen */
+/** Screen used as a transition between modules screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
+  const navigation = useNavigation<GameNavigatorProps>();
   const route = useRoute();
-  const { stage, activityIndex } = route.params as GameProps["Transition"];
-  const [timer, setTimer] = React.useState(false);
+  const { module, activityIndex } = route.params as GameProps["Transition"];
+  const [loaded, setLoaded] = React.useState(false);
+  const box = useBox(module.id);
 
-  setTimeout(() => {
-    setTimer(true);
-  }, 1500);
+  useEffect(() => {
+    if (box) {
+      setTimeout(() => {
+        if (activityIndex > 1) {
+          navigation.navigate("Game", {module: module, activitiesDone: activityIndex-1});
+        }
+        setLoaded(true);
+      }, 1500)
+    }
+  }, [box])
 
   return (
     <MainContainer>
@@ -53,19 +65,19 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
         closeButton={false}
       />
       <Content>
-        {timer ? (
+        {loaded ? (
           <GeneralInstructions
-            slides={[{text: t("General1"),}, {text: t("General2"),},
-            ]}
+            slides={[{text: t("General1")}, {text: t("General2")}]}
+            module={module}
           />
         ) : (
           <>
             <Title>{t("Starting activity")} {activityIndex}</Title>
-            <Subtitle>{stage.name}</Subtitle>
+            <Subtitle>{module.name}</Subtitle>
             <Image
               resizeMode="contain"
-              source={{ uri: stage.image }}
-              accessibilityHint={stage.imageAlt}
+              source={{ uri: module.image }}
+              accessibilityHint={module.imageAlt}
             />
           </>
         )}

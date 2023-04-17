@@ -23,7 +23,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
   const authentication = useAppSelector((state) => state.auth.authentication);
-  const storageAuth = useAppSelector((state) => state.user.flags.info);
+  const storageAuth = useAppSelector((state) => state.user.loaded);
   const [validated, setValidated] = useState(false);
   const [modalText, setModalText] = useState("");
 

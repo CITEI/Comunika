@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Node as NodeType } from "../../store/user";
+import { Node as NodeType } from "../../store/progress";
 import BaseTitle from "../atom/title";
 import Node from "./node";
 import BaseButton from "../atom/button";

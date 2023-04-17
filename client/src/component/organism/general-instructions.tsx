@@ -10,11 +10,13 @@ import BaseTTSPlayer from "./tts-player";
 import TTSLabel from "../atom/tts-label";
 import t from "../../pre-start/i18n";
 import Md from "../molecule/md";
+import { Module } from "../../store/modules";
 
 interface GeneralInstructionsProps {
   slides: {
     text: string;
   }[];
+  module: Module;
 }
 
 const Container = styled.View`
@@ -52,7 +54,7 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
     if (currentSlide < props.slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      navigation.navigate("Game");
+      navigation.navigate("Game", {module: props.module});
     }
   }, [currentSlide, navigation, props.slides.length]);
 

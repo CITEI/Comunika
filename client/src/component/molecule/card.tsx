@@ -21,7 +21,7 @@ interface CardProps {
   /** total number of activities */
   total: number;
   /** status of the card */
-  status: "completed" | "incomplete" | "locked";
+  status: "completed" | "incomplete" | "locked" | "ongoing";
   /** card button onPress handler */
   onPress: () => void;
 }
@@ -111,8 +111,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         <Title>{props.title}</Title>
         {
           {
-            completed: <PercentText>{t("Completed")}</PercentText>,
-            incomplete: (
+            ongoing: (
               <ProgressContainer>
                 <ProgressText>
                   {props.progress}/{props.total}
@@ -123,6 +122,8 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
                 </PercentText>
               </ProgressContainer>
             ),
+            completed: <PercentText>{t("Completed")}</PercentText>,
+            incomplete: <PercentText>{"Não Iniciado"}</PercentText>,
             locked: <BlockedText>{t("Locked")}</BlockedText>,
           }[props.status || "locked"]
         }
@@ -138,7 +139,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
           <Description>
             {props.description}
           </Description>
-          {props.status == "incomplete" && (
+          {(props.status == "incomplete" || props.status == "completed" || props.status == "ongoing") && (
             <Button label={t("Start")} onPress={props.onPress} />
           )}
         </ContentRightContainer>

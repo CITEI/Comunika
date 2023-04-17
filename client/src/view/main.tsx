@@ -1,15 +1,15 @@
 import React from "react";
-import useUserProgress from "../hooks/useuserprogress";
-import useUserInfo from "../hooks/useuserinfo";
-import Modules from "./modules";
+import useUserInfo from "../hooks/useUserInfo";
+import useModules from "../hooks/useModules";
+import Modules from "./Modules";
 
 interface MainProps {}
 
 const Main: React.VoidFunctionComponent<MainProps> = () => {
-  const info = useUserInfo();
-  const progress = useUserProgress();
+  const userInfo = useUserInfo();
+  const modules = useModules();
 
-  return (progress && info ? <Modules></Modules> : <></>);
+  return (userInfo && modules ? <Modules /> : <>Alou?</>);
 };
 
 export default Main;
