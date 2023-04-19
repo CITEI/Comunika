@@ -13,6 +13,7 @@ import { GameNavigatorProps } from "../../route/game";
 import util from "util";
 import t from "../../pre-start/i18n";
 import useModules from "../../hooks/useModules";
+import useAnswers from "../../hooks/useAnswers";
 interface ResultProps {
   module: Module;
   status: number;
@@ -61,6 +62,7 @@ const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
+  const answers = useAnswers();
   const next = modules.find(el => el.previous === props.module.id);
 
   /** Goes back to the modules screen */
@@ -70,7 +72,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
 
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
-    navigation.replace("Transition", {module: next!, activityIndex: 1});
+    navigation.replace("Transition", {module: next!, localData: answers[next!.id] ?? undefined});
   }, []);
 
   return (

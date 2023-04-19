@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import VerticalContainer from "../component/atom/vertical-container";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import auth, { login } from "../store/auth";
+import { login } from "../store/auth";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
 import Modal from "../component/molecule/modal";

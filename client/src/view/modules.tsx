@@ -5,21 +5,21 @@ import Cards from "../component/templates/cards";
 import t from "../pre-start/i18n";
 import useModules from "../hooks/useModules";
 import { Module } from '../store/modules';
-import useBoxes from '../hooks/useBoxes';
+import useAnswers from '../hooks/useAnswers';
 
 /** Screen that displays a list of modules */
 const Modules: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
-  const boxes = useBoxes();
+  const answers = useAnswers();
 
   /** Goes to the game screen */
   const handlePress = useCallback(
     (selection: Module) => {
-      const box = boxes[selection.id] ?? undefined;
+      const box = answers[selection.id];
       navigation.navigate("Transition", {
         module: selection,
-        activityIndex: box? box.answers.length + 1 : 1,
+        localData: box ?? undefined,
       });
     },
     [modules]
@@ -30,7 +30,7 @@ const Modules: React.VoidFunctionComponent = () => {
       title={t("Modules")}
       unit={t("module")}
       onPress={handlePress}
-      boxes={boxes}
+      answers={answers}
       data={modules}
     />
   ) : <></>;

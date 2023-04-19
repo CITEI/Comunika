@@ -3,14 +3,14 @@ import { useAppDispatch, useAppSelector } from '../store/store';
 import { fetchModules } from '../store/modules';
 
 /** Gets the user modules */
-const useModules = (reload?: boolean) => {
+const useModules = () => {
   const dispatch = useAppDispatch();
-  const result = useAppSelector((state) => state.user.result);
+  const grade = useAppSelector((state) => state.progress.grade);
   const modules = useAppSelector((state) => state.modules.data);
 
   useEffect(() => {
     dispatch(fetchModules());
-  }, [result]);
+  }, [grade]);
 
   return modules;
 }

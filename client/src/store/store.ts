@@ -7,14 +7,12 @@ import auth from "./auth";
 import user from "./user";
 import modules from './modules';
 import progress from './progress';
-import storage from './localStorage';
 
 export const rootReducer = combineReducers({
   auth: auth.reducer,
   user: user.reducer,
   modules: modules.reducer,
   progress: progress.reducer,
-  storage: storage.reducer
 });
 
 const store = configureStore({

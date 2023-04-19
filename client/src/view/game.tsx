@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useAppDispatch } from "../store/store";
-import { evaluate } from "../store/user";
+import { evaluate } from "../store/progress";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Activity from "../component/templates/activity";
-import useUserModule from "../hooks/useusermodule";
 import { useRoute } from "@react-navigation/native";
 import useBox from "../hooks/useBox";
 import { GameProps } from "../route/game";
@@ -15,12 +14,12 @@ const Game: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const dispatch = useAppDispatch();
 
-  const { module, activitiesDone } = route.params as GameProps["Game"];
+  const { module } = route.params as GameProps["Game"];
   const box = useBox(module.id);
-  const [answers, setAnswers] = useState<boolean[][]>([]);
+  const [answers, setAnswers] = useState<(string | boolean)[][]>([]);
 
   /** Saves answers for sending */
-  const handleFinish = useCallback((answers: boolean[][]) => {
+  const handleFinish = useCallback((answers: (string | boolean)[][]) => {
     setAnswers(answers);
   }, []);
 
@@ -37,10 +36,9 @@ const Game: React.VoidFunctionComponent = () => {
   return box && module ? (
     <Activity
       activities={box.activities}
-      done={activitiesDone ?? 0}
       onFinish={handleFinish}
       module={module.name}
-      boxID={module.id}
+      box={box}
     />
   ) : (
     <></>

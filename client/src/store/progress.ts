@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { insertBox } from './local/GameStorage';
+import { getBox, insertBox, readBox, StorageBox, deleteBox } from './local/GameStorage';
 import { toUri } from "../helper/api";
 import api from "../helper/api";
+import moment from 'moment';
 
 /** Base component for game screens definition */
 interface GameNode {
@@ -73,18 +74,24 @@ interface ResponseBox extends Box {
 
 export interface AppBox extends Box {
   activities: Activity[];
-  answers?: (string | boolean)[][];
+  answers: (string | boolean)[][];
   activitiesNumber?: number;
   activitiesProgress?: number;
 }
 
+export interface BoxMap {
+  [key: string]: AppBox
+}
+
 export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
   const response = await api.get(`user/box/${id}`);
+  const local = await getBox(id);
   const data = response.data as ResponseBox;
 
   const box = {
     createdAt: data.createdAt,
     module: data.module,
+    answers: local?.answers ?? [],
     attempt: data.attempt,
     activities: data.activities.map(el => {
       const activity = el.activity;
@@ -117,23 +124,50 @@ export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
 
   await insertBox(box);
   return box;
-})
+});
+
+export const readAnswers = createAsyncThunk("user/storage/answers", async () => {
+  const box = await readBox();
+  return box;
+});
+
+export const evaluate = createAsyncThunk(
+  "user/evaluate",
+  async ({ module, answers }: { module: string, answers: (string | boolean)[][] }) => {
+    const res = (await api.post(`/user/box/${module}`, { answers })).data;
+    await deleteBox(module);
+    return {grade: res, module: module};
+  }
+);
 
 export default createSlice({
   name: "progress",
   reducers: {},
   initialState: {
-    box: [] as AppBox[],
+    box: undefined as (AppBox | undefined),
+    answers: {} as StorageBox, 
     history: undefined,
+    grade: undefined as (number | undefined),
     flags: {
-      loadedBox: [] as string[],
+      box: false,
+      answers: false,
       history: false
     }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBox.fulfilled, (state, action) => {
-      state.box = [...state.box, action.payload];
-      state.flags.loadedBox = [...state.flags.loadedBox, action.payload.module];
+      state.box = action.payload;
+      state.flags.box = true;
+    });
+    builder.addCase(readAnswers.fulfilled, (state, action) => {
+      state.answers = action.payload;
+      state.flags.answers = true;
+    });
+    builder.addCase(evaluate.fulfilled, (state, action) => {
+      state.grade = action.payload.grade;
+      state.box = undefined;
+      state.flags.box = false;
+      state.flags.answers = false;
     });
   }
 });

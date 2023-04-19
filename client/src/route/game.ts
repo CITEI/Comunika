@@ -1,15 +1,15 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Box } from '../store/local/GameStorage';
 import { Module } from "../store/modules";
 
 export type GameProps = {
   Main: undefined;
   Transition: {
     module: Module;
-    activityIndex: number;
+    localData?: Box;
   }
   Game: {
     module: Module;
-    activitiesDone?: number;
   };
   Result: {
     module: Module;

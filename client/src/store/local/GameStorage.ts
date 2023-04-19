@@ -2,7 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppBox } from '../../store/progress';
 
 interface Box {
-  data: AppBox;
+  module: string;
+  createdAt: Date;
+  totalActivities: number;
   answers: (string | boolean)[][];
 }
 
@@ -22,9 +24,11 @@ async function saveBox(box: StorageBox) {
 async function insertBox(data: AppBox) {
   const box = await readBox();
 
-  if (box[data.module]?.data.createdAt != data.createdAt) {
+  if (box[data.module]?.createdAt != data.createdAt) {
     box[data.module] = {
-      data: data,
+      module: data.module,
+      createdAt: data.createdAt,
+      totalActivities: data.activities.length,
       answers: []
     }
   }
@@ -50,4 +54,4 @@ async function addAnswers(module: string, answers: (boolean | string)[]) {
   await saveBox(box);
 }
 
-export { addAnswers, insertBox, deleteBox, getBox, StorageBox, readBox };
+export { addAnswers, insertBox, deleteBox, getBox, StorageBox, Box, readBox };

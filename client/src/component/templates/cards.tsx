@@ -21,7 +21,7 @@ interface CardsProps {
   /** Card data */
   data: Module[];
   /** Local Storage Box */
-  boxes: StorageBox;
+  answers: StorageBox;
 }
 
 const ContentContainer = styled(BaseContentContainer)`
@@ -46,9 +46,8 @@ const Cards = (props: CardsProps) => {
       <ContentContainer>
         <Title>{props.title}</Title>
         {props.data.map((data, i) => {
-          const box = props.boxes[data.id] ?? undefined;
+          const box = props.answers[data.id] ?? undefined;
           const status = box ? "ongoing" : data.done ? "completed" : (data.available ? "incomplete" : "locked");
-          const length = box?.data.activities.length;
 
           let description = "";
 
@@ -58,7 +57,7 @@ const Cards = (props: CardsProps) => {
             else description = t('Finish the previous module to unlock this one');
           }
           else {
-            if (length > 1) description = `Este módulo contém ${length} atividades a serem realizadas com a criança.`
+            if (length > 1) description = `Este módulo contém ${box.totalActivities} atividades a serem realizadas com a criança.`
             else description = `Este módulo contém 1 atividade a ser realizada com a criança.`
           }
 
@@ -69,7 +68,7 @@ const Cards = (props: CardsProps) => {
               image={data.image}
               imageAlt={data.imageAlt}
               progress={box?.answers.length}
-              total={box?.data.activities.length}
+              total={box?.totalActivities}
               status={status}
               onPress={useCallback(() => props.onPress(data), [props.onPress])}
               key={i}

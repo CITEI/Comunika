@@ -28,31 +28,17 @@ export const fetchHistory = createAsyncThunk(
   }
 );
 
-
-export const evaluate = createAsyncThunk(
-  "user/evaluate",
-  async ({ module, answers }: { module: string, answers: (string | boolean)[][] }) => {
-    const res = (await api.post(`/user/box/${module}`, { answers })).data;
-    await deleteBox(module);
-    return res;
-  }
-);
-
 export default createSlice({
   name: "user",
   initialState: {
     info: {} as UserInfo,
     loaded: false,
-    result: undefined as (undefined | number),
   },
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchUserData.fulfilled, (state, action) => {
       state.info = action.payload;
       state.loaded = true;
-    });
-    builder.addCase(evaluate.fulfilled, (state, action) => {
-      state.result = action.payload;
     });
   },
 });

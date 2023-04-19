@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Activity as ActivityType} from "../../store/progress";
+import { Activity as ActivityType, AppBox} from "../../store/progress";
 import MainContainer from "../atom/main-container";
 import ContentContainer from "../atom/content-container";
 import Toolbar from "../organism/toolbar";
@@ -8,28 +8,26 @@ import Questionary from "../organism/questionary";
 import { addAnswers } from "../../store/local/GameStorage";
 
 interface ActivityProps {
-  boxID: string;
+  box: AppBox;
   module: string;
   activities: ActivityType[];
-  done: number;
-  onFinish: (answers: boolean[][]) => void;
+  onFinish: (answers: (boolean | string)[][]) => void;
 }
 
 const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
-  const [activityIndex, setActivityIndex] = useState(0 + props.done);
+  const [activityIndex, setActivityIndex] = useState(props.box.answers.length);
   const [answering, setAnswering] = useState(false);
-  const [answers, setAnswers] = useState<boolean[][]>([]);
+  const [answers, setAnswers] = useState<(string | boolean)[][]>(props.box.answers);
 
   const activity = props.activities[activityIndex];
 
   /** Starts answering screens */
   const handleFinishedInstructions = useCallback(() => setAnswering(true), []);
   const handleFinishedQuestionary = useCallback(
-    async (activityAnswers: boolean[]) => {
+    async (activityAnswers: (string | boolean)[]) => {
       if (activityIndex < props.activities.length)
         setAnswers([...answers, activityAnswers]);
-        await addAnswers(props.boxID, activityAnswers);
-
+        await addAnswers(props.box.module, activityAnswers);
       const next = activityIndex + 1;
       if (next < props.activities.length) {
         setTimeout(() => {

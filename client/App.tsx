@@ -7,15 +7,13 @@ import Register from "./src/view/register";
 import React from "react";
 import FlashMessage from "react-native-flash-message";
 import Main from "./src/view/main";
-import Stages from "./src/view/stages";
 import Game from "./src/view/game";
 import Result from "./src/view/result";
 import { APP_NAME } from "./src/pre-start/constants";
-import Settings, { SettingsButton } from "./src/view/settings";
+import Settings from "./src/view/settings";
 import { defaultTheme } from "./src/pre-start/themes";
 import { ThemeProvider } from "styled-components/native";
 import FontLoader from "./src/pre-start/font-loader";
-import MainContainer from "./src/component/atom/main-container";
 import Transition from "./src/view/transition";
 import Onboarding from "./src/view/onboarding";
 
@@ -51,10 +49,8 @@ export default function App() {
                   name="Main"
                   options={{
                     title: APP_NAME,
-                    headerRight: SettingsButton,
                   }}
                 />
-                <Stack.Screen component={Stages} name="Stages" />
                 <Stack.Screen component={Game} name="Game" />
                 <Stack.Screen component={Result} name="Result" />
                 <Stack.Screen component={Settings} name="Settings" />

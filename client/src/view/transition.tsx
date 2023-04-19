@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import t from "../pre-start/i18n";
 import useBox from "../hooks/useBox";
 
-interface TransitionProps {}
+interface TransitionProps { }
 
 const Content = styled(ContentContainer)`
   align-items: center;
@@ -39,22 +39,14 @@ const Image = styled.Image`
 
 /** Screen used as a transition between modules screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
-  const navigation = useNavigation<GameNavigatorProps>();
   const route = useRoute();
-  const { module, activityIndex } = route.params as GameProps["Transition"];
-  const [loaded, setLoaded] = React.useState(false);
-  const box = useBox(module.id);
+  const { module, localData } = route.params as GameProps["Transition"];
+  const [timer, setTimer] = React.useState(false);
 
-  useEffect(() => {
-    if (box) {
-      setTimeout(() => {
-        if (activityIndex > 1) {
-          navigation.navigate("Game", {module: module, activitiesDone: activityIndex-1});
-        }
-        setLoaded(true);
-      }, 1500)
-    }
-  }, [box])
+  setTimeout(() => {
+    setTimer(true);
+  }, 1500);
+
 
   return (
     <MainContainer>
@@ -65,14 +57,14 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
         closeButton={false}
       />
       <Content>
-        {loaded ? (
+        {timer ? (
           <GeneralInstructions
-            slides={[{text: t("General1")}, {text: t("General2")}]}
+            slides={[{ text: t("General1") }, { text: t("General2") }]}
             module={module}
           />
         ) : (
           <>
-            <Title>{t("Starting activity")} {activityIndex}</Title>
+            <Title>{t("Starting activity")} {(localData?.answers.length ?? 0) + 1}</Title>
             <Subtitle>{module.name}</Subtitle>
             <Image
               resizeMode="contain"

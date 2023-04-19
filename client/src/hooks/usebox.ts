@@ -6,13 +6,13 @@ import { fetchBox } from '../store/progress';
 const useBox = (module: string) => {
   const dispatch = useAppDispatch();
   const box = useAppSelector((state) => state.progress.box);
-  const loaded = useAppSelector((state) => state.progress.flags.loadedBox).includes(module);
+  const loaded = useAppSelector((state) => state.progress.flags.box);
 
   useEffect(() => {
     if (!loaded) dispatch(fetchBox(module));
   }, [loaded]);
 
-  return box.find(el => el.module == module);
+  return box;
 }
 
 export default useBox;
