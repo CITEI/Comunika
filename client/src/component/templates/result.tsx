@@ -14,9 +14,12 @@ import util from "util";
 import t from "../../pre-start/i18n";
 import useModules from "../../hooks/useModules";
 import useAnswers from "../../hooks/useAnswers";
+import ResetSuccess from '../organism/result-success';
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { addToStreak, resetStreak } from "../../store/progress";
 interface ResultProps {
   module: Module;
-  status: number;
+  grade: number;
 }
 
 const Container = styled(ContentContainer)`
@@ -63,15 +66,19 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
   const answers = useAnswers();
+  const activityStreak = useAppSelector((state) => state.progress.activityStreak);
+  const dispatch = useAppDispatch();
   const next = modules.find(el => el.previous === props.module.id);
 
   /** Goes back to the modules screen */
   const handleBack = useCallback(() => {
-    navigation.pop(2);
+    navigation.pop(2 + activityStreak);
+    dispatch(resetStreak());
   }, []);
 
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
+    dispatch(addToStreak());
     navigation.replace("Transition", {module: next!, localData: answers[next!.id] ?? undefined});
   }, []);
 
@@ -83,28 +90,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         logo={true}
         shadow={false}
       />
-      <Container>
-        <Title>
-          {util.format(
-            "You finished %s!",
-            props.module.name
-          )}
-        </Title>
-        <Image
-          source={{ uri: props.module.image }}
-          accessibilityHint={props.module.imageAlt}
-          resizeMode="contain"
-        />
-        <Text>{'StageSucceeded'}</Text>
-        <Footer>
-          {next && <Button label={t("Start next")} onPress={handleNext} />} 
-          <Button
-            variant="outline"
-            label={t("Back to menu")}
-            onPress={handleBack}
-          />
-        </Footer>
-      </Container>
+      <ResetSuccess next={next} handleNext={handleNext} handleBack={handleBack}/>
     </MainContainer>
   );
 };

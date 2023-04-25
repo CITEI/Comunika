@@ -57,7 +57,7 @@ const Cards = (props: CardsProps) => {
             else description = t('Finish the previous module to unlock this one');
           }
           else {
-            if (length > 1) description = `Este módulo contém ${box.totalActivities} atividades a serem realizadas com a criança.`
+            if (box?.totalActivities > 1) description = `Este módulo contém ${box.totalActivities} atividades a serem realizadas com a criança.`
             else description = `Este módulo contém 1 atividade a ser realizada com a criança.`
           }
 

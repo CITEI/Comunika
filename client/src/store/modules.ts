@@ -15,7 +15,7 @@ export interface Module {
 export const fetchModules = createAsyncThunk("modules/data", async () => {
   const respose = await api.get('user/modules');
   const data: Module[] = respose.data;
-  return data.map(e => ({...e, image: toUri(e.image)}));
+  return data.map(e => ({ ...e, image: toUri(e.image) }));
 });
 
 export default createSlice({
@@ -29,9 +29,6 @@ export default createSlice({
     builder.addCase(fetchModules.fulfilled, (state, action) => {
       state.data = action.payload;
       state.loaded = true;
-    });
-    builder.addCase(fetchModules.rejected, (state, action) => {
-      state.loaded = false;
     });
   }
 });

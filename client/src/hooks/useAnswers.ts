@@ -7,10 +7,11 @@ const useAnswers = () => {
   const dispatch = useAppDispatch();
   const answers = useAppSelector((state) => state.progress.answers);
   const loaded = useAppSelector((state) => state.progress.flags.answers);
+  const box = useAppSelector((state) => state.progress.box);
 
   useEffect(() => {
     dispatch(readAnswers());
-  }, [loaded]);
+  }, [loaded, box]);
 
   return answers;
 }

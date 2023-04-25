@@ -49,6 +49,7 @@ export type Node = TextNode | CarrouselNode;
 /** Node displayed after gameplay in order to test knowledge */
 export interface QuestionNode extends GameNode {
   question: string;
+  hasOther?: boolean;
   notes?: string;
 }
 
@@ -140,12 +141,24 @@ export const evaluate = createAsyncThunk(
   }
 );
 
-export default createSlice({
+const progressSlice = createSlice({
   name: "progress",
-  reducers: {},
+  reducers: {
+    addToStreak: (state) => {
+      state.activityStreak = state.activityStreak + 1;
+    },
+    resetStreak: (state) => {
+      state.activityStreak = 0;
+    },
+    disableBoxLoaded: (state) => {
+      state.box = undefined;
+      state.flags.box = false;
+    }
+  },
   initialState: {
     box: undefined as (AppBox | undefined),
-    answers: {} as StorageBox, 
+    answers: {} as StorageBox,
+    activityStreak: 0,
     history: undefined,
     grade: undefined as (number | undefined),
     flags: {
@@ -171,3 +184,6 @@ export default createSlice({
     });
   }
 });
+
+export default progressSlice;
+export const { disableBoxLoaded, addToStreak, resetStreak } = progressSlice.actions;

@@ -6,6 +6,7 @@ import Toolbar from "../organism/toolbar";
 import Instructions from "../organism/instructions";
 import Questionary from "../organism/questionary";
 import { addAnswers } from "../../store/local/GameStorage";
+import { useAppSelector } from "../../store/store";
 
 interface ActivityProps {
   box: AppBox;
@@ -18,6 +19,7 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
   const [activityIndex, setActivityIndex] = useState(props.box.answers.length);
   const [answering, setAnswering] = useState(false);
   const [answers, setAnswers] = useState<(string | boolean)[][]>(props.box.answers);
+  const activityStreak = useAppSelector((state) => state.progress.activityStreak);
 
   const activity = props.activities[activityIndex];
 
@@ -53,7 +55,7 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
           closeButton={true}
           logo={answering}
           shadow={false}
-          popCount={3}
+          popCount={2 + activityStreak}
         />
         <ContentContainer>
           {answering ? (

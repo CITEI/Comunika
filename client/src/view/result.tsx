@@ -11,11 +11,10 @@ import { GameProps } from "../route/game";
 /** Screen displayed after an activity box is completed */
 const Result: React.VoidFunctionComponent = () => {
   const route = useRoute();
-  const navigation = useNavigation<GameNavigatorProps>();
   const grade = useAppSelector(state => state.progress.grade);
   const { module } = route.params as GameProps["Result"];
   return (
-    <ResultTemplate module={module} status={grade!}/>
+    <ResultTemplate module={module} grade={grade!}/>
   ) 
 };
 

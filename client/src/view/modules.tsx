@@ -6,16 +6,20 @@ import t from "../pre-start/i18n";
 import useModules from "../hooks/useModules";
 import { Module } from '../store/modules';
 import useAnswers from '../hooks/useAnswers';
+import { disableBoxLoaded } from '../store/progress';
+import { useAppDispatch } from '../store/store';
 
 /** Screen that displays a list of modules */
 const Modules: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
   const answers = useAnswers();
+  const dispatch = useAppDispatch();
 
   /** Goes to the game screen */
   const handlePress = useCallback(
     (selection: Module) => {
+      dispatch(disableBoxLoaded());
       const box = answers[selection.id];
       navigation.navigate("Transition", {
         module: selection,
