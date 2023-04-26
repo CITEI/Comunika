@@ -79,7 +79,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
     dispatch(addToStreak());
-    navigation.replace("Transition", {module: next!, localData: answers[next!.id] ?? undefined});
+    navigation.replace("Transition", {module: next!});
   }, []);
 
   return (

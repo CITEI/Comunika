@@ -20,10 +20,8 @@ const Modules: React.VoidFunctionComponent = () => {
   const handlePress = useCallback(
     (selection: Module) => {
       dispatch(disableBoxLoaded());
-      const box = answers[selection.id];
       navigation.navigate("Transition", {
         module: selection,
-        localData: box ?? undefined,
       });
     },
     [modules]

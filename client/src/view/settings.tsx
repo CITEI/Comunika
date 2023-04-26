@@ -12,6 +12,7 @@ import RawTitle from "../component/atom/title";
 import { dp } from "../helper/resolution";
 import moment from "moment";
 import { clearToken } from "../helper/settings";
+import { resetStorage } from '../store/local/GameStorage';
 import * as Updates from "expo-updates";
 
 const Title = styled(RawTitle)`
@@ -38,6 +39,7 @@ const Settings: React.VoidFunctionComponent = () => {
   }, [navigation]);
 
   const handleLogout = useCallback(async () => {
+    await resetStorage();
     await clearToken();
     await Updates.reloadAsync();
   }, []);
@@ -78,11 +80,11 @@ const Settings: React.VoidFunctionComponent = () => {
             },
             {
               type: "checkboxset",
-              label: t("Comorbidities"),
-              name: "comorbidities",
+              label: t("Disabilities"),
+              name: "disabilities",
               options: disabilities,
               editable: false,
-              selected: info.comorbidity,
+              selected: info.disabilities,
             },
             {
               type: "button",

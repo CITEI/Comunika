@@ -21,7 +21,7 @@ const validators = {
   guardian: isLongerThanTwo,
   relationship: isLongerThanTwo,
   birth: (date: Date) => true,
-  comorbidity: (arr: string[]) => arr.length > 0,
+  disabilities: (arr: string[]) => arr.length > 0,
   region: isLongerThanTwo,
 };
 
@@ -51,7 +51,7 @@ const Register: React.VoidFunctionComponent = () => {
         guardian: map.get("guardian"),
         relationship: map.get("relationship"),
         birth: map.get("birth"),
-        comorbidity: map.get("comorbidity"),
+        disabilities: map.get("disabilities"),
         region: map.get("region"),
       } as any;
       dispatch(register(data));
@@ -92,7 +92,7 @@ const Register: React.VoidFunctionComponent = () => {
             {
               type: "checkboxset",
               label: t("Child's disabilities"),
-              name: "comorbidity",
+              name: "disabilities",
               options: disabilities.map((el) => ({
                 option: el.name,
                 value: el._id,

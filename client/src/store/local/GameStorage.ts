@@ -54,4 +54,8 @@ async function addAnswers(module: string, answers: (boolean | string)[]) {
   await saveBox(box);
 }
 
-export { addAnswers, insertBox, deleteBox, getBox, StorageBox, Box, readBox };
+async function resetStorage() {
+  await AsyncStorage.removeItem('BOX');
+}
+
+export { addAnswers, insertBox, deleteBox, getBox, StorageBox, Box, readBox, resetStorage };

@@ -12,7 +12,7 @@ import GeneralInstructions from "../component/organism/general-instructions";
 import { GameNavigatorProps } from "../route/game";
 import { useNavigation } from "@react-navigation/native";
 import t from "../pre-start/i18n";
-import useBox from "../hooks/useBox";
+import useAnswers from "../hooks/useAnswers";
 
 interface TransitionProps { }
 
@@ -40,7 +40,8 @@ const Image = styled.Image`
 /** Screen used as a transition between modules screen and activity screen */
 const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const route = useRoute();
-  const { module, localData } = route.params as GameProps["Transition"];
+  const { module } = route.params as GameProps["Transition"];
+  const answers = useAnswers();
   const [timer, setTimer] = React.useState(false);
 
   setTimeout(() => {
@@ -64,7 +65,7 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
           />
         ) : (
           <>
-            <Title>{t("Starting activity")} {(localData?.answers.length ?? 0) + 1}</Title>
+            <Title>{t("Starting activity")} {(answers[module.id]?.answers.length ?? 0) + 1}</Title>
             <Subtitle>{module.name}</Subtitle>
             <Image
               resizeMode="contain"

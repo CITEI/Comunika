@@ -6,7 +6,6 @@ export type GameProps = {
   Main: undefined;
   Transition: {
     module: Module;
-    localData?: Box;
   }
   Game: {
     module: Module;

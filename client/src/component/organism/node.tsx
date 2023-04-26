@@ -2,7 +2,7 @@ import React from "react";
 import styled from "../../pre-start/themes";
 import Carrousel from "../molecule/carrousel";
 import BaseText from "../atom/text";
-import { BaseNode } from "../../store/user";
+import { BaseNode } from "../../store/progress";
 import { dp } from "../../helper/resolution";
 import Md from "../molecule/md";
 import SoundImage from "../molecule/soundimage";

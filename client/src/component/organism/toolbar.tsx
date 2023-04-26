@@ -5,7 +5,7 @@ import { dp, vw } from "../../helper/resolution";
 import ToolbarButton from "../atom/toolbar-button";
 import logo from "../../../assets/logo_2.png";
 import { useAppDispatch } from "../../store/store";
-import { resetStreak } from "../../store/progress";
+import { resetStreak, disableBoxLoaded } from "../../store/progress";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
 
@@ -56,6 +56,7 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
   /** Returns the user to the previous screen */
   const handleClosePress = useCallback(() => {
     dispatch(resetStreak());
+    dispatch(disableBoxLoaded());
     navigation.pop(props.popCount || 1);
   }, [props.popCount]);
 
