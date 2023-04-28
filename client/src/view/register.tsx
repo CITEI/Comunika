@@ -11,6 +11,7 @@ import useDisabilities from "../hooks/usedisabilities";
 import Form from "../component/organism/form";
 import TextLink from "../component/molecule/text-link";
 import { isEmail, isPassword } from "../helper/validators";
+import ToS from "../component/molecule/tos";
 
 const isLongerThanTwo = (txt: string) => txt.length > 2;
 
@@ -74,24 +75,24 @@ const Register: React.VoidFunctionComponent = () => {
         <LoginHeader />
         <Form
           inputs={[
-            { type: "text", label: t("Email"), name: "email" },
-            { type: "password", label: t("Password"), name: "password" },
-            { type: "password", label: t("Confirm password"), name: "confirm" },
+            { type: "text", label: "Email", name: "email" },
+            { type: "password", label: "Senha", name: "password" },
+            { type: "password", label: "Confirmar senha", name: "confirm" },
             {
               type: "text",
-              label: t("Parent or guardian name"),
+              label: "Nome do responsável",
               name: "guardian",
             },
             {
               type: "text",
-              label: t("Relationship level"),
+              label: "Grau de parentesco",
               name: "relationship",
             },
-            { type: "date", label: t("Child's date of birth"), name: "birth" },
-            { type: "text", label: t("Region you live"), name: "region" },
+            { type: "date", label: "Data de nascimento da criança", name: "birth" },
+            { type: "text", label: "Região onde você mora", name: "region" },
             {
               type: "checkboxset",
-              label: t("Child's disabilities"),
+              label: "Deficiências da criança",
               name: "disabilities",
               options: disabilities.map((el) => ({
                 option: el.name,
@@ -100,7 +101,7 @@ const Register: React.VoidFunctionComponent = () => {
             },
             {
               type: "submit",
-              label: t("Login"),
+              label: "Cadastrar",
               name: "submit",
               onSubmit: handleSubmit,
               disabled: !validated,
@@ -108,9 +109,11 @@ const Register: React.VoidFunctionComponent = () => {
           ]}
           onChange={handleChange}
         />
+        <ToS/>
         <TextLink
-          text={t("Already registered?") + " "}
-          link={t("Click here")}
+          style={{paddingTop: 0}}
+          text={t("Já cadastrado?") + " "}
+          link={t("Clique aqui")}
           onPress={handleLogin}
         />
       </ContentContainer>
