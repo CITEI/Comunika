@@ -15,7 +15,7 @@ export const login = createAsyncThunk<
   { email: string; password: string },
   { rejectValue: string }
 >("auth/login", async (user, { rejectWithValue }) => {
-  try{
+  try {
     const res = await api.post("/auth", user);
     const token = res.data;
     setToken(token);
@@ -53,6 +53,63 @@ export const fetchDisabilities = createAsyncThunk(
     return (await api.get("/auth/disabilities")).data as Disability[];
   }
 );
+
+export const resetpass = createAsyncThunk(
+  "auth/reset-password/",
+  async ({
+    email,
+    token,
+    password,
+  }: {
+    email: string;
+    token: string;
+    password: string;
+  }, { rejectWithValue }) => {
+    try {
+      const data = await api.post("/auth/reset-password/", { email, token, password });
+      return data.status;
+    } catch (err) {
+      return rejectWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
+export const sendcode = createAsyncThunk(
+  "/auth/passreset/sendcode",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const data = await api.post("/auth/reset-password/send", { email });
+      return data.status;
+    } catch (err) {
+      return rejectWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
+export const codeverify = createAsyncThunk(
+  "auth/reset-password/validate",
+  async (
+    { email, token }: { email: string; token: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const data = await api.post("/auth/reset-password/validate", {
+        email,
+        token,
+      });
+      return data.status;
+    } catch (err) {
+      return rejectWithValue(
+        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
+      );
+    }
+  }
+);
+
 
 interface InitialState {
   authentication: {

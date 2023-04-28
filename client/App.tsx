@@ -16,6 +16,8 @@ import { ThemeProvider } from "styled-components/native";
 import FontLoader from "./src/pre-start/font-loader";
 import Transition from "./src/view/transition";
 import Onboarding from "./src/view/onboarding";
+import ForgotPass from "./src/view/forgot-pass";
+import ResetPass from "./src/view/reset-pass";
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +49,20 @@ export default function App() {
                 <Stack.Screen
                   component={Main}
                   name="Main"
+                  options={{
+                    title: APP_NAME,
+                  }}
+                />
+                <Stack.Screen
+                  component={ForgotPass}
+                  name="ForgotPass"
+                  options={{
+                    title: APP_NAME,
+                  }}
+                />
+                <Stack.Screen
+                  component={ResetPass}
+                  name="ResetPass"
                   options={{
                     title: APP_NAME,
                   }}

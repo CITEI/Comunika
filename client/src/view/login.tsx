@@ -61,6 +61,10 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
     navigation.navigate("Register");
   };
 
+  const handleForgot = () => {
+    navigation.navigate("ForgotPass");
+  };
+
   return (
     <MainContainer>
       <ContentContainer>
@@ -95,11 +99,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
           <TextLink
             text={t("Forgot the password?") + " "}
             link={t("Click here")}
-            onPress={() => {
-              Linking.openURL(
-                `mailto:${AUTHOR_EMAIL}?subject=Password%20reset`
-              );
-            }}
+            onPress={handleForgot}
           />
         </VerticalContainer>
       </ContentContainer>
