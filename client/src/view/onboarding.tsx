@@ -31,21 +31,21 @@ const Onboarding: React.VoidFunctionComponent = () => {
       slides={[
         {
           image: onb1,
-          imageAlt: t("Illustration of a woman with a bulb"),
-          text: t("Onboarding1"),
-          title: t("Hello! :)"),
+          imageAlt: "Ilustração de uma mulher com uma lâmpada",
+          text: "O Zica App tem o objetivo de auxiliar no desenvolvimento da comunicação de crianças afetadas pelo Zica Virus e por outros problemas genéticos ou cogênitos.",
+          title: "Olá! :)",
         },
         {
           image: onb2,
-          imageAlt: t("Illustration of people solving a puzzle."),
-          text: t("Onboarding2"),
-          title: t("How it works"),
+          imageAlt: "Ilustração de pessoas resolvendo um quebra-cabeça.",
+          text: "O App possui 3 estágios com diferentes atividades para o responsável realizar com a criança e auxiliá-la no seu desenvolvimento.",
+          title: "Como funciona",
         },
         {
           image: onb3,
-          imageAlt: t("Illustration of a woman with a pencil."),
-          text: t("Onboarding3"),
-          title: t("To begin"),
+          imageAlt: "Ilustração de uma mulher com um lápis.",
+          text: "Todas as atividades contarão com instruções detalhadas de como realiza-las e ao final você poderá registrar o desempenho da criança.",
+          title: "Para começar",
         },
       ]}
       onFinish={handleFinish}

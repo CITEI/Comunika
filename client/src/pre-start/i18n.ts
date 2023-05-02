@@ -3,7 +3,6 @@ import * as Localization from 'expo-localization';
 import pt from './translations/pt.json';
 import en from './translations/en.json'
 
-
 const i18n = new I18n({
   pt, en
 }, {

@@ -8,6 +8,7 @@ export async function saveToken(token: string) {
 
 /** Removes user's token */
 export async function clearToken() {
+  await AsyncStorage.removeItem("onboarding");
   await AsyncStorage.removeItem("access_token");
 }
 

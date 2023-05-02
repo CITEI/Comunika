@@ -112,8 +112,8 @@ const Register: React.VoidFunctionComponent = () => {
         <ToS/>
         <TextLink
           style={{paddingTop: 0}}
-          text={t("Já cadastrado?") + " "}
-          link={t("Clique aqui")}
+          text={"Já cadastrado?" + " "}
+          link={"Clique aqui"}
           onPress={handleLogin}
         />
       </ContentContainer>

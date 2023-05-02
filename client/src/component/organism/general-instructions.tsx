@@ -60,14 +60,14 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
 
   return (
     <Container>
-      <Title>{t("General instructions")}</Title>
+      <Title>{"Instruções gerais"}</Title>
       <TTSLabel />
       <TTSPlayer text={slide.text} />
       <Text textStyle={{fontSize: sp(13)}}>
         {slide.text}
       </Text>
       <Footer>
-        <Button label={t("Next")} onPress={handleNext} />
+        <Button label={"Próximo"} onPress={handleNext} />
       </Footer>
     </Container>
   );

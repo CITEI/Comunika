@@ -54,7 +54,7 @@ const Cards = (props: CardsProps) => {
           if (!box) {
             if (status == "completed") description = 'Clique no botão para refazer este módulo.';
             else if (status == 'incomplete') description = 'Clique no botão para começar este módulo.';
-            else description = t('Finish the previous module to unlock this one');
+            else description = 'Finalize o módulo anterior para liberar este.';
           }
           else {
             if (box?.totalActivities > 1) description = `Este módulo contém ${box.totalActivities} atividades a serem realizadas com a criança.`

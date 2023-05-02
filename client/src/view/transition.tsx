@@ -44,6 +44,8 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
   const answers = useAnswers();
   const [timer, setTimer] = React.useState(false);
 
+  const instructions = ["1 | Ao iniciar a atividade chamar a criança pelo nome no início e durante a realização para ter a certeza de que ela está participando.\n\n2 | Colocar a criança de frente para quem está conduzindo a atividade e certificar-se de que ela está numa boa posição para realiza-la.", "3 | Verificar se a criança esta disposta para realizar as atividades: Se não está com sono, fome ou sob efeito de medicação.\n\n4| Evitar antecipar a resposta! Dê tempo para a criança participar da atividade de acordo com o ritmo dela."]
+
   setTimeout(() => {
     setTimer(true);
   }, 1500);
@@ -60,12 +62,12 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
       <Content>
         {timer ? (
           <GeneralInstructions
-            slides={[{ text: t("General1") }, { text: t("General2") }]}
+            slides={[{text: instructions[0]}, {text: instructions[1]}]}
             module={module}
           />
         ) : (
           <>
-            <Title>{t("Starting activity")} {(answers[module.id]?.answers.length ?? 0) + 1}</Title>
+            <Title>{"Iniciando atividade"} {(answers[module.id]?.answers.length ?? 0) + 1}</Title>
             <Subtitle>{module.name}</Subtitle>
             <Image
               resizeMode="contain"

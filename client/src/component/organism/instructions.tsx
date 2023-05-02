@@ -71,7 +71,7 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
       <TTSLabel />
       <TTSPlayer text={extractText(currentNode.text)} />
       <Node {...currentNode} />
-      <Button label={isLast ? t("Finish") : t("Next")} onPress={handleNextPressed} />
+      <Button label={isLast ? "Finalizar" : "Próximo"} onPress={handleNextPressed} />
     </>
   );
 };

@@ -47,40 +47,40 @@ const Settings: React.VoidFunctionComponent = () => {
   return info ? (
     <MainContainer>
       <ContentContainer>
-        <Title>{t("Profile")}</Title>
+        <Title>{"Perfil"}</Title>
         <Form
           inputs={[
             {
               type: "text",
-              label: t("Email"),
+              label: "Email",
               name: "email",
               value: info.email,
               editable: false,
             },
             {
               type: "text",
-              label: t("Birth"),
+              label: "Data de nascimento",
               name: "birth",
               value: birth,
               editable: false,
             },
             {
               type: "text",
-              label: t("Guardian"),
+              label: "Responsável",
               name: "guardian",
               value: info.guardian,
               editable: false,
             },
             {
               type: "text",
-              label: t("Relationship"),
+              label: "Grau de parentesco",
               name: "relationship",
               value: info.relationship,
               editable: false,
             },
             {
               type: "checkboxset",
-              label: t("Disabilities"),
+              label: "Deficiências da criança",
               name: "disabilities",
               options: disabilities,
               editable: false,
@@ -88,13 +88,13 @@ const Settings: React.VoidFunctionComponent = () => {
             },
             {
               type: "button",
-              label: t("Return"),
+              label: "Voltar",
               name: "return",
               onPress: handleReturn,
             },
             {
               type: "button",
-              label: t("Logout"),
+              label: "Sair",
               name: "logout",
               onPress: handleLogout,
             },

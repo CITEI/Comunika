@@ -23,7 +23,7 @@ const LoginHeader: React.VoidFunctionComponent = () => {
   return (
     <Header>
       <Logo source={logo} resizeMode="contain" />
-      <Title>{t("Welcome!")}</Title>
+      <Title>{"Bem-vindo!"}</Title>
     </Header>
   )
 }

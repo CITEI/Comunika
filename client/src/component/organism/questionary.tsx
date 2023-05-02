@@ -108,12 +108,12 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
   return currentNode ? (
     <>
       <Counter>
-        {util.format(t('Question %s/%s'), index + 1, answers.length)}
+        {`Pergunta ${index + 1}/${answers.length}`}
       </Counter>
       <Md>{`# ${currentNode.question}`}</Md>
       <Notes>{currentNode.notes}</Notes>
       <RadioQuestions
-        questions={[t("Yes"), t("No"), "Outros"]}
+        questions={['Sim', 'Não', "Outros"]}
         onSelected={handleRadioSelect}
         selected={answers[index]}
       />
@@ -131,7 +131,7 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         <Button label={"Próxima Pergunta"} onPress={handleNext} />
       ) : <></>}
 
-      <BackButton label={t("Back")} onPress={handleBackPressed} />
+      <BackButton label={"Voltar"} onPress={handleBackPressed} />
     </>
   ) : <></>;
 };

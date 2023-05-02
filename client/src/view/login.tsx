@@ -70,7 +70,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
       <ContentContainer>
         <Modal
           text={t(modalText)}
-          title={t("Not logged! :(")}
+          title={t("Não logado! :(")}
           onRequestClose={useCallback(() => setModalText(""), [])}
           visible={Boolean(modalText)}
         ></Modal>
@@ -78,18 +78,18 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
         <VerticalContainer>
           <Form
             inputs={[
-              { type: "text", label: t("Email"), name: "email" },
-              { type: "password", label: t("Password"), name: "password" },
+              { type: "text", label: "Email", name: "email" },
+              { type: "password", label: "Senha", name: "password" },
               {
                 type: "submit",
-                label: t("Login"),
+                label: "Entrar",
                 name: "login",
                 onSubmit: handleLogin,
                 disabled: !validated,
               },
               {
                 type: "button",
-                label: t("Create account"),
+                label: "Criar conta",
                 name: "register",
                 onPress: handleRegister,
               },
@@ -97,8 +97,8 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
             onChange={handleChange}
           />
           <TextLink
-            text={t("Forgot the password?") + " "}
-            link={t("Click here")}
+            text={"Esqueceu a senha?" + " "}
+            link={"Clique aqui"}
             onPress={handleForgot}
           />
         </VerticalContainer>

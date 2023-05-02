@@ -81,7 +81,7 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
         />
         <Footer>
           <Button
-            label={isLast ? t("Go to the activities") : t("Next")}
+            label={isLast ? "Ir para as atividades" : "Próximo"}
             onPress={handleNext}
           />
         </Footer>

@@ -118,13 +118,13 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
                   {" | "}
                 </ProgressText>
                 <PercentText>
-                  {Math.round((100 * props.progress) / props.total)}% {t("completed")}
+                  {Math.round((100 * props.progress) / props.total)}% {"completo"}
                 </PercentText>
               </ProgressContainer>
             ),
-            completed: <PercentText>{t("Completed")}</PercentText>,
+            completed: <PercentText>{"Completo"}</PercentText>,
             incomplete: <PercentText>{"Não Iniciado"}</PercentText>,
-            locked: <BlockedText>{t("Locked")}</BlockedText>,
+            locked: <BlockedText>{"Bloqueado"}</BlockedText>,
           }[props.status || "locked"]
         }
       </Header>
@@ -140,7 +140,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
             {props.description}
           </Description>
           {(props.status == "incomplete" || props.status == "completed" || props.status == "ongoing") && (
-            <Button label={t("Start")} onPress={props.onPress} />
+            <Button label={"Iniciar"} onPress={props.onPress} />
           )}
         </ContentRightContainer>
       </ContentContainer>
