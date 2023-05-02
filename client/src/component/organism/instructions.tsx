@@ -63,7 +63,7 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
     <>
       <Header>
         <ModuleInfo>
-          {util.format(t('Activity %s instructions'), props.activity)}
+          {`Instruções da atividade ${props.activity}`}
           {" | "}{props.module}
         </ModuleInfo>
         <Title>{props.title}</Title>

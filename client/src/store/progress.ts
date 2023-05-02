@@ -177,7 +177,7 @@ const progressSlice = createSlice({
       state.flags.answers = true;
     });
     builder.addCase(evaluate.fulfilled, (state, action) => {
-      state.grade = action.payload.grade;
+      state.grade = action.payload.grade.grade;
       state.box = undefined;
       state.flags.box = false;
       state.flags.answers = false;

@@ -14,7 +14,6 @@ import util from "util";
 import t from "../../pre-start/i18n";
 import useModules from "../../hooks/useModules";
 import useAnswers from "../../hooks/useAnswers";
-import ResetSuccess from '../organism/result-success';
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { addToStreak, resetStreak } from "../../store/progress";
 interface ResultProps {
@@ -65,8 +64,8 @@ const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
-  const answers = useAnswers();
   const activityStreak = useAppSelector((state) => state.progress.activityStreak);
+  const approved = useAppSelector((state) => state.progress.grade)! > 0.5;
   const dispatch = useAppDispatch();
   const next = modules.find(el => el.previous === props.module.id);
 
@@ -76,11 +75,21 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
     dispatch(resetStreak());
   }, []);
 
+  const handleReinforcement = useCallback(() => {
+    dispatch(addToStreak());
+    navigation.replace("Transition", {module: props.module});
+  }, []);
+
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
     dispatch(addToStreak());
     navigation.replace("Transition", {module: next!});
   }, []);
+
+  const teste = [
+    next ? <Button variant={approved ? undefined : "outline"} label={"Iniciar o próximo módulo"} onPress={handleNext} /> : <></>, 
+    <Button variant={approved && next ? "outline" : undefined} label={approved ? 'Refazer módulo atual' : 'Reforçar módulo atual'} onPress={handleReinforcement}/>
+  ]
 
   return (
     <MainContainer>
@@ -90,7 +99,32 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         logo={true}
         shadow={false}
       />
-      <ResetSuccess next={next} handleNext={handleNext} handleBack={handleBack}/>
+      <Container>
+        <Title>
+          {`Você finalizou ${props.module.name}`}
+        </Title>
+        <Image
+          source={{ uri: props.module.image }}
+          accessibilityHint={props.module.imageAlt}
+          resizeMode="contain"
+        />
+        <Text>{
+          approved ? "Parabéns você conclui o módulo com maestria" : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"
+        }</Text>
+        <Footer>
+          {
+            approved ? teste[0] : teste[1]
+          }
+          {
+            approved ? teste[1] : teste[0]
+          }
+          <Button
+            variant="outline"
+            label={"Voltar ao menu"}
+            onPress={handleBack}
+          />
+        </Footer>
+      </Container>
     </MainContainer>
   );
 };
