@@ -86,7 +86,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
     navigation.replace("Transition", {module: next!});
   }, []);
 
-  const teste = [
+  const buttons = [
     next ? <Button variant={approved ? undefined : "outline"} label={"Iniciar o próximo módulo"} onPress={handleNext} /> : <></>, 
     <Button variant={approved && next ? "outline" : undefined} label={approved ? 'Refazer módulo atual' : 'Reforçar módulo atual'} onPress={handleReinforcement}/>
   ]
@@ -113,10 +113,10 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         }</Text>
         <Footer>
           {
-            approved ? teste[0] : teste[1]
+            approved ? buttons[0] : buttons[1]
           }
           {
-            approved ? teste[1] : teste[0]
+            approved ? buttons[1] : buttons[0]
           }
           <Button
             variant="outline"
