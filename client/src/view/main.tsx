@@ -9,7 +9,7 @@ const Main: React.VoidFunctionComponent<MainProps> = () => {
   const userInfo = useUserInfo();
   const modules = useModules();
 
-  return (userInfo && modules ? <Modules /> : <>Alou?</>);
+  return (userInfo && modules ? <Modules /> : <></>);
 };
 
 export default Main;

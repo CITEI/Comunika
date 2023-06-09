@@ -5,12 +5,12 @@ import { fetchModules } from '../store/modules';
 /** Gets the user modules */
 const useModules = () => {
   const dispatch = useAppDispatch();  
-  const box = useAppSelector((state) => state.modules.loaded);
+  const loaded = useAppSelector((state) => state.modules.loaded);
   const modules = useAppSelector((state) => state.modules.data);
 
   useEffect(() => {
-    dispatch(fetchModules());
-  }, [box]);
+    if(!loaded) dispatch(fetchModules());
+  }, [loaded]);
 
   return modules;
 }

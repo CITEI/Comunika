@@ -13,8 +13,8 @@ export interface Module {
 }
 
 export const fetchModules = createAsyncThunk("modules/data", async () => {
-  const respose = await api.get('user/modules');
-  const data: Module[] = respose.data;
+  const response = await api.get('user/modules');
+  const data: Module[] = response.data;
   return data.map(e => ({ ...e, image: toUri(e.image) }));
 });
 
