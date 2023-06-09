@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect } from "react";
 import OnboardingTemplate from "../component/templates/onboarding";
 import onb1 from "../../assets/onboarding/1.png";
 import onb2 from "../../assets/onboarding/2.png";
@@ -13,7 +13,6 @@ import { GameNavigatorProps } from "../route/game";
 
 const Onboarding: React.VoidFunctionComponent = () => {
   const navigation = useNavigation<GameNavigatorProps>();
-  const [first, setFirst] = useState(false);
 
   const handleFinish = useCallback(async () => {
     await setOnboardingComplete();
@@ -23,9 +22,8 @@ const Onboarding: React.VoidFunctionComponent = () => {
   useEffect(() => {
     isOnboardingComplete().then((completed) => {
       if (completed) navigation.replace("Main");
-      else setFirst(true);
     });
-  }, [first, navigation]);
+  }, []);
 
   return <OnboardingTemplate
       slides={[
