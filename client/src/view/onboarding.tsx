@@ -3,7 +3,6 @@ import OnboardingTemplate from "../component/templates/onboarding";
 import onb1 from "../../assets/onboarding/1.png";
 import onb2 from "../../assets/onboarding/2.png";
 import onb3 from "../../assets/onboarding/3.png";
-import t from "../pre-start/i18n";
 import {
   isOnboardingComplete,
   setOnboardingComplete,

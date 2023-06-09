@@ -3,11 +3,5 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "strict": true,
-    "jsx": "react"
   },
-  "include": ["src/types"],
-  "files": [
-    "src/types/env.d.ts",
-  ],
-  "typesRoots": ["src/types"]
 }
