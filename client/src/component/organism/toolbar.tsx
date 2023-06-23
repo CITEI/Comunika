@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import styled from "../../pre-start/themes";
 import { dp, vw } from "../../helper/resolution";
 import ToolbarButton from "../atom/toolbar-button";
-import logo from "../../../assets/logo_2.png";
+import logo from "../../../assets/logo.png";
 import { useAppDispatch } from "../../store/store";
 import { resetStreak, disableBoxLoaded } from "../../store/progress";
 import { useNavigation } from "@react-navigation/native";

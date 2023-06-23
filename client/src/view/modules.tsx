@@ -29,7 +29,7 @@ const Modules: React.VoidFunctionComponent = () => {
 
   return modules ? (
     <Cards
-      title={"Módulos"}
+      title={"Atividades"}
       unit={"módulo"}
       onPress={handlePress}
       answers={answers}

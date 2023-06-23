@@ -28,22 +28,23 @@ const Container = styled(ContentContainer)`
 `;
 
 const Title = styled(BaseTitle)`
-  font-size: ${sp(20)}px;
+  font-size: ${sp(24)}px;
   text-align: center;
 `;
 
 const Image = styled.Image`
   width: ${dp(180)}px;
   height: ${dp(180)}px;
-  margin-bottom: ${dp(20)}px;
-  margin-top: ${dp(40)}px;
+  margin-bottom: ${dp(19)}px;
+  margin-top: ${dp(37)}px;
 `;
 
 const Text = styled(BaseText)`
   font-family: ${(props) => props.theme.fontFamily.titleLight};
   font-size: ${sp(16)}px;
   text-align: center;
-  margin-bottom: ${dp(20)}px;
+  margin-top: ${dp(10)}px;
+  margin-bottom: ${dp(16)}px;
 `;
 
 const Footer = styled.View`
@@ -94,20 +95,21 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   return (
     <MainContainer>
       <Toolbar
-        accountButton={false}
+        accountButton={true}
         closeButton={false}
         logo={true}
-        shadow={false}
+        shadow={true}
       />
       <Container>
-        <Title>
-          {`Você finalizou ${props.module.name}`}
-        </Title>
+        
         <Image
           source={{ uri: props.module.image }}
           accessibilityHint={props.module.imageAlt}
           resizeMode="contain"
         />
+        <Title>
+          {`Parabéns!`}
+        </Title>
         <Text>{
           approved ? "Parabéns você conclui o módulo com maestria" : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"
         }</Text>

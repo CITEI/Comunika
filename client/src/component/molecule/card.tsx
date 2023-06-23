@@ -43,6 +43,7 @@ const Header = styled.View`
 `;
 
 const Title = styled(BaseTitle)`
+  color: #585858;
   font-size: ${sp(16)}px;
   flex: 3;
 `;
@@ -71,10 +72,10 @@ const ContentContainer = styled.View`
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
-  margin-top: ${dp(13)}px;
+  margin-top: ${dp(5)}px;
   border-top-color: ${(props) => props.theme.color.hr};
   border-top-width: 1px;
-  padding-top: ${dp(8)}px;
+  padding-top: ${dp(14)}px;
   flex: 1;
 `;
 
@@ -100,6 +101,7 @@ const Description = styled(RawText)`
 
 const Button = styled(BaseButton)`
   width: 100%;
+  font-size: ${sp(14)}px;
 `;
 
 /** Card is a component that displays the summarized information of a group
@@ -118,7 +120,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
                   {" | "}
                 </ProgressText>
                 <PercentText>
-                  {Math.round((100 * props.progress) / props.total)}% {"completo"}
+                  {Math.round((100 * props.progress) / props.total)}% {"concluído"}
                 </PercentText>
               </ProgressContainer>
             ),
@@ -140,7 +142,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
             {props.description}
           </Description>
           {(props.status == "incomplete" || props.status == "completed" || props.status == "ongoing") && (
-            <Button label={"Iniciar"} onPress={props.onPress} />
+            <Button label={"Iniciar Atividade"} onPress={props.onPress} />
           )}
         </ContentRightContainer>
       </ContentContainer>

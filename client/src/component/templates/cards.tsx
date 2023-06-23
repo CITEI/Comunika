@@ -6,8 +6,6 @@ import styled from "styled-components/native";
 import { dp, sp } from "../../helper/resolution";
 import Card from "../molecule/card";
 import BaseContentContainer from "../atom/content-container";
-import util from "util";
-import t from "../../pre-start/i18n";
 import { Module } from "../../store/modules";
 import { StorageBox } from "../../store/local/GameStorage";
 
@@ -52,13 +50,13 @@ const Cards = (props: CardsProps) => {
           let description = "";
 
           if (!box) {
-            if (status == "completed") description = 'Clique no botão para refazer este módulo.';
-            else if (status == 'incomplete') description = 'Clique no botão para começar este módulo.';
-            else description = 'Finalize o módulo anterior para liberar este.';
+            if (status == "completed") description = 'Clique no botão para refazer este estágio.';
+            else if (status == 'incomplete') description = 'Clique no botão para começar este estágio.';
+            else description = 'Finalize o estágio anterior para liberar este.';
           }
           else {
-            if (box?.totalActivities > 1) description = `Este módulo contém ${box.totalActivities} atividades a serem realizadas com a criança.`
-            else description = `Este módulo contém 1 atividade a ser realizada com a criança.`
+            if (box?.totalActivities > 1) description = `Esse estágio possui ${box.totalActivities} atividades para serem realizadas com a criança!`
+            else description = `Esse estágio possui 1 atividade a ser realizada com a criança.`
           }
 
           return (
