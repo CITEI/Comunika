@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { MAX_PASSWORD_LENGTH, MIN_PASSWORD_LENGTH, MIN_STRING_LENGTH } from "../pre-start/constants";
-import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "./utils";
 
 /** Interface for creating a new admin */
@@ -17,10 +16,6 @@ export const AdminSchema = new mongoose.Schema({
     required: true,
     index: true,
     unique: true,
-    validate: {
-      validator: isEmail,
-      message: "Please enter a valid email address",
-    },
   },
   password: {
     type: String,
