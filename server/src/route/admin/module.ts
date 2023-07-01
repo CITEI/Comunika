@@ -50,7 +50,7 @@ const moduleOptions: ResourceOptions = {
       ],
       handler: async (req: ActionRequest, _res: any, con: ActionContext) => {
         let module = await moduleService.create(req.payload as object);
-        module.previous = module.previous._id;
+        module.previous = module.previous ? module.previous._id : null;
         return buildResponse({
           con,
           result: "success",
