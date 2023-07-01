@@ -3,7 +3,7 @@ import { celebrate, Joi } from "celebrate";
 import { Router, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { UserDocument } from "src/model/user";
+import { UserDocument } from "../../model/user";
 import { CustomJoi } from '../utils/custom_joi';
 
 const router = Router();
