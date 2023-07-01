@@ -7,7 +7,7 @@ import { UserInput, UserDocument } from "../../model/user";
 import { userAuthenticationService, userService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
 import { tokenService } from "../../service/token";
-import { sendResetToken } from "../../service/email";
+import { sendResetToken, sendResetNotification } from "../../service/email";
 
 const router = Router();
 
@@ -86,9 +86,7 @@ router.post("/reset-password", celebrate({
 
   await tokenService.delete({ email });
   await userService.resetPassword(email, password);
-
-  res.status(StatusCodes.ACCEPTED);
-  return res.send(ReasonPhrases.ACCEPTED);
+  return await sendResetNotification(email, res);
 })
 
 router.post(

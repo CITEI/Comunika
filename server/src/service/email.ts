@@ -1,9 +1,10 @@
 import nodemailer from 'nodemailer';
 import { Response } from 'express';
 import { EMAIL_ADDRESS, EMAIL_PASSWORD } from '../pre-start/constants';
-import { content } from '../html';
+import fs from 'fs/promises';
+import path from 'path';
 
-async function sendResetToken(email: string, token: string, response: Response) {
+async function sendEmail(toEmail: string, content: string, subject: string) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -12,21 +13,33 @@ async function sendResetToken(email: string, token: string, response: Response) 
     },
   });
 
-  try {
-    const info = await transporter.sendMail({
-      from: EMAIL_ADDRESS,
-      to: email,
-      subject: 'Comunizika - Restauração de senha',
-      html: content({ token: token })
-    });
-
-    return response
-      .status(parseInt(info.response.split(" ")[0]))
-      .send(info.response.split(" ")[2])
-      .end();
-  } catch (error) {
-    return response.status(500).send(error).end();
-  }
+  return await transporter.sendMail({
+    from: EMAIL_ADDRESS,
+    to: toEmail,
+    subject: subject,
+    html: content
+  });
 }
 
-export { sendResetToken };
+async function sendResetToken(toEmail: string, token: string, response: Response) {
+  const emailHtml = await fs.readFile(path.resolve(__dirname, "../html/sendToken.html"), 'utf8');
+  const email = emailHtml.replaceAll("$token", token);
+  const info = await sendEmail(toEmail, email, 'Comunizika - Recuperação de senha');
+
+  return response
+    .status(parseInt(info.response.split(" ")[0]))
+    .send(info.response.split(" ")[2])
+    .end();
+}
+
+async function sendResetNotification(toEmail: string, response: Response) {
+  const email = await fs.readFile(path.resolve(__dirname, "../html/resetConfirmation.html"), 'utf8');
+  const info = await sendEmail(toEmail, email, 'Comunizika - Senha alterada');
+
+  return response
+    .status(parseInt(info.response.split(" ")[0]))
+    .send(info.response.split(" ")[2])
+    .end();
+}
+
+export { sendResetToken, sendResetNotification };

@@ -12,7 +12,6 @@ import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
 import moduleRouter from "./route/game/module";
 import userRouter from "./route/game/user";
-import winston from "./pre-start/winston";
 import adminjs from "./pre-start/adminjs";
 
 // Constants
