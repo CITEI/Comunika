@@ -42,9 +42,7 @@ const Edit: React.FC<EditPropertyProps> = (props) => {
         <Label>{property.label}</Label>
         {editing ? (
           <Box>
-            <DropZone onChange={handleDropZoneChange}>
-              {image && !image && <DropZoneItem src={image} />}
-            </DropZone>
+            <DropZone onChange={handleDropZoneChange}/>
             <Label variant="info">
               Extensions: {(property.custom.extensions as string[]).join(", ")}
             </Label>

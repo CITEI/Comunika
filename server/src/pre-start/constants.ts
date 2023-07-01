@@ -1,5 +1,6 @@
 import {dirname, join} from "path";
 
+export const PASS_RESET_EXPIRATION = Number(process.env.PASS_RESET_EXPIRATION ?? 600); // 10 minutes
 export const JWT_EXPIRATION = process.env.JWT_EXPIRATION_TIME || "14d";
 export const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const JWT_ALGORITHM = "HS256";
@@ -8,12 +9,15 @@ export const BASE_PATH = `/api/${API_VERSION}`;
 export const ENV = process.env.ENV || "development";
 
 export const DB_PROTOCOL = process.env.DB_PROTOCOL || 'mongodb'
-export const DB_VERSION = process.env.DB_VERSION || "5.0.0";
+export const DB_VERSION = process.env.DB_VERSION || "5.0.0";  
 export const DB_HOST = process.env.DB_HOST;
 export const DB_DATABASE = process.env.DB_NAME;
 export const DB_USER = process.env.DB_USER;
 export const DB_PASSWORD = process.env.DB_PASSWORD;
 export const DB_REPLICA_SET = process.env.DB_REPLICASET;
+
+export const EMAIL_ADDRESS = process.env.EMAIL_ADDRESS;
+export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
 
 export const LOG_FOLDER = "logs";
 export const GAME_ACTIVITY_SAMPLE_QUANTITY = 5;

@@ -4,7 +4,6 @@ import {
   MIN_PASSWORD_LENGTH,
   MIN_STRING_LENGTH,
 } from "../pre-start/constants";
-import isEmail from "validator/lib/isEmail";
 import { passwordsMatch, hashPassword } from "./utils";
 import { ProgressInput, ProgressSchema } from "./progress";
 
@@ -25,10 +24,6 @@ export const UserSchema = new mongoose.Schema({
     required: true,
     index: true,
     unique: true,
-    validate: {
-      validator: isEmail,
-      message: "Please enter a valid email address",
-    },
   },
   password: {
     type: String,

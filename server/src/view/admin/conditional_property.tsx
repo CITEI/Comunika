@@ -2,6 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { BasePropertyComponent, EditPropertyProps } from "adminjs";
 import { uniqueId } from "underscore";
 
+interface EditProps extends EditPropertyProps {
+  children: any;
+}
+
 /**
  * ConditionalProperty custom
  */
@@ -17,7 +21,7 @@ export interface ConditionalPropertyCustom {
 /**
  * A regular AdminJS component that deactivates given another property value
  */
-const ConditionalProperty: React.FC<EditPropertyProps> = (props) => {
+const ConditionalProperty: React.FC<EditProps> = (props) => {
   const { property, record } = props;
   const { custom } = property;
   const { dependency, isin, initialState } =
