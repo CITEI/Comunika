@@ -12,6 +12,7 @@ import swaggerDocs from "./pre-start/swagger";
 import authRouter from "./route/game/authentication";
 import moduleRouter from "./route/game/module";
 import userRouter from "./route/game/user";
+import deleteRouter from "./route/game/deleteAccout";
 import adminjs from "./pre-start/adminjs";
 
 // Constants
@@ -58,6 +59,7 @@ apiRouter.use("/auth", authRouter);
 apiRouter.use("/module", moduleRouter);
 apiRouter.use("/user", userRouter);
 apiRouter.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+apiRouter.use("/delete-account", deleteRouter);
 
 app.use(BASE_PATH, apiRouter);
 

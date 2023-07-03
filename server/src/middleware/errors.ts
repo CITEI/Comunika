@@ -29,7 +29,8 @@ function parseError(err: Error): ServerError
 
   else if (err instanceof CelebrateError)
   {
-    const detail = err.details.get('body')!.details[0]
+    const body = err.details.get('body');
+    const detail = body ? body.details[0] : err.details.get('query')!.details[0];
     const name = detail.path[0].toString()
     const problem = detail.type == 'object.unknown' ? "extra" : "missing"
     return new BadRequestError({fields: [{name, problem}]})
