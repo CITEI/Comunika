@@ -69,7 +69,6 @@ app.use(custom_errors()); // app-only errors
 /***********************************************************************************
  *                                  Front-end content
  **********************************************************************************/
-
 // Set static dir
 app.use(`/${STATIC_DIR}`, express.static(PUBLIC_PATH));
 
