@@ -18,17 +18,24 @@ export const fetchModules = createAsyncThunk("modules/data", async () => {
   return data.map(e => ({ ...e, image: toUri(e.image) }));
 });
 
-export default createSlice({
+const modulesSlice = createSlice({
   name: "modules",
-  reducers: {},
+  reducers: {
+    markModulesAsLoading: (state) => {
+      state.loading = false;
+    },
+  },
   initialState: {
     data: new Array<Module>(),
-    loaded: false
+    loading: false
   },
   extraReducers: (builder) => {
     builder.addCase(fetchModules.fulfilled, (state, action) => {
       state.data = action.payload;
-      state.loaded = true;
+      state.loading = false;
     });
   }
 });
+
+export default modulesSlice;
+export const { markModulesAsLoading } = modulesSlice.actions;

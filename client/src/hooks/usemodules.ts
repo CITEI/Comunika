@@ -1,16 +1,20 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { fetchModules } from '../store/modules';
+import { fetchModules, markModulesAsLoading } from '../store/modules';
 
 /** Gets the user modules */
 const useModules = () => {
   const dispatch = useAppDispatch();  
-  const loaded = useAppSelector((state) => state.modules.loaded);
   const modules = useAppSelector((state) => state.modules.data);
+  const loading = useAppSelector((state) => state.modules.loading);
+  const answers = useAppSelector((state) => state.progress.answers);
 
   useEffect(() => {
-    if(!loaded) dispatch(fetchModules());
-  }, [loaded]);
+    if(!loading) {
+      dispatch(markModulesAsLoading());
+      dispatch(fetchModules());
+    }
+  }, [answers]);
 
   return modules;
 }

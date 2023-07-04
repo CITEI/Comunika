@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getBox, insertBox, readBox, StorageBox, deleteBox } from './local/GameStorage';
 import { toUri } from "../helper/api";
 import api from "../helper/api";
-import moment from 'moment';
 
 /** Base component for game screens definition */
 interface GameNode {

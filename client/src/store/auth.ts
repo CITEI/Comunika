@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api, { setToken } from "../helper/api";
-import store from "./store";
+import {useAppDispatch} from "./store";
 import { saveToken } from "../helper/settings";
 import { StatusCodes } from "http-status-codes";
 import { AxiosError } from "axios";
@@ -8,6 +8,7 @@ import { AxiosError } from "axios";
 const ERROR_MESSAGES = {
   [StatusCodes.NOT_FOUND]: "User not found",
 };
+
 const GENERIC_MESSAGE = "Invalid credentials";
 
 export const login = createAsyncThunk<
@@ -22,7 +23,7 @@ export const login = createAsyncThunk<
     await saveToken(token);
   } catch (error) {
     const err = error as AxiosError;
-    return rejectWithValue(ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE);
+    return rejectWithValue(GENERIC_MESSAGE);
   }
 });
 
@@ -38,7 +39,8 @@ export const register = createAsyncThunk(
     comorbidity: string[];
   }) => {
     await api.post("/auth/register", user);
-    store.dispatch(login({ email: user.email, password: user.password }));
+    const dispatch = useAppDispatch();
+    dispatch(login({ email: user.email, password: user.password }));
   }
 );
 
@@ -69,9 +71,7 @@ export const resetpass = createAsyncThunk(
       const data = await api.post("/auth/reset-password/", { email, token, password });
       return data.status;
     } catch (err) {
-      return rejectWithValue(
-        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
-      );
+      return rejectWithValue(GENERIC_MESSAGE);
     }
   }
 );
@@ -83,9 +83,7 @@ export const sendcode = createAsyncThunk(
       const data = await api.post("/auth/reset-password/send", { email });
       return data.status;
     } catch (err) {
-      return rejectWithValue(
-        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
-      );
+      return rejectWithValue(GENERIC_MESSAGE);
     }
   }
 );
@@ -103,9 +101,7 @@ export const codeverify = createAsyncThunk(
       });
       return data.status;
     } catch (err) {
-      return rejectWithValue(
-        ERROR_MESSAGES[err.response!.status] || GENERIC_MESSAGE
-      );
+      return rejectWithValue(GENERIC_MESSAGE);
     }
   }
 );

@@ -1,6 +1,6 @@
 import RawText from '../atom/text';
-import React from 'react'
-import { TextProps } from 'react-native';
+import React from 'react';
+import { Linking } from 'react-native';
 import styled from '../../pre-start/themes';
 import { dp } from '../../helper/resolution';
 
@@ -19,9 +19,9 @@ const ToS: React.VoidFunctionComponent = () => {
   return (
     <Container>
       <RawText>Ao se cadastrar, você concorda com os </RawText>
-      <Link onPress={() => console.log()}>Termos de Serviço</Link>
+      <Link onPress={() => Linking.openURL("https://drive.google.com/file/d/1mF5b8NPe_Q440TNOy8p0o95Id7p4hxaq/view?usp=sharing")}>Termos de Uso</Link>
       <RawText> e a </RawText>
-      <Link onPress={() => console.log()}>Política de Privacidade</Link>
+      <Link onPress={() => Linking.openURL("https://drive.google.com/file/d/1mF5b8NPe_Q440TNOy8p0o95Id7p4hxaq/view?usp=sharing")}>Política de Privacidade</Link>
       <RawText>.</RawText>
     </Container>
   )

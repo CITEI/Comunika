@@ -12,8 +12,6 @@ import LoginHeader from "../component/organism/login-header";
 import Form from "../component/organism/form";
 import { isEmail, isPassword } from "../helper/validators";
 import TextLink from "../component/molecule/text-link";
-import { Linking } from "react-native";
-import { AUTHOR_EMAIL } from "../pre-start/constants";
 import { loadToken } from "../helper/settings";
 import { fetchUserData } from "../store/user";
 
