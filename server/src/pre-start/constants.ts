@@ -6,7 +6,7 @@ export const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const JWT_ALGORITHM = "HS256";
 export const API_VERSION = process.env.API_VERSION || "v1";
 export const BASE_PATH = `/api/${API_VERSION}`;
-export const ENV = process.env.ENV || "development";
+export const ENV = process.env.NODE_ENV || "development";
 
 export const DB_PROTOCOL = process.env.DB_PROTOCOL || 'mongodb'
 export const DB_VERSION = process.env.DB_VERSION || "5.0.0";  
