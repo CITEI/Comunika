@@ -45,7 +45,7 @@ export const ROOT_PASSWORD = temp_root_password;
 export const PROJECT_PATH = dirname(__dirname)
 export const STATIC_DIR = 'public'
 // This needs to be done to prevent the whole public folder to be overwritten when building the app, so I moved it to outside the src.
-export const PUBLIC_PROJECT_PATH = PROJECT_PATH.replace(/(\\src|\\dist)/g, '');
+export const PUBLIC_PROJECT_PATH = PROJECT_PATH.replace(/((\\|\/)src|(\\|\/)dist)/g, '');
 export const PUBLIC_PATH = join(PUBLIC_PROJECT_PATH, STATIC_DIR)
 
 export const MIN_NODES = Number(process.env.MIN_NODES || 1)
