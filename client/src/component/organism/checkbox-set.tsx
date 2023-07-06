@@ -21,10 +21,12 @@ const Container = styled(View)`
   padding-left: ${(props) => dp(3)}px;
   padding-right: ${(props) => dp(3)}px;
   margin-top: ${(props) => dp(12)}px;
+  margin-bottom: ${dp(16)}px;
 `;
 
 const Label = styled(InputLabel)`
-  margin-bottom: ${(props) => dp(5)}px;
+  margin-left: ${dp(14)}px;
+  margin-bottom: ${dp(5)}px;
 `;
 
 /** Multiple checkbox selection box */

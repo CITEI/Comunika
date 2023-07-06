@@ -1,6 +1,7 @@
 import React from "react";
 import { View as RawView, ViewProps } from "react-native";
 import styled from "styled-components/native";
+import { dp } from "../../helper/resolution";
 
 const View = styled(RawView)`
   flex-direction: column;

@@ -18,7 +18,7 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
   background: ${(props) => {
     switch (props.variant) {
       case "outline":
-        return "transparent";
+        return props.theme.color.disabled;
       default:
         return props.theme.color.primary;
     }
@@ -27,7 +27,7 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
     ${(props) => {
       switch (props.variant) {
         case "outline":
-          return props.theme.color.primary;
+          return props.theme.color.borderDisabled;
         default:
           return "transparent";
       }

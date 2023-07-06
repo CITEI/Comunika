@@ -9,13 +9,13 @@ const Header = styled.View`
   align-items: center;
   justify-content: center;
   margin-top: ${dp(25)}px;
-  margin-bottom: ${dp(25)}px;
+  margin-bottom: ${dp(31)}px;
 `
 
 const Logo = styled.Image`
-  width: ${dp(200)}px;
+  width: ${dp(185)}px;
   height: ${dp(40)}px;
-  margin-bottom: ${dp(39)}px;
+  margin-bottom: ${dp(30)}px;
   margin-top: ${dp(25)}px;
 `
 
@@ -23,7 +23,7 @@ const LoginHeader: React.VoidFunctionComponent = () => {
   return (
     <Header>
       <Logo source={logo} resizeMode="contain" />
-      <Title>{"Bem-vindo!"}</Title>
+      <Title>{"Boas vindas!"}</Title>
     </Header>
   )
 }

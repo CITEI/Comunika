@@ -9,7 +9,7 @@ export interface InputProps extends RawInputProps {
 }
 
 const Container = styled.View`
-  margin-bottom: ${(props) => dp(8)}px;
+  margin-bottom: ${(props) => dp(16)}px;
 `;
 
 /** Labelled input field */

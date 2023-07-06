@@ -40,7 +40,7 @@ const Checkbox: React.VoidFunctionComponent<CheckboxProps> = (props) => {
   return (
     <Container {...containerProps} onPress={handlePress}>
       <Checkmark value={selected} onSelected={handlePress} />
-      <Label>{props.label}</Label>
+      <Label style={{marginLeft: dp(10)}}>{props.label}</Label>
     </Container>
   );
 };

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api, { setToken } from "../helper/api";
-import {useAppDispatch} from "./store";
+import store, { useAppDispatch } from "./store";
 import { saveToken } from "../helper/settings";
 import { StatusCodes } from "http-status-codes";
 import { AxiosError } from "axios";
@@ -10,6 +10,24 @@ const ERROR_MESSAGES = {
 };
 
 const GENERIC_MESSAGE = "Invalid credentials";
+
+export interface UserI {
+  name: string,
+  email: string,
+  password: string,
+  disabilities: string[]
+}
+
+export interface ParentI extends UserI {
+  relationship: string,
+  region: string,
+  birth: Date
+}
+
+export interface EducatorI extends UserI {
+  school: string,
+  numberOfDisabledStudents: number
+}
 
 export const login = createAsyncThunk<
   void,
@@ -27,22 +45,22 @@ export const login = createAsyncThunk<
   }
 });
 
-export const register = createAsyncThunk(
-  "auth/register",
-  async (user: {
-    email: string;
-    password: string;
-    guardian: string;
-    relationship: string;
-    birth: string;
-    region: string;
-    comorbidity: string[];
-  }) => {
-    await api.post("/auth/register", user);
-    const dispatch = useAppDispatch();
-    dispatch(login({ email: user.email, password: user.password }));
+export const registerParent = createAsyncThunk(
+  "auth/register/parent",
+  async (user: ParentI) => {
+    await api.post("/auth/register/parent", user);
+    store.dispatch(login({ email: user.email, password: user.password }));
   }
 );
+
+export const registerEducator = createAsyncThunk(
+  "auth/register/educator",
+  async (user: EducatorI) => {
+    await api.post("/auth/register/educator", user);
+    store.dispatch(login({ email: user.email, password: user.password }));
+  }
+);
+
 
 interface Disability {
   _id: string;
@@ -124,15 +142,18 @@ export default createSlice({
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state) => {
       state.authentication = { ...state.authentication, status: true };
-    }),
-      builder.addCase(login.rejected, (state, action) => {
-        state.authentication = {
-          ...state.authentication,
-          status: false,
-          message: action.payload as string,
-        };
-      });
-    builder.addCase(register.rejected, (state) => {
+    });
+    builder.addCase(login.rejected, (state, action) => {
+      state.authentication = {
+        ...state.authentication,
+        status: false,
+        message: action.payload as string,
+      };
+    });
+    builder.addCase(registerParent.rejected, (state) => {
+      state.authentication = { ...state.authentication, status: false };
+    });
+    builder.addCase(registerEducator.rejected, (state) => {
       state.authentication = { ...state.authentication, status: false };
     });
     builder.addCase(fetchDisabilities.fulfilled, (state, action) => {
