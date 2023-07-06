@@ -319,7 +319,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "createdAt updatedAt email guardian relationship birth region disabilities progress.module",
+        "createdAt updatedAt email name relationship birth region disabilities progress.module school numberOfDisabledStudents",
     });
   }
 }
