@@ -1,22 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { deleteBox } from "./local/GameStorage";
+import { UserI } from "./auth";
 import api from "../helper/api";
 
-interface UserInfo {
-  _id?: string;
-  email?: string;
-  birth?: string;
-  disabilities?: string[];
-  guardian?: string;
-  region?: string;
-  relationship?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
 export const fetchUserData = createAsyncThunk("user/data", async () => {
-  const data = (await api.get(`/user`)).data;
-  return data as UserInfo;
+  const data = (await api.get(`/user`)).data as UserI;
+  return data as UserI;
 });
 
 /** Obtains the stages an user finished */
@@ -31,7 +19,7 @@ export const fetchHistory = createAsyncThunk(
 export default createSlice({
   name: "user",
   initialState: {
-    info: {} as UserInfo,
+    info: {} as UserI,
     loaded: false,
   },
   reducers: {},

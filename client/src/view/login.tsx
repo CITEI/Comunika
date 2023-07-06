@@ -14,6 +14,7 @@ import { isEmail, isPassword } from "../helper/validators";
 import TextLink from "../component/molecule/text-link";
 import { loadToken } from "../helper/settings";
 import { fetchUserData } from "../store/user";
+import { sp } from "../helper/resolution";
 
 export interface LoginProps {}
 

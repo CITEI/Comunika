@@ -1,8 +1,8 @@
 import { Image } from "react-native";
 import React, { useCallback } from "react";
 import styled from "../../pre-start/themes";
-import { dp, vw } from "../../helper/resolution";
-import ToolbarButton from "../atom/toolbar-button";
+import { dp, vw } from '../../helper/resolution';
+import Icon from '@expo/vector-icons/Feather';
 import logo from "../../../assets/logo.png";
 import { useAppDispatch } from "../../store/store";
 import { resetStreak, disableBoxLoaded } from "../../store/progress";
@@ -66,17 +66,18 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
         style={
           props.shadow
             ? {
-                elevation: dp(5),
-              }
+              elevation: dp(5),
+            }
             : {}
         }
       >
         {props.accountButton ? (
-          <ToolbarButton
+          <Icon
+            size={dp(20)}
             name="user"
             style={{ color: "#8E8E8E" }}
             onPress={handleAccountPress}
-          ></ToolbarButton>
+          ></Icon>
         ) : (
           <Spacer></Spacer>
         )}
@@ -93,11 +94,12 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
           <Spacer></Spacer>
         )}
         {props.closeButton ? (
-          <ToolbarButton
+          <Icon
             name="x-circle"
             style={{ color: "#FF867A" }}
             onPress={handleClosePress}
-          ></ToolbarButton>
+            size={dp(20)}
+          ></Icon>
         ) : (
           <Spacer></Spacer>
         )}

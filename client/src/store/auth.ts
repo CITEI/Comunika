@@ -15,7 +15,8 @@ export interface UserI {
   name: string,
   email: string,
   password: string,
-  disabilities: string[]
+  disabilities: string[],
+  user: string
 }
 
 export interface ParentI extends UserI {
