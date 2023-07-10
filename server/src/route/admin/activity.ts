@@ -61,7 +61,7 @@ const activityValidatorSchema = {
               )
             )
             .min(1),
-        }),
+        })
       )
     )
     .min(MIN_NODES)
@@ -110,7 +110,7 @@ const activityOptions: ResourceOptions = {
     "nodes.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["text"],
-      extensions: ["png", "gif"],
+      extensions: ["png", "svg", "gif"],
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -136,7 +136,7 @@ const activityOptions: ResourceOptions = {
     "nodes.images.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["carrousel"],
-      extensions: ["png", "gif"],
+      extensions: ["png", "svg", "gif"],
     }),
     "nodes.images.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -156,9 +156,12 @@ const activityOptions: ResourceOptions = {
     new: {
       before: [
         buildFileUploadBefore([
-          { attribute: "nodes.$.image", extensions: ["png", "gif"] },
+          { attribute: "nodes.$.image", extensions: ["png", "svg", "gif"] },
           { attribute: "nodes.$.audio", extensions: ["ogg"] },
-          { attribute: "nodes.$.images.$.image", extensions: ["png", "gif"] },
+          {
+            attribute: "nodes.$.images.$.image",
+            extensions: ["png", "svg", "gif"],
+          },
           { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
         ]),
         unflattenRequest,

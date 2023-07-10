@@ -24,7 +24,7 @@ import { PUBLIC_PATH, STATIC_DIR } from "../../pre-start/constants";
 const moduleOptions: ResourceOptions = {
   properties: {
     ...linkedListProperties,
-    image: buildFileUploadProperty({ extensions: ["png"] }),
+    image: buildFileUploadProperty({ extensions: ["png", "svg"] }),
   },
   actions: {
     bulkDelete: {
@@ -32,7 +32,9 @@ const moduleOptions: ResourceOptions = {
     },
     new: {
       before: [
-        buildFileUploadBefore([{ attribute: "image", extensions: ["png"] }]),
+        buildFileUploadBefore([
+          { attribute: "image", extensions: ["png", "svg"] },
+        ]),
         buildValidator({
           name: CustomJoi.RequiredString(),
           image: CustomJoi.UploadStatus(),
