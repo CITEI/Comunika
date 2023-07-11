@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import VerticalContainer from "../atom/vertical-container";
+import VerticalContainer from "../atom/verticalContainer";
 import Input, { InputProps } from "../molecule/input";
-import PasswordInput, { PasswordInputProps } from "../molecule/password-input";
+import PasswordInput, { PasswordInputProps } from "../molecule/passwordInput";
 import Checkbox, { CheckboxProps } from "../molecule/checkbox";
 import Button, { ButtonProps } from "../atom/button";
-import DateInput, { DateInputProps } from "../molecule/date-input";
-import CheckboxSet, { CheckboxSetProps } from "./checkbox-set";
+import DateInput, { DateInputProps } from "../molecule/dateInput";
+import CheckboxSet, { CheckboxSetProps } from "./checkboxSet";
 import { ViewProps } from "react-native";
 
 interface SubmitProps extends Omit<ButtonProps, "onPress"> {
@@ -39,7 +39,7 @@ const DoNothing = (...args) => {};
  * whenever a submit button is clicked
  */
 const Form: React.VoidFunctionComponent<FormProps> = (props) => {
-  const {inputs: constructors, onChange, ...viewProps} = props;
+  const { inputs: constructors, onChange, ...viewProps } = props;
   const [inputs, setInputs] = useState(new Map<string, any>());
 
   const handleChange = useCallback(
@@ -135,7 +135,9 @@ const Form: React.VoidFunctionComponent<FormProps> = (props) => {
   };
 
   return (
-    <VerticalContainer {...viewProps} >{constructors.map(generateChild)}</VerticalContainer>
+    <VerticalContainer {...viewProps}>
+      {constructors.map(generateChild)}
+    </VerticalContainer>
   );
 };
 

@@ -4,7 +4,7 @@ import { dp, sp } from "../../helper/resolution";
 import BaseTitle from "../atom/title";
 import RawText from "../atom/text";
 import BaseButton from "../atom/button";
-import ShadowPanel from "../atom/shadow-panel";
+import ShadowPanel from "../atom/shadowPanel";
 import t from "../../pre-start/i18n";
 
 interface CardProps {
@@ -120,7 +120,8 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
                   {" | "}
                 </ProgressText>
                 <PercentText>
-                  {Math.round((100 * props.progress) / props.total)}% {"concluído"}
+                  {Math.round((100 * props.progress) / props.total)}%{" "}
+                  {"concluído"}
                 </PercentText>
               </ProgressContainer>
             ),
@@ -138,10 +139,10 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
           resizeMode="contain"
         />
         <ContentRightContainer>
-          <Description>
-            {props.description}
-          </Description>
-          {(props.status == "incomplete" || props.status == "completed" || props.status == "ongoing") && (
+          <Description>{props.description}</Description>
+          {(props.status == "incomplete" ||
+            props.status == "completed" ||
+            props.status == "ongoing") && (
             <Button label={"Iniciar Atividade"} onPress={props.onPress} />
           )}
         </ContentRightContainer>

@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import VerticalContainer from "../component/atom/vertical-container";
+import VerticalContainer from "../component/atom/verticalContainer";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { login } from "../store/auth";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
 import Modal from "../component/molecule/modal";
-import MainContainer from "../component/atom/main-container";
-import ContentContainer from "../component/atom/content-container";
+import MainContainer from "../component/atom/mainContainer";
+import ContentContainer from "../component/atom/contentContainer";
 import t from "../pre-start/i18n";
-import LoginHeader from "../component/organism/login-header";
+import LoginHeader from "../component/organism/loginHeader";
 import Form from "../component/organism/form";
 import { isEmail, isPassword } from "../helper/validators";
-import TextLink from "../component/molecule/text-link";
+import TextLink from "../component/molecule/textLink";
 import { loadToken } from "../helper/settings";
 import { fetchUserData } from "../store/user";
 import { sp } from "../helper/resolution";
@@ -29,7 +29,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   useEffect(() => {
     loadToken().then(() => {
       dispatch(fetchUserData());
-    })
+    });
   }, []);
 
   useEffect(() => {

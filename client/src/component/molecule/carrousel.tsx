@@ -1,8 +1,8 @@
 import { dp } from "../../helper/resolution";
 import React, { useCallback, useState } from "react";
 import styled from "../../pre-start/themes";
-import IconButton from "../atom/icon-button";
-import AudioButton from "../atom/audio-button";
+import IconButton from "../atom/iconButton";
+import AudioButton from "../atom/audioButton";
 import { TouchableOpacity } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -63,7 +63,7 @@ const Icon = styled(Image)`
   flex: 1;
   margin-left: ${dp(5)}px;
   margin-right: ${dp(5)}px;
-`
+`;
 
 const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
   const [preview, setPreview] = useState<boolean>(props.preview || false);
@@ -91,12 +91,14 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
     <Container>
       {preview ? (
         <Preview onPress={handlePreview}>
-          {props.slides.filter(el => "image" in el).map((el, i) => (
-            <Container key={i}>
-              <Icon source={{ uri: el.image }} resizeMode="contain" />
-              {el.audio && <AudioButton audio={el.audio} />}
-            </Container>
-          ))}
+          {props.slides
+            .filter((el) => "image" in el)
+            .map((el, i) => (
+              <Container key={i}>
+                <Icon source={{ uri: el.image }} resizeMode="contain" />
+                {el.audio && <AudioButton audio={el.audio} />}
+              </Container>
+            ))}
         </Preview>
       ) : (
         <>

@@ -2,7 +2,7 @@ import styled from "../../pre-start/themes";
 import React, { useState, useEffect, useCallback } from "react";
 import { dp } from "../../helper/resolution";
 import MaskedInput, { MaskInputProps } from "react-native-mask-input";
-import InputLabel, { LabelProps } from "../atom/input-label";
+import InputLabel, { LabelProps } from "../atom/inputLabel";
 
 const MaskInput = styled(MaskedInput).attrs(
   (props: { focused: boolean }) => props

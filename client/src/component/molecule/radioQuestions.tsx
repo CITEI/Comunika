@@ -1,8 +1,8 @@
 import { View, Text, ViewProps } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import BaseQuestionRadio from "../atom/question-radio";
+import BaseQuestionRadio from "../atom/questionRadio";
 import { dp } from "../../helper/resolution";
-import styled from "../../pre-start/themes"
+import styled from "../../pre-start/themes";
 
 interface RadioQuestionsProps extends ViewProps {
   questions: string[];
@@ -12,7 +12,7 @@ interface RadioQuestionsProps extends ViewProps {
 
 const QuestionRadio = styled(BaseQuestionRadio)`
   margin-bottom: ${dp(12)}px;
-`
+`;
 
 const RadioQuestions: React.VoidFunctionComponent<RadioQuestionsProps> = (
   props
@@ -21,7 +21,7 @@ const RadioQuestions: React.VoidFunctionComponent<RadioQuestionsProps> = (
 
   useEffect(() => {
     setSelected(props.selected);
-  }, [props])
+  }, [props]);
 
   const handleOnSelect = useCallback(
     (index: number) => {

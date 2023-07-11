@@ -1,6 +1,6 @@
 import moment from "moment";
-import useDisabilities from "../../hooks/usedisabilities";
-import { ParentI } from "../../store/auth"
+import useDisabilities from "../../hooks/useDisabilities";
+import { ParentI } from "../../store/auth";
 import RawForm from "../organism/form";
 import styled from "styled-components";
 import { dp } from "../../helper/resolution";
@@ -10,9 +10,9 @@ const Form = styled(RawForm)`
 `;
 
 interface props {
-  user: ParentI, 
-  handleReturn(): void,
-  handleLogout(): Promise<void>
+  user: ParentI;
+  handleReturn(): void;
+  handleLogout(): Promise<void>;
 }
 
 function ParentSettings(props: props) {
@@ -76,7 +76,7 @@ function ParentSettings(props: props) {
         },
       ]}
     />
-  )
+  );
 }
 
 export default ParentSettings;

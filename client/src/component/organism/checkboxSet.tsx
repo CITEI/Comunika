@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import styled from "../../pre-start/themes";
 import { dp } from "../../helper/resolution";
 import Checkbox from "../molecule/checkbox";
-import InputLabel from "../atom/input-label";
+import InputLabel from "../atom/inputLabel";
 
 export interface CheckboxSetProps extends ViewProps {
   onSelectionChange: (selected: string[]) => void;

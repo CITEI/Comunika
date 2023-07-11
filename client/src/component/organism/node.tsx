@@ -5,7 +5,7 @@ import BaseText from "../atom/text";
 import { BaseNode } from "../../store/progress";
 import { dp } from "../../helper/resolution";
 import Md from "../molecule/md";
-import SoundImage from "../molecule/soundimage";
+import SoundImage from "../molecule/soundImage";
 
 export interface NodeProps extends BaseNode {
   [key: string]: any;
@@ -27,7 +27,9 @@ const Node: React.FunctionComponent<NodeProps> = (props) => {
               audio={props.audio}
             />
           ),
-          carrousel: <Carrousel slides={props.images} preview={props.preview} />,
+          carrousel: (
+            <Carrousel slides={props.images} preview={props.preview} />
+          ),
         }[props.type]
       }
       <Md>{props.text}</Md>

@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
 import Toolbar from "../organism/toolbar";
-import MainContainer from "../atom/main-container";
+import MainContainer from "../atom/mainContainer";
 import BaseTitle from "../atom/title";
 import styled from "styled-components/native";
 import { dp, sp } from "../../helper/resolution";
 import Card from "../molecule/card";
-import BaseContentContainer from "../atom/content-container";
+import BaseContentContainer from "../atom/contentContainer";
 import { Module } from "../../store/modules";
 import { StorageBox } from "../../store/local/GameStorage";
 
@@ -45,18 +45,27 @@ const Cards = (props: CardsProps) => {
         <Title>{props.title}</Title>
         {props.data.map((data, i) => {
           const box = props.answers[data.id] ?? undefined;
-          const status = box ? "ongoing" : data.done ? "completed" : (data.available ? "incomplete" : "locked");
+          const status = box
+            ? "ongoing"
+            : data.done
+            ? "completed"
+            : data.available
+            ? "incomplete"
+            : "locked";
 
           let description = "";
 
           if (!box) {
-            if (status == "completed") description = 'Clique no botão para refazer este estágio.';
-            else if (status == 'incomplete') description = 'Clique no botão para começar este estágio.';
-            else description = 'Finalize o estágio anterior para liberar este.';
-          }
-          else {
-            if (box?.totalActivities > 1) description = `Esse estágio possui ${box.totalActivities} atividades para serem realizadas com a criança!`
-            else description = `Esse estágio possui 1 atividade a ser realizada com a criança.`
+            if (status == "completed")
+              description = "Clique no botão para refazer este estágio.";
+            else if (status == "incomplete")
+              description = "Clique no botão para começar este estágio.";
+            else description = "Finalize o estágio anterior para liberar este.";
+          } else {
+            if (box?.totalActivities > 1)
+              description = `Esse estágio possui ${box.totalActivities} atividades para serem realizadas com a criança!`;
+            else
+              description = `Esse estágio possui 1 atividade a ser realizada com a criança.`;
           }
 
           return (

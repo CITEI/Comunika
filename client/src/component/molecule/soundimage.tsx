@@ -2,7 +2,7 @@ import { ImageBackground } from "react-native";
 import React from "react";
 import styled from "../../pre-start/themes";
 import { dp } from "../../helper/resolution";
-import AudioButton from "../atom/audio-button";
+import AudioButton from "../atom/audioButton";
 
 export interface SoundImageProps {
   /** image uri */

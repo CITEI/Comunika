@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { registerEducator, registerParent } from '../store/auth';
+import { registerEducator, registerParent } from "../store/auth";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import ContentContainer from "../component/atom/content-container";
-import MainContainer from "../component/atom/main-container";
-import LoginHeader from "../component/organism/login-header";
+import ContentContainer from "../component/atom/contentContainer";
+import MainContainer from "../component/atom/mainContainer";
+import LoginHeader from "../component/organism/loginHeader";
 import t from "../pre-start/i18n";
-import useDisabilities from "../hooks/usedisabilities";
-import ParentRegisterForm from "../component/templates/parent-register";
-import TextLink from "../component/molecule/text-link";
+import useDisabilities from "../hooks/useDisabilities";
+import ParentRegisterForm from "../component/templates/parentRegister";
+import TextLink from "../component/molecule/textLink";
 import { isEmail, isPassword } from "../helper/validators";
 import ToS from "../component/molecule/tos";
-import RelationSelection from '../component/organism/relationSelection';
-import EducatorRegisterForm from '../component/templates/educatorRegister';
+import RelationSelection from "../component/organism/relationSelection";
+import EducatorRegisterForm from "../component/templates/educatorRegister";
 
 const isLongerThanTwo = (txt: string) => txt.length > 2;
 
@@ -30,16 +30,18 @@ const parentValidator = {
   relationship: isLongerThanTwo,
   birth: (date: Date) => true,
   region: isLongerThanTwo,
-}
+};
 
 const educatorValidator = {
   ...validators,
   school: isLongerThanTwo,
   numberOfDisabledStudents: (t: number) => !isNaN(t),
-}
+};
 
 const Register: React.VoidFunctionComponent = () => {
-  const authenticated = useAppSelector((state) => state.auth.authentication.status);
+  const authenticated = useAppSelector(
+    (state) => state.auth.authentication.status
+  );
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
   const [validated, setValidated] = useState(false);
@@ -47,7 +49,7 @@ const Register: React.VoidFunctionComponent = () => {
 
   const handleSelection = (state: string): void => {
     state == "parent" ? setIsParent(true) : setIsParent(false);
-  }
+  };
 
   const handleChange = (map: Map<string, any>) => {
     const validator = isParent ? parentValidator : educatorValidator;
@@ -70,18 +72,24 @@ const Register: React.VoidFunctionComponent = () => {
         disabilities: map.get("disabilities"),
       } as any;
       if (isParent) {
-        dispatch(registerParent({
-          ...userData,
-          relationship: map.get('relationship'),
-          region: map.get('region'),
-          birth: map.get('birth')
-        } as any))
+        dispatch(
+          registerParent({
+            ...userData,
+            relationship: map.get("relationship"),
+            region: map.get("region"),
+            birth: map.get("birth"),
+          } as any)
+        );
       } else {
-        dispatch(registerEducator({
-          ...userData,
-          school: map.get('school'),
-          numberOfDisabledStudents: Number(map.get('numberOfDisabledStudents'))
-        } as any))
+        dispatch(
+          registerEducator({
+            ...userData,
+            school: map.get("school"),
+            numberOfDisabledStudents: Number(
+              map.get("numberOfDisabledStudents")
+            ),
+          } as any)
+        );
       }
     },
     [dispatch]
@@ -92,8 +100,7 @@ const Register: React.VoidFunctionComponent = () => {
   }, [navigation]);
 
   useEffect(() => {
-    if (authenticated)
-      navigation.navigate("Onboarding");
+    if (authenticated) navigation.navigate("Onboarding");
   }, [authenticated]);
 
   return (
@@ -101,11 +108,19 @@ const Register: React.VoidFunctionComponent = () => {
       <ContentContainer>
         <LoginHeader />
         <RelationSelection handle={handleSelection} parentSelected={isParent} />
-        {
-          isParent ?
-            <ParentRegisterForm handleSubmit={handleSubmit} handleChange={handleChange} validated={validated} /> :
-            <EducatorRegisterForm handleSubmit={handleSubmit} handleChange={handleChange} validated={validated} />
-        }
+        {isParent ? (
+          <ParentRegisterForm
+            handleSubmit={handleSubmit}
+            handleChange={handleChange}
+            validated={validated}
+          />
+        ) : (
+          <EducatorRegisterForm
+            handleSubmit={handleSubmit}
+            handleChange={handleChange}
+            validated={validated}
+          />
+        )}
         <ToS />
         <TextLink
           style={{ paddingTop: 0 }}

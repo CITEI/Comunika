@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import t from "../../pre-start/i18n";
-import MainContainer from "../atom/main-container";
-import ContentContainer from "../atom/content-container";
+import MainContainer from "../atom/mainContainer";
+import ContentContainer from "../atom/contentContainer";
 import Toolbar from "../organism/toolbar";
 import styled from "../../pre-start/themes";
 import BaseTitle from "../atom/title";

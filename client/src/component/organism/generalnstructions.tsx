@@ -6,8 +6,8 @@ import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
-import BaseTTSPlayer from "./tts-player";
-import TTSLabel from "../atom/tts-label";
+import BaseTTSPlayer from "./ttsPlayer";
+import TTSLabel from "../atom/ttsLabel";
 import t from "../../pre-start/i18n";
 import Md from "../molecule/md";
 import { Module } from "../../store/modules";
@@ -22,7 +22,7 @@ interface GeneralInstructionsProps {
 const Container = styled.View`
   width: 100%;
   text-align: left;
-`
+`;
 
 const Title = styled(BaseTitle)`
   font-size: ${sp(20)}px;
@@ -39,13 +39,15 @@ const Text = styled(Md)`
 
 const TTSPlayer = styled(BaseTTSPlayer)`
   margin-bottom: ${dp(34)}px;
-`
+`;
 
 const Footer = styled.View`
   width: 100%;
 `;
 
-const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps> = (props) => {
+const GeneralInstructions: React.VoidFunctionComponent<
+  GeneralInstructionsProps
+> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const slide = props.slides[currentSlide];
@@ -54,7 +56,7 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
     if (currentSlide < props.slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      navigation.navigate("Game", {module: props.module});
+      navigation.navigate("Game", { module: props.module });
     }
   }, [currentSlide, navigation, props.slides.length]);
 
@@ -63,9 +65,7 @@ const GeneralInstructions: React.VoidFunctionComponent<GeneralInstructionsProps>
       <Title>{"Instruções gerais"}</Title>
       <TTSLabel />
       <TTSPlayer text={slide.text} />
-      <Text textStyle={{fontSize: sp(13)}}>
-        {slide.text}
-      </Text>
+      <Text textStyle={{ fontSize: sp(13) }}>{slide.text}</Text>
       <Footer>
         <Button label={"Próximo"} onPress={handleNext} />
       </Footer>

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled from "../../pre-start/themes";
-import ShadowPanel, { ShadowPanelProps } from "./shadow-panel";
+import ShadowPanel, { ShadowPanelProps } from "./shadowPanel";
 import { dp } from "../../helper/resolution";
 import BaseText from "./text";
 
@@ -21,7 +21,8 @@ interface CheckmarkProps {
 
 const Container = styled(ShadowPanel)<CheckmarkProps>`
   border-radius: ${dp(5)}px;
-  border: 1px solid ${(props) => (props.selected ? props.theme.color.primary : "transparent")};
+  border: 1px solid
+    ${(props) => (props.selected ? props.theme.color.primary : "transparent")};
   padding: ${dp(10)}px;
   flex-direction: row;
   align-items: center;
@@ -51,7 +52,7 @@ const QuestionRadio: React.VoidFunctionComponent<QuestionRadioProps> = (
   }, [props.selected, props.index, props.onSelect]);
 
   return (
-    <Container {...props} >
+    <Container {...props}>
       <Checkmark selected={props.selected} onPress={handlePress} />
       <Text>{props.option}</Text>
     </Container>

@@ -3,12 +3,12 @@ import styled from "../pre-start/themes";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import useUserInfo from "../hooks/useUserInfo";
-import MainContainer from "../component/atom/main-container";
-import ContentContainer from "../component/atom/content-container";
+import MainContainer from "../component/atom/mainContainer";
+import ContentContainer from "../component/atom/contentContainer";
 import RawTitle from "../component/atom/title";
 import { dp } from "../helper/resolution";
 import { clearToken } from "../helper/settings";
-import { resetStorage } from '../store/local/GameStorage';
+import { resetStorage } from "../store/local/GameStorage";
 import * as Updates from "expo-updates";
 import ParentSettings from "../component/templates/parentSettings";
 import { EducatorI, ParentI } from "../store/auth";
@@ -29,22 +29,30 @@ const Settings: React.VoidFunctionComponent = () => {
 
   const handleLogout = useCallback(async () => {
     await resetStorage();
-    console.log('box removed')
+    console.log("box removed");
     await clearToken();
-    console.log('token removed')
+    console.log("token removed");
     await Updates.reloadAsync();
-    console.log('reload?')
+    console.log("reload?");
   }, []);
 
   return info ? (
     <MainContainer>
       <ContentContainer>
         <Title>Perfil</Title>
-        {
-          info.user == 'Parent' ?
-            <ParentSettings user={info as ParentI} handleReturn={handleReturn} handleLogout={handleLogout} /> :
-            <EducatorSettings user={info as EducatorI} handleReturn={handleReturn} handleLogout={handleLogout} />
-        }
+        {info.user == "Parent" ? (
+          <ParentSettings
+            user={info as ParentI}
+            handleReturn={handleReturn}
+            handleLogout={handleLogout}
+          />
+        ) : (
+          <EducatorSettings
+            user={info as EducatorI}
+            handleReturn={handleReturn}
+            handleLogout={handleLogout}
+          />
+        )}
       </ContentContainer>
     </MainContainer>
   ) : (

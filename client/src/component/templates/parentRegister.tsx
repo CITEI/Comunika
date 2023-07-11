@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import { useState } from "react";
 import Form from "../organism/form";
-import useDisabilities from "../../hooks/usedisabilities";
+import useDisabilities from "../../hooks/useDisabilities";
 import { isEmail, isPassword } from "../../helper/validators";
 
 const isLongerThanTwo = (txt: string) => txt.length > 2;
@@ -51,7 +51,7 @@ function ParentRegisterForm(props: props) {
       ]}
       onChange={props.handleChange}
     />
-  )
+  );
 }
 
 export default ParentRegisterForm;

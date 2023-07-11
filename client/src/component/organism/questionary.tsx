@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import AreaInput from '../molecule/AreaInput';
+import AreaInput from "../molecule/areaInput";
 import { QuestionNode } from "../../store/progress";
 import Title from "../atom/title";
 import RawText from "../atom/text";
-import RadioQuestions from "../molecule/radio-questions";
+import RadioQuestions from "../molecule/radioQuestions";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 import BaseButton from "../atom/button";
 import t from "../../pre-start/i18n";
 import Md from "../molecule/md";
-import util from 'util'
+import util from "util";
 
 interface QuestionaryProps {
   questions: QuestionNode[];
@@ -36,7 +36,7 @@ const Notes = styled(RawText)`
 
 const Button = styled(BaseButton)`
   margin-top: ${dp(25)}px;
-`
+`;
 
 /** A form that shows boolean questions to answer */
 const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
@@ -65,7 +65,7 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
     } else {
       setHaveOther(true);
     }
-  }
+  };
 
   useEffect(() => {
     if (other[index] != "" || answers[index] == 2) {
@@ -77,10 +77,12 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
 
   useEffect(() => {
     const lastAnswer = answers[answers.length - 1];
-    if (lastAnswer != undefined && lastAnswer !=2)
-      props.onFinish(answers.map((el, i) => {
-        return el == 2 ? other[i] : el==0;
-      }));
+    if (lastAnswer != undefined && lastAnswer != 2)
+      props.onFinish(
+        answers.map((el, i) => {
+          return el == 2 ? other[i] : el == 0;
+        })
+      );
   }, [answers]);
 
   /** Moves to the previous activity node */
@@ -96,44 +98,50 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
 
   function handleNext() {
     if (answers[answers.length - 1] == 2) {
-      props.onFinish(answers.map((el, i) => {
-        return el == 2 ? other[i] : el==0;
-      }));
+      props.onFinish(
+        answers.map((el, i) => {
+          return el == 2 ? other[i] : el == 0;
+        })
+      );
     } else {
       const next = index + 1;
       if (next < answers.length) setTimeout(() => setIndex(next), 500);
     }
-  };
+  }
 
   return currentNode ? (
     <>
-      <Counter>
-        {`Pergunta ${index + 1}/${answers.length}`}
-      </Counter>
+      <Counter>{`Pergunta ${index + 1}/${answers.length}`}</Counter>
       <Md>{`# ${currentNode.question}`}</Md>
       <Notes>{currentNode.notes}</Notes>
       <RadioQuestions
-        questions={['Sim', 'Não', "Outros"]}
+        questions={["Sim", "Não", "Outros"]}
         onSelected={handleRadioSelect}
         selected={answers[index]}
       />
 
       {haveOther ? (
         <AreaInput
-          labelProps={{ style: { fontWeight: "bold", marginLeft: 0, }, }}
+          labelProps={{ style: { fontWeight: "bold", marginLeft: 0 } }}
           label="Descreva abaixo quais outros comportamentos a criança demonstrou:"
           value={other[index]}
           onChangeText={handleInputChange}
         />
-      ) : <></>}
+      ) : (
+        <></>
+      )}
 
       {haveOther ? (
         <Button label={"Próxima Pergunta"} onPress={handleNext} />
-      ) : <></>}
+      ) : (
+        <></>
+      )}
 
       <BackButton label={"Voltar"} onPress={handleBackPressed} />
     </>
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
 
 export default Questionary;

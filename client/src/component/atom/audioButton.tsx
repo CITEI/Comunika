@@ -1,4 +1,4 @@
-import IconButton, { IconButtonProps } from "./icon-button";
+import IconButton, { IconButtonProps } from "./iconButton";
 import React, { useCallback, useState } from "react";
 import { Audio } from "expo-av";
 

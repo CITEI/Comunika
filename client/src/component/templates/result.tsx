@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Module } from "../../store/modules";
-import MainContainer from "../atom/main-container";
-import ContentContainer from "../atom/content-container";
+import MainContainer from "../atom/mainContainer";
+import ContentContainer from "../atom/contentContainer";
 import Toolbar from "../organism/toolbar";
 import styled from "../../pre-start/themes";
 import BaseTitle from "../atom/title";
@@ -14,7 +14,7 @@ import util from "util";
 import t from "../../pre-start/i18n";
 import useModules from "../../hooks/useModules";
 import useAnswers from "../../hooks/useAnswers";
-import { useAppDispatch, useAppSelector } from '../../store/store';
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import { addToStreak, resetStreak } from "../../store/progress";
 interface ResultProps {
   module: Module;
@@ -65,10 +65,12 @@ const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   const navigation = useNavigation<GameNavigatorProps>();
   const modules = useModules();
-  const activityStreak = useAppSelector((state) => state.progress.activityStreak);
+  const activityStreak = useAppSelector(
+    (state) => state.progress.activityStreak
+  );
   const approved = useAppSelector((state) => state.progress.grade)! > 0.5;
   const dispatch = useAppDispatch();
-  const next = modules.find(el => el.previous === props.module.id);
+  const next = modules.find((el) => el.previous === props.module.id);
 
   /** Goes back to the modules screen */
   const handleBack = useCallback(() => {
@@ -78,19 +80,31 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
 
   const handleReinforcement = useCallback(() => {
     dispatch(addToStreak());
-    navigation.replace("Transition", {module: props.module});
+    navigation.replace("Transition", { module: props.module });
   }, []);
 
   /** Goes to the activities page of the next box */
   const handleNext = useCallback(() => {
     dispatch(addToStreak());
-    navigation.replace("Transition", {module: next!});
+    navigation.replace("Transition", { module: next! });
   }, []);
 
   const buttons = [
-    next ? <Button variant={approved ? undefined : "outline"} label={"Iniciar o próximo módulo"} onPress={handleNext} /> : <></>, 
-    <Button variant={approved && next ? "outline" : undefined} label={approved ? 'Refazer módulo atual' : 'Reforçar módulo atual'} onPress={handleReinforcement}/>
-  ]
+    next ? (
+      <Button
+        variant={approved ? undefined : "outline"}
+        label={"Iniciar o próximo módulo"}
+        onPress={handleNext}
+      />
+    ) : (
+      <></>
+    ),
+    <Button
+      variant={approved && next ? "outline" : undefined}
+      label={approved ? "Refazer módulo atual" : "Reforçar módulo atual"}
+      onPress={handleReinforcement}
+    />,
+  ];
 
   return (
     <MainContainer>
@@ -101,25 +115,20 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         shadow={true}
       />
       <Container>
-        
         <Image
           source={{ uri: props.module.image }}
           accessibilityHint={props.module.imageAlt}
           resizeMode="contain"
         />
-        <Title>
-          {`Parabéns!`}
-        </Title>
-        <Text>{
-          approved ? "Parabéns você conclui o módulo com maestria" : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"
-        }</Text>
+        <Title>{`Parabéns!`}</Title>
+        <Text>
+          {approved
+            ? "Parabéns você conclui o módulo com maestria"
+            : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"}
+        </Text>
         <Footer>
-          {
-            approved ? buttons[0] : buttons[1]
-          }
-          {
-            approved ? buttons[1] : buttons[0]
-          }
+          {approved ? buttons[0] : buttons[1]}
+          {approved ? buttons[1] : buttons[0]}
           <Button
             variant="outline"
             label={"Voltar ao menu"}

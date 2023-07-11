@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import { useState } from "react";
 import Form from "../organism/form";
-import useDisabilities from "../../hooks/usedisabilities";
+import useDisabilities from "../../hooks/useDisabilities";
 import { isEmail, isPassword } from "../../helper/validators";
 
 const isLongerThanTwo = (txt: string) => txt.length > 2;
@@ -27,7 +27,11 @@ function EducatorRegisterForm(props: props) {
           label: "Nome da escola que trabalha",
           name: "school",
         },
-        { type: "text", label: "Com quantas crianças com deficiência trabalha?", name: "numberOfDisabledStudents" },
+        {
+          type: "text",
+          label: "Com quantas crianças com deficiência trabalha?",
+          name: "numberOfDisabledStudents",
+        },
         {
           type: "checkboxset",
           label: "Deficiências das crianças",
@@ -50,7 +54,7 @@ function EducatorRegisterForm(props: props) {
       ]}
       onChange={props.handleChange}
     />
-  )
+  );
 }
 
 export default EducatorRegisterForm;

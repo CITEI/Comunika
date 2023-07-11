@@ -1,5 +1,5 @@
-import useDisabilities from "../../hooks/usedisabilities";
-import { EducatorI } from "../../store/auth"
+import useDisabilities from "../../hooks/useDisabilities";
+import { EducatorI } from "../../store/auth";
 import RawForm from "../organism/form";
 import styled from "styled-components";
 import { dp } from "../../helper/resolution";
@@ -9,9 +9,9 @@ const Form = styled(RawForm)`
 `;
 
 interface props {
-  user: EducatorI, 
-  handleReturn(): void,
-  handleLogout(): Promise<void>
+  user: EducatorI;
+  handleReturn(): void;
+  handleLogout(): Promise<void>;
 }
 
 function EducatorSettings(props: props) {
@@ -73,7 +73,7 @@ function EducatorSettings(props: props) {
         },
       ]}
     />
-  )
+  );
 }
 
 export default EducatorSettings;

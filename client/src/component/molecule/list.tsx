@@ -1,5 +1,5 @@
 import React from "react";
-import ListRow from "../atom/list-row";
+import ListRow from "../atom/listRow";
 import styled from "styled-components/native";
 import { View } from "react-native";
 
