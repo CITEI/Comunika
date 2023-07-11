@@ -5,7 +5,7 @@ import BaseTitle from "../atom/title";
 import RawText from "../atom/text";
 import BaseButton from "../atom/button";
 import ShadowPanel from "../atom/shadowPanel";
-import t from "../../pre-start/i18n";
+import { SvgUri } from "react-native-svg";
 
 interface CardProps {
   /** image url */
@@ -85,6 +85,10 @@ const Icon = styled.Image`
   height: 100%;
 `;
 
+const SvgIcon = styled(SvgUri)`
+  flex: 1;
+`;
+
 const ContentRightContainer = styled.View`
   flex-flow: column;
   text-align: center;
@@ -132,12 +136,16 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         }
       </Header>
       <ContentContainer>
-        <Icon
-          source={{ uri: props.image }}
-          accessibilityLabel={props.imageAlt}
-          style={{}}
-          resizeMode="contain"
-        />
+        {props.image.slice(-3) == "svg" ? (
+          <SvgIcon width={100} height={100} uri={props.image}></SvgIcon>
+        ) : (
+          <Icon
+            source={{ uri: props.image }}
+            accessibilityLabel={props.imageAlt}
+            style={{}}
+            resizeMode="contain"
+          />
+        )}
         <ContentRightContainer>
           <Description>{props.description}</Description>
           {(props.status == "incomplete" ||
