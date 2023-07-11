@@ -137,7 +137,12 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
       </Header>
       <ContentContainer>
         {props.image.slice(-3) == "svg" ? (
-          <SvgIcon width={100} height={100} uri={props.image}></SvgIcon>
+          <SvgIcon
+            width="100%"
+            height="100%"
+            accessibilityHint={props.imageAlt}
+            uri={props.image}
+          ></SvgIcon>
         ) : (
           <Icon
             source={{ uri: props.image }}
