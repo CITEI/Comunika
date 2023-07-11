@@ -32,7 +32,7 @@ const SoundImage: React.VoidFunctionComponent<SoundImageProps> = (props) => {
     <Container
       source={{ uri: props.image }}
       accessibilityHint={props.imageAlt}
-      resizeMode="stretch"
+      resizeMode="contain"
     >
       {props.audio && <Audio audio={props.audio} />}
     </Container>
