@@ -16,6 +16,7 @@ import useModules from "../../hooks/useModules";
 import useAnswers from "../../hooks/useAnswers";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import { addToStreak, resetStreak } from "../../store/progress";
+import { SvgUri } from "react-native-svg";
 interface ResultProps {
   module: Module;
   grade: number;
@@ -35,6 +36,11 @@ const Title = styled(BaseTitle)`
 const Image = styled.Image`
   width: ${dp(180)}px;
   height: ${dp(180)}px;
+  margin-bottom: ${dp(19)}px;
+  margin-top: ${dp(37)}px;
+`;
+
+const SvgImage = styled(SvgUri)`
   margin-bottom: ${dp(19)}px;
   margin-top: ${dp(37)}px;
 `;
@@ -115,11 +121,20 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         shadow={true}
       />
       <Container>
-        <Image
-          source={{ uri: props.module.image }}
-          accessibilityHint={props.module.imageAlt}
-          resizeMode="contain"
-        />
+        {props.module.image.slice(-3) == "svg" ? (
+          <SvgImage
+            width={dp(180)}
+            height={dp(180)}
+            accessibilityHint={props.module.imageAlt}
+            uri={props.module.image}
+          />
+        ) : (
+          <Image
+            source={{ uri: props.module.image }}
+            accessibilityHint={props.module.imageAlt}
+            resizeMode="contain"
+          />
+        )}
         <Title>{`Parabéns!`}</Title>
         <Text>
           {approved

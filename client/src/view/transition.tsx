@@ -13,6 +13,7 @@ import { GameNavigatorProps } from "../route/game";
 import { useNavigation } from "@react-navigation/native";
 import t from "../pre-start/i18n";
 import useAnswers from "../hooks/useAnswers";
+import { SvgUri } from "react-native-svg";
 
 interface TransitionProps {}
 
@@ -34,6 +35,10 @@ const Subtitle = styled(BaseText)`
 const Image = styled.Image`
   width: ${dp(180)}px;
   height: ${dp(180)}px;
+  margin-top: ${dp(76)}px;
+`;
+
+const SvgImage = styled(SvgUri)`
   margin-top: ${dp(76)}px;
 `;
 
@@ -74,11 +79,20 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
               {(answers[module.id]?.answers.length ?? 0) + 1}
             </Title>
             <Subtitle>{module.name}</Subtitle>
-            <Image
-              resizeMode="contain"
-              source={{ uri: module.image }}
-              accessibilityHint={module.imageAlt}
-            />
+            {module.image.slice(-3) == "svg" ? (
+              <SvgImage
+                width={dp(180)}
+                height={dp(180)}
+                uri={module.image}
+                accessibilityHint={module.imageAlt}
+              />
+            ) : (
+              <Image
+                resizeMode="contain"
+                source={{ uri: module.image }}
+                accessibilityHint={module.imageAlt}
+              />
+            )}
           </>
         )}
       </Content>
