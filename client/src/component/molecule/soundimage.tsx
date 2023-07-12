@@ -41,6 +41,7 @@ const SoundImage: React.VoidFunctionComponent<SoundImageProps> = (props) => {
       {props.image.slice(-3) == "svg" ? (
         <SvgUri
           accessibilityLabel={props.imageAlt}
+          width="100%"
           height="100%"
           uri={props.image}
         ></SvgUri>
