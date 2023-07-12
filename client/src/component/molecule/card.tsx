@@ -140,7 +140,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
           <SvgIcon
             width="100%"
             height="100%"
-            accessibilityHint={props.imageAlt}
+            accessibilityLabel={props.imageAlt}
             uri={props.image}
           ></SvgIcon>
         ) : (

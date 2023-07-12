@@ -84,13 +84,13 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
                 width={dp(180)}
                 height={dp(180)}
                 uri={module.image}
-                accessibilityHint={module.imageAlt}
+                accessibilityLabel={module.imageAlt}
               />
             ) : (
               <Image
                 resizeMode="contain"
                 source={{ uri: module.image }}
-                accessibilityHint={module.imageAlt}
+                accessibilityLabel={module.imageAlt}
               />
             )}
           </>

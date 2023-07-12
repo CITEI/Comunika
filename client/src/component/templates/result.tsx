@@ -125,13 +125,13 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
           <SvgImage
             width={dp(180)}
             height={dp(180)}
-            accessibilityHint={props.module.imageAlt}
+            accessibilityLabel={props.module.imageAlt}
             uri={props.module.image}
           />
         ) : (
           <Image
             source={{ uri: props.module.image }}
-            accessibilityHint={props.module.imageAlt}
+            accessibilityLabel={props.module.imageAlt}
             resizeMode="contain"
           />
         )}

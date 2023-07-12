@@ -76,7 +76,7 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
         <Text>{slide.text}</Text>
         <Image
           source={slide.image}
-          accessibilityHint={slide.imageAlt}
+          accessibilityLabel={slide.imageAlt}
           resizeMode="contain"
         />
         <Footer>

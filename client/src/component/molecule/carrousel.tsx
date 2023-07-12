@@ -108,7 +108,7 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
               <Image
                 source={{ uri: current.image }}
                 resizeMode="contain"
-                accessibilityHint={current.imageAlt}
+                accessibilityLabel={current.imageAlt}
               />
             )}
             {current.audio && <AudioButton audio={current.audio} />}
