@@ -17,20 +17,38 @@ interface QuestionaryProps {
 }
 
 const BackButton = styled(BaseButton)`
+  margin-top: ${dp(4)}px;
+  padding: ${dp(3)}px;
+  padding-right: ${dp(17)}px;
+  padding-left: ${dp(17)}px;
   background: transparent;
-  border: 1px solid ${(props) => props.theme.color.inputBorder};
+  min-height: ${dp(32)}px;
+  color: ${(props) => props.theme.color.notes};
+  font-size: ${sp(14)}px;
+  border: 1px solid ${(props) => props.theme.color.backButtonBorder};
+  width: ${dp(100)}px;
 `;
 
-const Counter = styled(Title)`
+const Counter = styled(RawText)`
+  margin-bottom: ${dp(13)}px;
+  margin-top: ${dp(30)}px;
+`;
+
+const CounterCurrent = styled(Title)`
+  font-family: ${(props) => props.theme.fontFamily.textBold}
   font-size: ${sp(16)}px;
   margin-bottom: ${dp(8)}px;
   color: ${(props) => props.theme.color.notes};
 `;
 
+const CounterTotal = styled(CounterCurrent)`
+  font-family: ${(props) => props.theme.fontFamily.text};
+`;
+
 const Notes = styled(RawText)`
   font-size: ${dp(14)}px;
   margin-top: ${dp(8)}px;
-  margin-bottom: ${dp(28)}px;
+  margin-bottom: ${dp(16)}px;
   color: ${(props) => props.theme.color.notes};
 `;
 
@@ -111,7 +129,10 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
 
   return currentNode ? (
     <>
-      <Counter>{`Pergunta ${index + 1}/${answers.length}`}</Counter>
+      <Counter>
+        <CounterCurrent>{`Pergunta ${index + 1}`}</CounterCurrent>
+        <CounterTotal> / {answers.length}</CounterTotal>
+      </Counter>
       <Md>{`# ${currentNode.question}`}</Md>
       <Notes>{currentNode.notes}</Notes>
       <RadioQuestions
@@ -137,7 +158,13 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         <></>
       )}
 
-      <BackButton label={"Voltar"} onPress={handleBackPressed} />
+      <BackButton
+        label={"Voltar"}
+        backButton={true}
+        onPress={handleBackPressed}
+      >
+        {"AAAAAA"}
+      </BackButton>
     </>
   ) : (
     <></>

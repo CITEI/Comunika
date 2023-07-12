@@ -31,7 +31,9 @@ const Container = styled(ShadowPanel)<CheckmarkProps>`
 
 const Checkmark = styled.TouchableOpacity<CheckmarkProps>`
   background-color: ${(props) =>
-    props.selected ? props.theme.color.primary : props.theme.color.inputBorder};
+    props.selected
+      ? props.theme.color.primary
+      : props.theme.color.radioQuestionUnchecked};
   border-radius: ${dp(20)}px;
   width: ${dp(20)}px;
   height: ${dp(20)}px;

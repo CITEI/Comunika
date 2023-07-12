@@ -29,11 +29,8 @@ const Settings: React.VoidFunctionComponent = () => {
 
   const handleLogout = useCallback(async () => {
     await resetStorage();
-    console.log("box removed");
     await clearToken();
-    console.log("token removed");
     await Updates.reloadAsync();
-    console.log("reload?");
   }, []);
 
   return info ? (

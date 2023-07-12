@@ -1,5 +1,6 @@
-import baseStyled, { ReactNativeStyledInterface } from 'styled-components/native'
-
+import baseStyled, {
+  ReactNativeStyledInterface,
+} from "styled-components/native";
 
 const lightTheme = {
   color: {
@@ -12,8 +13,10 @@ const lightTheme = {
     text: "#000",
     bold: "#FF2869",
     inputBorder: "#C4C4C4",
-    hr: 'rgba(196, 196, 196, 0.24)',
-    textProgress: '#99C957',
+    radioQuestionUnchecked: "#F4F3F6",
+    backButtonBorder: "#ACB3BF",
+    hr: "rgba(196, 196, 196, 0.24)",
+    textProgress: "#99C957",
   },
   fontFamily: {
     text: "OpenSans_400Regular",

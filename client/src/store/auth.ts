@@ -12,22 +12,22 @@ const ERROR_MESSAGES = {
 const GENERIC_MESSAGE = "Invalid credentials";
 
 export interface UserI {
-  name: string,
-  email: string,
-  password: string,
-  disabilities: string[],
-  user: string
+  name: string;
+  email: string;
+  password: string;
+  disabilities: string[];
+  user: string;
 }
 
 export interface ParentI extends UserI {
-  relationship: string,
-  region: string,
-  birth: Date
+  relationship: string;
+  region: string;
+  birth: Date;
 }
 
 export interface EducatorI extends UserI {
-  school: string,
-  numberOfDisabledStudents: number
+  school: string;
+  numberOfDisabledStudents: number;
 }
 
 export const login = createAsyncThunk<
@@ -62,7 +62,6 @@ export const registerEducator = createAsyncThunk(
   }
 );
 
-
 interface Disability {
   _id: string;
   name: string;
@@ -77,17 +76,24 @@ export const fetchDisabilities = createAsyncThunk(
 
 export const resetpass = createAsyncThunk(
   "auth/reset-password/",
-  async ({
-    email,
-    token,
-    password,
-  }: {
-    email: string;
-    token: string;
-    password: string;
-  }, { rejectWithValue }) => {
+  async (
+    {
+      email,
+      token,
+      password,
+    }: {
+      email: string;
+      token: string;
+      password: string;
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const data = await api.post("/auth/reset-password/", { email, token, password });
+      const data = await api.post("/auth/reset-password/", {
+        email,
+        token,
+        password,
+      });
       return data.status;
     } catch (err) {
       return rejectWithValue(GENERIC_MESSAGE);
@@ -124,7 +130,6 @@ export const codeverify = createAsyncThunk(
     }
   }
 );
-
 
 interface InitialState {
   authentication: {

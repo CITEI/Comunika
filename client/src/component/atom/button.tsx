@@ -3,14 +3,19 @@ import { TouchableOpacity } from "react-native";
 import { TouchableOpacityProps } from "react-native";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
+import Icon from "@expo/vector-icons/Feather";
 
 export interface ButtonProps extends TouchableOpacityProps {
+  backButton?: boolean;
   variant?: "outline";
   label: string;
   onPress: () => void;
 }
 
 const RawButton = styled(TouchableOpacity)<ButtonProps>`
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
   min-height: ${(props) => dp(38)}px;
   padding: ${(props) => dp(10)}px;
   border-radius: ${(props) => dp(20)}px;
@@ -33,7 +38,6 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
       }
     }};
   margin-top: ${(props) => dp(12)}px;
-  justify-content: center;
 `;
 
 const Label = styled.Text`
@@ -50,6 +54,14 @@ const Button: React.VoidFunctionComponent<ButtonProps> = (props) => {
       {...props}
       variant={props.variant || props.disabled ? "outline" : undefined}
     >
+      {props.backButton && (
+        <Icon
+          color="#585858"
+          style={{ marginRight: dp(5) }}
+          size={28}
+          name="arrow-left"
+        />
+      )}
       <Label>{props.label}</Label>
     </RawButton>
   );
