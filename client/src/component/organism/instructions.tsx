@@ -26,21 +26,22 @@ const Button = styled(BaseButton)`
 
 const Header = styled.View`
   align-items: center;
-  margin-bottom: ${dp(20)}px;
+  margin-bottom: ${dp(15)}px;
 `;
 
 const ModuleInfo = styled(BaseTitle)`
   font-family: ${(props) => props.theme.fontFamily.titleLight};
   font-size: ${sp(14)}px;
-  margin-bottom: ${dp(4)}px;
+  margin-bottom: ${dp(3)}px;
 `;
 
 const Title = styled(BaseTitle)`
   text-align: center;
+  font-size: ${sp(16)}px;
 `;
 
 const TTSPlayer = styled(BaseTTSPlayer)`
-  margin-bottom: ${dp(20)}px;
+  margin-bottom: ${dp(15)}px;
 `;
 
 /** Activity instructions screen */
@@ -60,14 +61,9 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
   return (
     <>
       <Header>
-        <ModuleInfo>
-          {`Instruções da atividade ${props.activity}`}
-          {" | "}
-          {props.module}
-        </ModuleInfo>
+        <ModuleInfo>{props.module}</ModuleInfo>
         <Title>{props.title}</Title>
       </Header>
-      <TTSLabel />
       <TTSPlayer text={extractText(currentNode.text)} />
       <Node {...currentNode} />
       <Button
