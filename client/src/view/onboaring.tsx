@@ -18,13 +18,8 @@ const Onboarding: React.VoidFunctionComponent = () => {
     navigation.replace("Main");
   }, [navigation]);
 
-  useEffect(() => {
-    isOnboardingComplete().then((completed) => {
-      if (completed) navigation.replace("Main");
-    });
-  }, []);
-
-  return <OnboardingTemplate
+  return (
+    <OnboardingTemplate
       slides={[
         {
           image: onb1,
@@ -47,6 +42,7 @@ const Onboarding: React.VoidFunctionComponent = () => {
       ]}
       onFinish={handleFinish}
     />
+  );
 };
 
 export default Onboarding;

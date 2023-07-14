@@ -14,7 +14,7 @@ import { isEmail, isPassword } from "../helper/validators";
 import TextLink from "../component/molecule/textLink";
 import { loadToken } from "../helper/settings";
 import { fetchUserData } from "../store/user";
-import { sp } from "../helper/resolution";
+import { isOnboardingComplete } from "../helper/settings";
 
 export interface LoginProps {}
 
@@ -34,7 +34,10 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
 
   useEffect(() => {
     if (authentication.status || storageAuth) {
-      navigation.navigate("Onboarding");
+      isOnboardingComplete().then((completed) => {
+        if (completed) navigation.navigate("Main");
+        else navigation.navigate("Onboarding");
+      });
     } else setModalText(authentication.message || "");
   }, [authentication, storageAuth]);
 

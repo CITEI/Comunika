@@ -10,12 +10,10 @@ import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../../route/game";
-import util from "util";
-import t from "../../pre-start/i18n";
 import useModules from "../../hooks/useModules";
-import useAnswers from "../../hooks/useAnswers";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import { addToStreak, resetStreak } from "../../store/progress";
+import { resetModules } from "../../store/modules";
 import { SvgUri } from "react-native-svg";
 interface ResultProps {
   module: Module;
@@ -81,6 +79,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
   /** Goes back to the modules screen */
   const handleBack = useCallback(() => {
     navigation.pop(2 + activityStreak);
+    dispatch(resetModules());
     dispatch(resetStreak());
   }, []);
 
