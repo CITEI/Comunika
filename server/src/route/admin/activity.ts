@@ -242,10 +242,48 @@ const activityOptions: ResourceOptions = {
       },
     },
     edit: {
-      before: [unflattenRequest, buildValidator(activityValidatorSchema)],
+      before: [
+        buildFileUploadBefore([
+          { attribute: "nodes.$.image", extensions: ["png", "svg", "gif"] },
+          { attribute: "nodes.$.audio", extensions: ["ogg"] },
+          {
+            attribute: "nodes.$.images.$.image",
+            extensions: ["png", "svg", "gif"],
+          },
+          { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
+        ]),
+        unflattenRequest,
+        buildValidator({
+          ...activityValidatorSchema,
+        }),
+      ],
       layout: Object.keys(ActivitySchema.paths).filter(
         (key) => !["_id", "__v", "questionCount"].includes(key)
       ),
+      after: [
+        buildFileUploadAfter({
+          "nodes.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.audio": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.images.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.images.$.audio": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+        }),
+      ],
     },
   },
 };
