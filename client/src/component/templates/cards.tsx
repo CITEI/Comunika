@@ -15,7 +15,7 @@ interface CardsProps {
   /** Singular name of the card unit */
   unit: string;
   /** Card button press handler */
-  onPress: (id) => void;
+  onPress: (module: Module) => void;
   /** Card data */
   data: Module[];
   /** Local Storage Box */
@@ -23,7 +23,7 @@ interface CardsProps {
 }
 
 const ContentContainer = styled(BaseContentContainer)`
-  padding-top: ${dp(20)}px;
+  padding-top: ${dp(29)}px;
 `;
 
 const Title = styled(BaseTitle)`

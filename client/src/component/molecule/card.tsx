@@ -29,8 +29,9 @@ interface CardProps {
 const Container = styled(ShadowPanel)`
   background: ${(props) => props.theme.color.background};
   padding: ${dp(20)}px;
+  padding-top: ${dp(12)}px;
   border-radius: ${dp(10)}px;
-  margin-bottom: ${dp(20)}px;
+  margin-bottom: ${dp(24)}px;
   font-family: ${(props) => props.theme.fontFamily.textBold};
   font-weight: bold;
   min-height: ${dp(160)}px;
@@ -72,7 +73,7 @@ const ContentContainer = styled.View`
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
-  margin-top: ${dp(5)}px;
+  margin-top: ${dp(8)}px;
   border-top-color: ${(props) => props.theme.color.hr};
   border-top-width: 1px;
   padding-top: ${dp(14)}px;
@@ -95,7 +96,7 @@ const ContentRightContainer = styled.View`
   align-items: center;
   justify-content: center;
   flex: 2;
-  margin-left: ${dp(20)}px;
+  margin-left: ${dp(24)}px;
 `;
 
 const Description = styled(RawText)`

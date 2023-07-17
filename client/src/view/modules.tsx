@@ -4,10 +4,10 @@ import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
 import t from "../pre-start/i18n";
 import useModules from "../hooks/useModules";
-import { Module } from '../store/modules';
-import useAnswers from '../hooks/useAnswers';
-import { disableBoxLoaded } from '../store/progress';
-import { useAppDispatch } from '../store/store';
+import { Module } from "../store/modules";
+import useAnswers from "../hooks/useAnswers";
+import { disableBoxLoaded } from "../store/progress";
+import { useAppDispatch } from "../store/store";
 
 /** Screen that displays a list of modules */
 const Modules: React.VoidFunctionComponent = () => {
@@ -35,7 +35,9 @@ const Modules: React.VoidFunctionComponent = () => {
       answers={answers}
       data={modules}
     />
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
 
 export default Modules;
