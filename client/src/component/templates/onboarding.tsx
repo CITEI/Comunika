@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import t from "../../pre-start/i18n";
+import { ImageSourcePropType } from "react-native";
 import MainContainer from "../atom/mainContainer";
 import ContentContainer from "../atom/contentContainer";
 import Toolbar from "../organism/toolbar";
@@ -8,11 +8,10 @@ import BaseTitle from "../atom/title";
 import BaseText from "../atom/text";
 import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
-import { ImageSource } from "react-native-vector-icons/Icon";
 
 interface OnboardingProps {
   slides: {
-    image: ImageSource;
+    image: ImageSourcePropType;
     imageAlt: string;
     text: string;
     title: string;
@@ -24,12 +23,12 @@ const Container = styled(ContentContainer)`
   align-items: center;
   justify-content: center;
   height: 100%;
+  margin-top: ${dp(25)}px;
 `;
 
 const Title = styled(BaseTitle)`
-  font-size: ${sp(20)}px;
+  font-size: ${sp(18)}px;
   text-align: center;
-  margin-top: ${dp(50)}px;
   margin-bottom: ${dp(18)}px;
 `;
 
@@ -41,7 +40,7 @@ const Image = styled.Image`
 
 const Text = styled(BaseText)`
   font-family: ${(props) => props.theme.fontFamily.titleLight};
-  font-size: ${sp(16)}px;
+  font-size: ${sp(14)}px;
   text-align: center;
   margin-bottom: ${dp(38)}px;
 `;
@@ -84,6 +83,7 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
             label={isLast ? "Ir para as atividades" : "Próximo"}
             onPress={handleNext}
           />
+          <Text />
         </Footer>
       </Container>
     </MainContainer>
