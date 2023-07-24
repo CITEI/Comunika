@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { View, Modal as RModal, ModalBaseProps } from "react-native";
 import styled from "../../pre-start/themes";
-import { dp, vw, vh } from "../../helper/resolution";
-import Button from "../atom/button";
+import { dp, sp, vh, vw } from "../../helper/resolution";
+import RawButton from "../atom/button";
 import RawText from "../atom/text";
 import Title from "../atom/title";
 
 interface ModalProps extends ModalBaseProps {
   title: string;
   text: string;
+  setText(text: string): void;
 }
 
 const StyledModalBackground = styled.View`
@@ -24,12 +25,23 @@ const StyledModalBackground = styled.View`
 
 const StyledModalContainer = styled.View`
   background-color: ${(props) => props.theme.color.background};
-  width: ${vw(100) - dp(20)}px;
-  padding: ${dp(20)}px;
-  padding-top: ${dp(26)}px;
-  padding-bottom: ${dp(26)}px;
   border-radius: ${dp(10)}px;
+  align-items: center;
+  padding: ${dp(23)}px;
+  padding-top: ${dp(26)}px;
+  padding-bottom: ${dp(20)}px;
+`;
+
+const Text = styled(RawText)`
   text-align: center;
+  font-size: ${sp(14)}px;
+  margin-top: ${dp(10)}px;
+`;
+
+const Button = styled(RawButton)`
+  width: ${vw(70)}px;
+  max-height: ${dp(45)}px;
+  margin-top: ${dp(14)}px;
 `;
 
 const Modal: React.VoidFunctionComponent<ModalProps> = (props) => {
@@ -50,17 +62,8 @@ const Modal: React.VoidFunctionComponent<ModalProps> = (props) => {
         <StyledModalBackground>
           <StyledModalContainer>
             <Title style={{ textAlign: "center" }}>{props.title}</Title>
-            <RawText style={{ textAlign: "center", marginTop: dp(10) }}>
-              {props.text}
-            </RawText>
-            <Button
-              label="Close"
-              style={{ marginHorizontal: dp(20) }}
-              onPress={useCallback(() => {
-                setVisible(false);
-                if (props.onRequestClose) props.onRequestClose()
-              }, [])}
-            ></Button>
+            <Text>{props.text}</Text>
+            <Button label="Voltar" onPress={() => props.setText("")}></Button>
           </StyledModalContainer>
         </StyledModalBackground>
       </RModal>

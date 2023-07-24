@@ -71,9 +71,10 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
     <MainContainer>
       <ContentContainer>
         <Modal
-          text={t(modalText)}
-          title={t("Não logado! :(")}
-          onRequestClose={useCallback(() => setModalText(""), [])}
+          title={"Credenciais inválidas! :("}
+          text={"Verifique se seu e-mail e sua senha estão corretos."}
+          setText={setModalText}
+          onRequestClose={() => setModalText("")}
           visible={Boolean(modalText)}
         ></Modal>
         <LoginHeader />
