@@ -6,8 +6,6 @@ import { AuthNavigatorProps } from "../route/auth";
 import ContentContainer from "../component/atom/contentContainer";
 import MainContainer from "../component/atom/mainContainer";
 import LoginHeader from "../component/organism/loginHeader";
-import t from "../pre-start/i18n";
-import useDisabilities from "../hooks/useDisabilities";
 import ParentRegisterForm from "../component/templates/parentRegister";
 import TextLink from "../component/molecule/textLink";
 import { isEmail, isPassword } from "../helper/validators";
@@ -63,6 +61,10 @@ const Register: React.VoidFunctionComponent = () => {
     else setValidated(true);
   };
 
+  const get = () => {
+    return isParent;
+  }
+
   const handleSubmit = useCallback(
     (map: Map<string, string>) => {
       const userData = {
@@ -92,7 +94,7 @@ const Register: React.VoidFunctionComponent = () => {
         );
       }
     },
-    [dispatch]
+    [dispatch, isParent]
   );
 
   const handleLogin = useCallback(() => {
