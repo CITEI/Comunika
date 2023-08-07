@@ -61,10 +61,6 @@ const Register: React.VoidFunctionComponent = () => {
     else setValidated(true);
   };
 
-  const get = () => {
-    return isParent;
-  }
-
   const handleSubmit = useCallback(
     (map: Map<string, string>) => {
       const userData = {

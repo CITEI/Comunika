@@ -56,7 +56,7 @@ const Button: React.VoidFunctionComponent<ButtonProps> = (props) => {
   return (
     <RawButton
       {...props}
-      variant={props.variant ?? (props.disabled ? "disabled" : undefined)}
+      variant={props.disabled ? "disabled" : props.variant ?? undefined}
     >
       {props.backButton && (
         <Icon

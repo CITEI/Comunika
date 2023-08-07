@@ -3,15 +3,11 @@ import VerticalContainer from "../component/atom/verticalContainer";
 import { useAppDispatch } from "../store/store";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import { isEmail, isPassword } from "../helper/validators";
+import { isEmail } from "../helper/validators";
 import MainContainer from "../component/atom/mainContainer";
 import ContentContainer from "../component/atom/contentContainer";
-import t from "../pre-start/i18n";
-import LoginHeader from "../component/organism/forgotHeader";
-import Form from "../component/organism/form";
-import { codeverify, resetpass, sendcode } from "../store/auth";
-import Text from "../component/atom/text";
-import Md from "../component/molecule/md";
+import ForgotHeader from "../component/organism/forgotHeader";
+import { sendcode } from "../store/auth";
 import Input from "../component/molecule/input";
 import Button from "../component/atom/button";
 
@@ -20,15 +16,15 @@ export interface ForgotPassProps {}
 const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const [email, setEmail] = useState<string>("");
-  const [sendButtonAvailable, setSendButtonAvailable] =
-    useState<boolean>(false);
+  const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
   const handleSendCode = async () => {
+    if(!isValidEmail) return;
     const result = (await dispatch(sendcode(email))).payload;
 
     if (result == 100 || result == 250) {
-      navigation.navigate("ResetPass", { email: email });
+      navigation.navigate("ValidateCode", { email: email });
     } else {
     }
   };
@@ -36,27 +32,29 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   const onEmailChange = (text: string) => {
     if (isEmail(text)) {
       setEmail(text);
-      setSendButtonAvailable(true);
-    } else if (sendButtonAvailable) {
-      setSendButtonAvailable(false);
+      setIsValidEmail(true);
+    } else {
+      setEmail("");
+      setIsValidEmail(false);
     }
   };
 
   return (
     <MainContainer>
       <ContentContainer>
-        <LoginHeader />
+        <ForgotHeader text="Digite o seu e-mail para recuperação de senha" />
         <VerticalContainer>
-          <Input label="Digite seu Email" onChangeText={onEmailChange} />
+          <Input label="E-mail" onChangeText={onEmailChange} />
           <Button
-            disabled={!sendButtonAvailable}
+            disabled={!isValidEmail}
             label="Enviar código"
             onPress={handleSendCode}
           ></Button>
           <Button
-            disabled={email == ""}
+            disabled={!isValidEmail}
+            variant="outline"
             label="Já tenho o código"
-            onPress={() => navigation.navigate("ResetPass", { email: email })}
+            onPress={() => navigation.navigate("ValidateCode", { email: email })}
           />
         </VerticalContainer>
       </ContentContainer>

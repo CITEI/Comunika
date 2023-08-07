@@ -1,15 +1,15 @@
 import React from "react";
-import { dp } from "../../helper/resolution";
+import { dp, sp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
 import Title from "../atom/title";
 import logo from "../../../assets/logo.png";
-import t from "../../pre-start/i18n";
+import RawText from "../atom/text";
 
 const Header = styled.View`
   align-items: center;
   justify-content: center;
   margin-top: ${dp(25)}px;
-  margin-bottom: ${dp(25)}px;
+  margin-bottom: ${dp(30)}px;
 `;
 
 const Logo = styled.Image`
@@ -19,13 +19,21 @@ const Logo = styled.Image`
   margin-top: ${dp(25)}px;
 `;
 
-const LoginHeader: React.VoidFunctionComponent = () => {
+const Text = styled(RawText)`
+  font-family: ${(props) => props.theme.fontFamily.textSemiBold};
+  font-size: ${sp(15)}px;
+  text-align: center;
+  margin-top: ${dp(8)}px;
+`
+
+function ForgotHeader(props: {text: string}) {
   return (
     <Header>
       <Logo source={logo} resizeMode="contain" />
-      <Title>Recuperação de Senha</Title>
+      <Title>Recuperar Senha</Title>
+      <Text>{props.text}</Text>
     </Header>
   );
 };
 
-export default LoginHeader;
+export default ForgotHeader;

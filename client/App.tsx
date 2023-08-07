@@ -17,7 +17,8 @@ import FontLoader from "./src/pre-start/fontLoader";
 import Transition from "./src/view/transition";
 import Onboarding from "./src/view/onboaring";
 import ForgotPass from "./src/view/forgotPassword";
-import ResetPass from "./src/view/resetPassword";
+import ValidateCode from "./src/view/validateCode";
+import ResetPassword from "./src/view/resetPassword";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,7 +62,14 @@ export default function App() {
                 }}
               />
               <Stack.Screen
-                component={ResetPass}
+                component={ValidateCode}
+                name="ValidateCode"
+                options={{
+                  title: APP_NAME,
+                }}
+              />
+              <Stack.Screen
+                component={ResetPassword}
                 name="ResetPass"
                 options={{
                   title: APP_NAME,

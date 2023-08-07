@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import VerticalContainer from "../component/atom/verticalContainer";
 import { useAppDispatch } from "../store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import { isEmail, isPassword } from "../helper/validators";
+import { isPassword } from "../helper/validators";
 import MainContainer from "../component/atom/mainContainer";
 import ContentContainer from "../component/atom/contentContainer";
-import t from "../pre-start/i18n";
 import LoginHeader from "../component/organism/forgotHeader";
-import Form from "../component/organism/form";
-import { codeverify, resetpass, sendcode } from "../store/auth";
-import Text from "../component/atom/text";
-import Md from "../component/molecule/md";
-import Input from "../component/molecule/input";
+import { resetpass} from "../store/auth";
 import Button from "../component/atom/button";
 import PasswordInput from "../component/molecule/passwordInput";
-import { dp } from "../helper/resolution";
 
-export interface ForgotPassProps {}
+export interface ResetPassProps {}
 
-const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
+const ResetPassword: React.VoidFunctionComponent<ResetPassProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
   const route = useRoute();
-  const { email } = route.params as { email: string };
-  const [code, setCode] = useState<string>("");
-  const [isCodeValid, setIsCodeValid] = useState<boolean | undefined>(
-    undefined
-  );
+  const { email, code } = route.params as { email: string, code: string };
   const [newPass, setNewPass] = useState<string>("");
   const [newPassRepeat, setNewPassRepeat] = useState<string>("");
-
-  const onCodeChange = (text: string) => {
-    setCode(text);
-  };
 
   const onPassChange = (
     text: string,
@@ -41,56 +27,32 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   ) => {
     if (isPassword(text)) {
       update(text);
-    }
-  };
-
-  const validadeCode = async () => {
-    const result = await dispatch(codeverify({ email: email, token: code }));
-    if (result.payload == 200) setIsCodeValid(true);
-    else setIsCodeValid(false);
-  };
-
-  const handleResetPassword = async () => {
-    const result = await dispatch(
-      resetpass({ token: code, email: email, password: newPass })
-    );
-
-    if (result && result.payload == 202) {
-      navigation.pop(2);
-      return;
+    } else {
+      update("")
     }
   };
 
   const isRecoverAvailable = () => {
-    return newPass != "" && newPassRepeat == newPass && isCodeValid;
+    return newPass != "" && newPassRepeat == newPass;
   };
 
-  useEffect(() => {
-    if (code.length == 6) {
-      validadeCode();
+  const handleResetPassword = async () => {
+    if(!isRecoverAvailable()) return;
+    const result = await dispatch(
+      resetpass({ token: code, email: email, password: newPass })
+    );
+
+    if (result && result.payload == 250) {
+      navigation.pop(3);
+      return;
     }
-  }, [code]);
+  };
 
   return (
     <MainContainer>
       <ContentContainer>
-        <LoginHeader />
+        <LoginHeader text="Digite sua nova senha"/>
         <VerticalContainer>
-          <Input
-            autoCorrect={false}
-            style={{ textTransform: "uppercase" }}
-            mask={[
-              /([\w\d])/,
-              /([\w\d])/,
-              /([\w\d])/,
-              /([\w\d])/,
-              /([\w\d])/,
-              /([\w\d])/,
-            ]}
-            label="Código"
-            value={code}
-            onChangeText={onCodeChange}
-          />
           <PasswordInput
             label="Nova senha"
             onChangeText={(t) => onPassChange(t, setNewPass)}
@@ -99,14 +61,9 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
             label="Repita a senha"
             onChangeText={(t) => onPassChange(t, setNewPassRepeat)}
           />
-          {!isCodeValid && isCodeValid != undefined ? (
-            <Md style={{ marginTop: dp(5) }}>#### **Código inválido**</Md>
-          ) : (
-            <></>
-          )}
           <Button
             disabled={!isRecoverAvailable()}
-            label="Restaurar a senha"
+            label="Alterar senha"
             onPress={handleResetPassword}
           />
         </VerticalContainer>
@@ -115,4 +72,4 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   );
 };
 
-export default ForgotPass;
+export default ResetPassword;

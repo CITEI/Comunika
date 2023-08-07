@@ -8,6 +8,7 @@ export interface LabelProps extends TextProps {};
 const Label = styled.Text`
   font-size: ${(props) => sp(13)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
+  padding-left: ${() => dp(15)}px;
 `;
 
 export default Label;
