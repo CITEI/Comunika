@@ -8,7 +8,7 @@ const lightTheme = {
     secondary: "#FFEFD7",
     background: "#fff",
     notes: "#585858",
-    disabled: "#F9F9F9",
+    disabledBackground: "#F9F9F9",
     borderDisabled: "#CBCBCB",
     text: "#000",
     bold: "#FF2869",

@@ -7,7 +7,7 @@ import Icon from "@expo/vector-icons/Feather";
 
 export interface ButtonProps extends TouchableOpacityProps {
   backButton?: boolean;
-  variant?: "outline";
+  variant?: "outline" | "disabled";
   label: string;
   onPress: () => void;
 }
@@ -23,7 +23,9 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
   background: ${(props) => {
     switch (props.variant) {
       case "outline":
-        return props.theme.color.disabled;
+        return "transparent";
+      case "disabled":
+        return props.theme.color.disabledBackground;
       default:
         return props.theme.color.primary;
     }
@@ -31,8 +33,10 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
   border: 1px solid
     ${(props) => {
       switch (props.variant) {
-        case "outline":
+        case "disabled":
           return props.theme.color.borderDisabled;
+        case "outline":
+          return props.theme.color.primary;
         default:
           return "transparent";
       }
@@ -52,7 +56,7 @@ const Button: React.VoidFunctionComponent<ButtonProps> = (props) => {
   return (
     <RawButton
       {...props}
-      variant={props.variant || props.disabled ? "outline" : undefined}
+      variant={props.variant ?? (props.disabled ? "disabled" : undefined)}
     >
       {props.backButton && (
         <Icon
