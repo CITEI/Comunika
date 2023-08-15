@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TextStyle, View, ViewStyle } from 'react-native';
-import Markdown, {MarkdownIt} from 'react-native-markdown-display'
+import Markdown, { MarkdownIt } from 'react-native-markdown-display'
 import Title from '../atom/title'
 import styled from '../../pre-start/themes'
 import { sp } from '../../helper/resolution';
@@ -42,7 +42,7 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
   }, [props.children])
 
   /** Configures markdown parser */
-  const markdownit = React.useMemo(() => MarkdownIt({typographer: true}).disable([ 'list' ]), [])
+  const markdownit = React.useMemo(() => MarkdownIt({ typographer: true }).disable(['list']), [])
 
   return (
     <View style={props.style}>
@@ -50,7 +50,7 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
         style={{
           body: props.textStyle || {},
           bold: props.boldStyle || {},
-          heading1: props.titleStyle || {fontSize: sp(18)},
+          heading1: props.titleStyle || { fontSize: sp(18) },
         }}
         rules={{
           body: (node, children, parent, styles) => (

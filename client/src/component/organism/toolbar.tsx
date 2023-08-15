@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import styled from "../../pre-start/themes";
 import { dp, vw } from '../../helper/resolution';
 import Icon from '@expo/vector-icons/Feather';
@@ -13,13 +13,15 @@ interface ToolbarProps {
   /** Enables the account button */
   accountButton: boolean;
   /** Enables the close button */
-  closeButton: boolean;
+  closeAction?: () => void;
   /** Adds shadow under the toolbar */
   shadow: boolean;
   /** Enables the logo icon */
   logo: boolean;
   /** Number of navigation stack pops */
   popCount?: number;
+  /** Function to handle a modal that closes activity */
+  shouldQuit?: boolean;
 }
 
 const Container = styled.View`
@@ -54,22 +56,18 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
   }, []);
 
   /** Returns the user to the previous screen */
-  const handleClosePress = useCallback(() => {
-    dispatch(resetStreak());
-    dispatch(disableBoxLoaded());
-    navigation.pop(props.popCount || 1);
-  }, [props.popCount]);
+  useEffect(() => {
+    if (props.shouldQuit) {
+      dispatch(resetStreak());
+      dispatch(disableBoxLoaded());
+      navigation.pop(props.popCount || 1);
+    }
+  }, [props.shouldQuit]);
 
   return (
     <Container>
       <Shadow
-        style={
-          props.shadow
-            ? {
-              elevation: dp(5),
-            }
-            : {}
-        }
+        style={ props.shadow ? {elevation: dp(5)} : {}}
       >
         {props.accountButton ? (
           <Icon
@@ -93,11 +91,11 @@ const Toolbar: React.FunctionComponent<ToolbarProps> = (props) => {
         ) : (
           <Spacer></Spacer>
         )}
-        {props.closeButton ? (
+        {props.closeAction ? (
           <Icon
             name="x-circle"
             style={{ color: "#FF867A" }}
-            onPress={handleClosePress}
+            onPress={props.closeAction}
             size={dp(20)}
           ></Icon>
         ) : (

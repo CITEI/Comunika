@@ -7,6 +7,7 @@ import Instructions from "../organism/instructions";
 import Questionary from "../organism/questionary";
 import { addAnswers } from "../../store/local/GameStorage";
 import { useAppSelector } from "../../store/store";
+import LeaveActivityModal from "../organism/leaveActivityModal";
 
 interface ActivityProps {
   box: AppBox;
@@ -16,6 +17,8 @@ interface ActivityProps {
 }
 
 const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [shouldQuit, setShouldQuit] = useState(false);
   const [activityIndex, setActivityIndex] = useState(props.box.answers.length);
   const [answering, setAnswering] = useState(false);
   const [answers, setAnswers] = useState<(string | boolean)[][]>(
@@ -51,14 +54,21 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
     }
   }, [answers, props.activities]);
 
+
   return activity ? (
     <MainContainer>
+      <LeaveActivityModal
+        visible={modalVisible}
+        quit={() => setShouldQuit(true)}
+        close={() => setModalVisible(false)}
+      />
       <Toolbar
         accountButton={false}
-        closeButton={true}
+        closeAction={() => setModalVisible(true)}
         logo={answering}
         shadow={false}
         popCount={2 + activityStreak}
+        shouldQuit={shouldQuit}
       />
       <ContentContainer>
         {answering ? (

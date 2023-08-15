@@ -42,9 +42,12 @@ const ResetPassword: React.VoidFunctionComponent<ResetPassProps> = (props) => {
       resetpass({ token: code, email: email, password: newPass })
     );
 
-    if (result && result.payload == 250) {
+    if (result.payload == 250) {
       navigation.pop(3);
       return;
+    } else {
+      // Preciso mudar o backend pra arrumar o tratamento de erro aqui.
+      navigation.pop(3);
     }
   };
 

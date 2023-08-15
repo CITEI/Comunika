@@ -66,7 +66,6 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
     <MainContainer>
       <Toolbar
         accountButton={false}
-        closeButton={false}
         logo={true}
         shadow={false}
       />

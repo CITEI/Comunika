@@ -17,7 +17,6 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
   flex-direction: row;
   justify-content: center;
   min-height: ${(props) => dp(38)}px;
-  padding: ${(props) => dp(10)}px;
   border-radius: ${(props) => dp(20)}px;
   align-items: center;
   background: ${(props) => {
@@ -46,7 +45,6 @@ const RawButton = styled(TouchableOpacity)<ButtonProps>`
 
 const Label = styled.Text`
   color: #000;
-  font-weight: 400;
   font-size: ${(props) => sp(14)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
 `;

@@ -115,7 +115,6 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
     <MainContainer>
       <Toolbar
         accountButton={true}
-        closeButton={false}
         logo={true}
         shadow={true}
       />

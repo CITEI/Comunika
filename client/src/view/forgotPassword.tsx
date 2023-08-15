@@ -10,22 +10,25 @@ import ForgotHeader from "../component/organism/forgotHeader";
 import { sendcode } from "../store/auth";
 import Input from "../component/molecule/input";
 import Button from "../component/atom/button";
+import ErrorModal from "../component/organism/errorModal";
 
-export interface ForgotPassProps {}
+export interface ForgotPassProps { }
 
 const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
   const [email, setEmail] = useState<string>("");
   const [isValidEmail, setIsValidEmail] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const dispatch = useAppDispatch();
 
   const handleSendCode = async () => {
-    if(!isValidEmail) return;
+    if (!isValidEmail) return;
     const result = (await dispatch(sendcode(email))).payload;
 
-    if (result == 100 || result == 250) {
+    if (typeof result === "number") {
       navigation.navigate("ValidateCode", { email: email });
     } else {
+      setError(result)
     }
   };
 
@@ -42,6 +45,7 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   return (
     <MainContainer>
       <ContentContainer>
+        <ErrorModal visible={!!error} close={() => setError(undefined)} errorMessage={error!} />
         <ForgotHeader text="Digite o seu e-mail para recuperação de senha" />
         <VerticalContainer>
           <Input label="E-mail" onChangeText={onEmailChange} />

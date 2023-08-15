@@ -63,7 +63,7 @@ const Modal: React.VoidFunctionComponent<ModalProps> = (props) => {
           <StyledModalContainer>
             <Title style={{ textAlign: "center" }}>{props.title}</Title>
             <Text>{props.text}</Text>
-            <Button label="Voltar" onPress={() => props.setText("")}></Button>
+            <Button label="Fechar" onPress={() => props.setText("")}></Button>
           </StyledModalContainer>
         </StyledModalBackground>
       </RModal>

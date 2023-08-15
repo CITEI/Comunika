@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";
 import Cards from "../component/templates/cards";
-import t from "../pre-start/i18n";
 import useModules from "../hooks/useModules";
 import { Module } from "../store/modules";
 import useAnswers from "../hooks/useAnswers";

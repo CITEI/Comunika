@@ -12,7 +12,7 @@ const Label = styled(RawText)`
 `;
 
 const TTSLabel: React.VoidFunctionComponent<TextProps> = (props) => {
-  return <Label>{"Toque aqui para ouvir as instruções por áudio"}</Label>;
+  return <Label>{"Clique para ouvir instruções por áudio:"}</Label>;
 };
 
 export default TTSLabel;

@@ -38,7 +38,6 @@ const Cards = (props: CardsProps) => {
       <Toolbar
         logo={true}
         accountButton={true}
-        closeButton={false}
         shadow={true}
       ></Toolbar>
       <ContentContainer>

@@ -3,18 +3,13 @@ import VerticalContainer from "../component/atom/verticalContainer";
 import { useAppDispatch } from "../store/store";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import { isEmail, isPassword } from "../helper/validators";
 import MainContainer from "../component/atom/mainContainer";
 import ContentContainer from "../component/atom/contentContainer";
-import t from "../pre-start/i18n";
 import LoginHeader from "../component/organism/forgotHeader";
-import Form from "../component/organism/form";
-import { codeverify, resetpass, sendcode } from "../store/auth";
-import Text from "../component/atom/text";
+import { codeverify } from "../store/auth";
 import Md from "../component/molecule/md";
 import Input from "../component/molecule/input";
 import Button from "../component/atom/button";
-import PasswordInput from "../component/molecule/passwordInput";
 import { dp } from "../helper/resolution";
 
 export interface ValidateCodeProps { }

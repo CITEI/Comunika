@@ -28,13 +28,11 @@ const Title = styled(BaseTitle)`
   font-size: ${sp(20)}px;
   text-align: center;
   margin-top: ${dp(50)}px;
-  margin-bottom: ${dp(18)}px;
+  margin-bottom: ${dp(30)}px;
 `;
 
 const Text = styled(Md)`
-  text-align: center;
-  flex: 1;
-  height: 100%;
+
 `;
 
 const TTSPlayer = styled(BaseTTSPlayer)`
@@ -60,14 +58,19 @@ const GeneralInstructions: React.VoidFunctionComponent<
     }
   }, [currentSlide, navigation, props.slides.length]);
 
+  function handleSkip() {
+    navigation.navigate("Game", { module: props.module });
+  }
+
   return (
     <Container>
       <Title>{"Instruções gerais"}</Title>
       <TTSLabel />
       <TTSPlayer text={slide.text} />
-      <Text textStyle={{ fontSize: sp(13) }}>{slide.text}</Text>
+      <Text textStyle={{ fontSize: sp(13), lineHeight: sp(20) }}>{slide.text}</Text>
       <Footer>
         <Button label={"Próximo"} onPress={handleNext} />
+        <Button variant="outline" label={"Pular tutorial"} onPress={handleSkip} />
       </Footer>
     </Container>
   );

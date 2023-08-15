@@ -64,7 +64,6 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
         logo={true}
         shadow={false}
         accountButton={false}
-        closeButton={false}
       />
       <Content>
         {timer ? (

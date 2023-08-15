@@ -4,10 +4,8 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { login } from "../store/auth";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProps } from "../route/auth";
-import Modal from "../component/molecule/modal";
 import MainContainer from "../component/atom/mainContainer";
 import ContentContainer from "../component/atom/contentContainer";
-import t from "../pre-start/i18n";
 import LoginHeader from "../component/organism/loginHeader";
 import Form from "../component/organism/form";
 import { isEmail, isPassword } from "../helper/validators";
@@ -15,6 +13,7 @@ import TextLink from "../component/molecule/textLink";
 import { loadToken } from "../helper/settings";
 import { fetchUserData } from "../store/user";
 import { isOnboardingComplete } from "../helper/settings";
+import ErrorModal from "../component/organism/errorModal";
 
 export interface LoginProps {}
 
@@ -24,7 +23,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   const authentication = useAppSelector((state) => state.auth.authentication);
   const storageAuth = useAppSelector((state) => state.user.loaded);
   const [validated, setValidated] = useState(false);
-  const [modalText, setModalText] = useState("");
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     loadToken().then(() => {
@@ -38,7 +37,7 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
         if (completed) navigation.navigate("Main");
         else navigation.navigate("Onboarding");
       });
-    } else setModalText(authentication.message || "");
+    } else setError(authentication.message ?? "");
   }, [authentication, storageAuth]);
 
   const handleChange = useCallback(
@@ -67,16 +66,14 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
     navigation.navigate("ForgotPass");
   };
 
+  function clearError() {
+    setError(undefined);
+  }
+
   return (
     <MainContainer>
       <ContentContainer>
-        <Modal
-          title={"Credenciais inválidas! :("}
-          text={"Verifique se seu e-mail e sua senha estão corretos."}
-          setText={setModalText}
-          onRequestClose={() => setModalText("")}
-          visible={Boolean(modalText)}
-        ></Modal>
+        <ErrorModal visible={!!error} close={clearError} errorMessage={error!}/>
         <LoginHeader />
         <VerticalContainer>
           <Form

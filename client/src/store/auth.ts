@@ -1,15 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api, { setToken } from "../helper/api";
-import store, { useAppDispatch } from "./store";
+import store from "./store";
 import { saveToken } from "../helper/settings";
-import { StatusCodes } from "http-status-codes";
 import { AxiosError } from "axios";
-
-const ERROR_MESSAGES = {
-  [StatusCodes.NOT_FOUND]: "User not found",
-};
-
-const GENERIC_MESSAGE = "Invalid credentials";
+import { ErrorNames } from "../helper/error";
 
 export interface UserI {
   name: string;
@@ -33,7 +27,7 @@ export interface EducatorI extends UserI {
 export const login = createAsyncThunk<
   void,
   { email: string; password: string },
-  { rejectValue: string }
+  { rejectValue: ErrorNames }
 >("auth/login", async (user, { rejectWithValue }) => {
   try {
     const res = await api.post("/auth", user);
@@ -42,7 +36,7 @@ export const login = createAsyncThunk<
     await saveToken(token);
   } catch (error) {
     const err = error as AxiosError;
-    return rejectWithValue(GENERIC_MESSAGE);
+    return rejectWithValue("InvalidCredentials");
   }
 });
 
@@ -74,20 +68,19 @@ export const fetchDisabilities = createAsyncThunk(
   }
 );
 
-export const resetpass = createAsyncThunk(
+interface ResetPassInput {
+  email: string;
+  token: string;
+  password?: string;
+}
+
+export const resetpass = createAsyncThunk<
+  number,
+  ResetPassInput,
+  { rejectValue: ErrorNames }
+>(
   "auth/reset-password/",
-  async (
-    {
-      email,
-      token,
-      password,
-    }: {
-      email: string;
-      token: string;
-      password: string;
-    },
-    { rejectWithValue }
-  ) => {
+  async ({ email, token, password }, { rejectWithValue }) => {
     try {
       const data = await api.post("/auth/reset-password/", {
         email,
@@ -96,29 +89,31 @@ export const resetpass = createAsyncThunk(
       });
       return data.status;
     } catch (err) {
-      return rejectWithValue(GENERIC_MESSAGE);
+      return rejectWithValue("InvalidCredentials");
     }
   }
 );
 
-export const sendcode = createAsyncThunk(
-  "/auth/passreset/sendcode",
-  async (email: string, { rejectWithValue }) => {
-    try {
-      const data = await api.post("/auth/reset-password/send", { email });
-      return data.status;
-    } catch (err) {
-      return rejectWithValue(GENERIC_MESSAGE);
-    }
+export const sendcode = createAsyncThunk<
+  number,
+  string,
+  { rejectValue: ErrorNames }
+>("/auth/passreset/sendcode", async (email, { rejectWithValue }) => {
+  try {
+    const data = await api.post("/auth/reset-password/send", { email });
+    return data.status;
+  } catch (err) {
+    return rejectWithValue("EmailNotFound");
   }
-);
+});
 
-export const codeverify = createAsyncThunk(
+export const codeverify = createAsyncThunk<
+  number,
+  ResetPassInput,
+  { rejectValue: ErrorNames }
+>(
   "auth/reset-password/validate",
-  async (
-    { email, token }: { email: string; token: string },
-    { rejectWithValue }
-  ) => {
+  async ({ email, token }, { rejectWithValue }) => {
     try {
       const data = await api.post("/auth/reset-password/validate", {
         email,
@@ -126,7 +121,7 @@ export const codeverify = createAsyncThunk(
       });
       return data.status;
     } catch (err) {
-      return rejectWithValue(GENERIC_MESSAGE);
+      return rejectWithValue("InvalidToken");
     }
   }
 );
@@ -153,7 +148,7 @@ export default createSlice({
       state.authentication = {
         ...state.authentication,
         status: false,
-        message: action.payload as string,
+        message: action.payload!,
       };
     });
     builder.addCase(registerParent.rejected, (state) => {
