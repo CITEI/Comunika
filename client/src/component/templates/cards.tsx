@@ -55,10 +55,8 @@ const Cards = (props: CardsProps) => {
           let description = "";
 
           if (!box) {
-            if (status == "completed")
-              description = "Clique no botão para refazer este estágio.";
-            else if (status == "incomplete")
-              description = "Clique no botão para começar este estágio.";
+            if (status == "completed" || status == "incomplete")
+              description = `Esse estágio possui atividades sobre ${data.name.toLocaleLowerCase()} para serem realizadas com a criança!`;
             else description = "Finalize o estágio anterior para liberar este.";
           } else {
             if (box?.totalActivities > 1)

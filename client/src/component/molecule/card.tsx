@@ -73,7 +73,7 @@ const ContentContainer = styled.View`
   flex-flow: row;
   justify-content: flex-start;
   align-items: center;
-  margin-top: ${dp(8)}px;
+  margin-top: ${dp(5)}px;
   border-top-color: ${(props) => props.theme.color.hr};
   border-top-width: 1px;
   padding-top: ${dp(14)}px;
@@ -91,6 +91,7 @@ const SvgIcon = styled(SvgUri)`
 `;
 
 const ContentRightContainer = styled.View`
+  min-width: ${10}%;
   flex-flow: column;
   text-align: center;
   align-items: center;
@@ -100,6 +101,7 @@ const ContentRightContainer = styled.View`
 `;
 
 const Description = styled(RawText)`
+  font-family: ${(props) => props.theme.fontFamily.text};
   font-size: ${sp(10)}px;
   text-align: center;
 `;
