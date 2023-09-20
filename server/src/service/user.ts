@@ -264,9 +264,10 @@ class UserService extends BasicService<UserDocument> {
       id,
       select: "progress",
     });
-
-    // Check if the box ins't yet created
-    if (!user.progress.box.get(module)) {
+    // Getting the current user's box.
+    const userBox = user.progress.box.get(module);
+    // Check if the box ins't yet created or is empty.
+    if (!userBox || userBox?.data.activities.length === 0) {
       const newBox = await this.createBox({ module: module });
       // This is necessary because the call to populate below woudn't work otherwise
       user.progress.box.set(module, {done: false, data: newBox});
