@@ -143,7 +143,7 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
 
       {haveOther ? (
         <AreaInput
-          labelProps={{ style: { fontWeight: "bold", marginLeft: 0 } }}
+          labelProps={{ style: { fontWeight: "bold", marginLeft: 0, paddingLeft: 0 } }}
           label="Descreva abaixo quais outros comportamentos a criança demonstrou:"
           value={other[index]}
           onChangeText={handleInputChange}

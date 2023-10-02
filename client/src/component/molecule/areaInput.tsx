@@ -1,6 +1,6 @@
 import styled from "../../pre-start/themes";
 import React, { useState, useEffect, useCallback } from "react";
-import { dp } from "../../helper/resolution";
+import { dp, sp } from "../../helper/resolution";
 import MaskedInput, { MaskInputProps } from "react-native-mask-input";
 import InputLabel, { LabelProps } from "../atom/inputLabel";
 
@@ -47,6 +47,7 @@ const AreaInput: React.VoidFunctionComponent<AreaInputProps> = (props) => {
         focused={isFocused}
         multiline
         style={{
+          fontSize: sp(12),
           height: dp(130),
           textAlignVertical: "top",
           borderRadius: dp(5),

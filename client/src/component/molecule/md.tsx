@@ -3,7 +3,7 @@ import { TextStyle, View, ViewStyle } from 'react-native';
 import Markdown, { MarkdownIt } from 'react-native-markdown-display'
 import Title from '../atom/title'
 import styled from '../../pre-start/themes'
-import { sp } from '../../helper/resolution';
+import { dp, sp } from '../../helper/resolution';
 
 interface MdProps {
   children: string;
@@ -14,9 +14,10 @@ interface MdProps {
 }
 
 const Body = styled.View`
+  margin-top: ${dp(10)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
   color: ${(props) => props.theme.color.text};
-  font-size: ${(props) => sp(12)}px;
+  font-size: ${sp(12)}px;
   text-align: center;
 `
 
@@ -48,7 +49,7 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
     <View style={props.style}>
       <Markdown
         style={{
-          body: props.textStyle || {},
+          body: props.textStyle || {fontSize: sp(12)},
           bold: props.boldStyle || {},
           heading1: props.titleStyle || { fontSize: sp(18) },
         }}
@@ -73,4 +74,4 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
   )
 }
 
-export default Md
+export default Md;

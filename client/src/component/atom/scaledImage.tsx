@@ -10,7 +10,7 @@ type ImageSize = {
 
 const Image = styled.Image<{ size: ImageSize }>`
   width: 100%;
-  height: ${(props) => dp(props.size?.height ?? 0)}px;
+  height: ${dp(120)}px;
 `;
 
 interface ScaledImageProps {

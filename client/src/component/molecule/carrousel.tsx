@@ -55,6 +55,8 @@ const Image = styled.Image`
 `;
 
 const Preview = styled(TouchableOpacity)`
+  display: flex;
+  flex-direction: row;
   width: 100%;
 `;
 
@@ -87,6 +89,8 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
     setPreview(false);
   }, [preview]);
 
+  console.log(props.slides[1].audio)
+
   return (
     <Container>
       {preview ? (
@@ -95,7 +99,7 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
             .filter((el) => "image" in el)
             .map((el, i) => (
               <Container key={i}>
-                <Icon source={{ uri: el.image }} resizeMode="contain" />
+                <Icon source={{ uri: el.image }} resizeMode="contain"/>
                 {el.audio && <AudioButton audio={el.audio} />}
               </Container>
             ))}

@@ -36,7 +36,7 @@ const Text = styled(Md)`
 `;
 
 const TTSPlayer = styled(BaseTTSPlayer)`
-  margin-bottom: ${dp(34)}px;
+  margin-bottom: ${dp(5)}px;
 `;
 
 const Footer = styled.View`

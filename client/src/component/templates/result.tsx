@@ -44,7 +44,7 @@ const SvgImage = styled(SvgUri)`
 `;
 
 const Text = styled(BaseText)`
-  font-family: ${(props) => props.theme.fontFamily.titleLight};
+  font-family: ${(props) => props.theme.fontFamily.text};
   font-size: ${sp(16)}px;
   text-align: center;
   margin-top: ${dp(10)}px;
@@ -136,7 +136,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         <Title>{`Parabéns!`}</Title>
         <Text>
           {approved
-            ? "Parabéns você conclui o módulo com maestria"
+            ? "Você concluiu o módulo!"
             : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"}
         </Text>
         <Footer>

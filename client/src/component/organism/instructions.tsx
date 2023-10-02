@@ -21,7 +21,7 @@ interface InstructionProps {
 
 const Button = styled(BaseButton)`
   margin-bottom: ${dp(30)}px;
-  margin-top: ${dp(25)}px;
+  margin-top: ${dp(20)}px;
 `;
 
 const Header = styled.View`

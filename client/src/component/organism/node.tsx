@@ -12,6 +12,7 @@ export interface NodeProps extends BaseNode {
 }
 
 const Container = styled.View`
+  margin-top: ${dp(5)}px  ;
   align-items: center;
 `;
 

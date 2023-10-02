@@ -62,7 +62,7 @@ const SoundImage: React.VoidFunctionComponent<SoundImageProps> = (props) => {
           uri={props.image}
         ></SvgUri>
       ) : (
-        <ScaledImage image={props.image} imageAlt={props.imageAlt} />
+        <ScaledImage image={props.image} imageAlt={props.imageAlt}/>
       )}
       {props.audio && <Audio audio={props.audio} />}
       <StyledIcon name="arrow-expand" size={sp(16)} onPress={() => setDisplayVisible(true)}/>

@@ -2,10 +2,10 @@
   "build": {
     "production": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "env": {
-        "API_DOMAIN": "http://20.38.46.236:3000"
+        "API_DOMAIN": "http://comunizika.im.ufrrj.br"
       }
     }
   }
