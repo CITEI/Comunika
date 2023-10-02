@@ -1,9 +1,8 @@
 import { Modal } from "react-native";
 import styled from "../../pre-start/themes";
 import { vw, vh, dp, sp } from "../../helper/resolution";
-import { SvgUri } from "react-native-svg";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import ScaledImage from "../atom/scaledImage";
+import { Image } from "expo-image";
 
 const ModalBackground = styled.View`
   background-color: rgba(0, 0, 0, 0.6);
@@ -15,7 +14,7 @@ const ModalBackground = styled.View`
   z-index: 999;
 `;
 
-const Image = styled.Image`
+const ImageStyled = styled(Image)`
   width: 100%;
   height: 100%;
 `;
@@ -23,7 +22,6 @@ const Image = styled.Image`
 interface ImageModalProps {
   visible: boolean,
   close: () => void,
-  imageType: string,
   imageUri: string,
   imageAlt: string,
 }
@@ -56,20 +54,12 @@ function ImageModal(props: ImageModalProps) {
     >
       <ModalBackground>
         <ImageBackground>
-          {props.imageType == "svg" ? (
-            <SvgUri
-            accessibilityLabel={props.imageAlt}
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMaxYMax"
-            uri={props.imageUri}
-            ></SvgUri>
-          ) : (
-            <ScaledImage
-              image={props.imageUri}
-              imageAlt={props.imageAlt}
-            ></ScaledImage>
-          )}
+          <ImageStyled 
+            source={props.imageUri}
+            alt={props.imageAlt}
+            contentFit="contain"
+            contentPosition={'bottom center'}
+          />
           <StyledIcon name="arrow-collapse" size={sp(16)} onPress={props.close}/>
         </ImageBackground>
       </ModalBackground>
