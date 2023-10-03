@@ -1,42 +1,46 @@
 import IconButton, { IconButtonProps } from "./iconButton";
-import React, { useCallback, useState } from "react";
-import { Audio } from "expo-av";
+import React, { useEffect } from "react";
+import { AVPlaybackStatus, AVPlaybackStatusError, AVPlaybackStatusSuccess, Audio } from "expo-av";
 
 export interface AudioButtonProps extends Omit<IconButtonProps, "icon"> {
   audio: string;
-  blocked?: boolean;
-  onPlay?: () => void;
-  onFinish?: () => void;
 }
 
 /** Button that fires a sound */
-const AudioButton: React.VoidFunctionComponent<AudioButtonProps> = (props) => {
-  const { audio, blocked, onPlay, onFinish, onPress, ...rest } = props;
-  const isBlocked = props.blocked || false;
-  const [playing, setPlaying] = useState(false);
-
-  const handlePress = useCallback(
-    async (ev) => {
-      if (onPress) onPress(ev);
-      if (!playing && !isBlocked) {
-        setPlaying(true);
-        if (props.onPlay) props.onPlay();
-        await Audio.Sound.createAsync(
-          { uri: props.audio },
-          { shouldPlay: true },
-          (status) => {
-            if (status["didJustFinish"]) {
-              setPlaying(false);
-              if (props.onFinish) props.onFinish();
-            }
-          }
-        );
+function AudioButton(props: AudioButtonProps) {
+  const { audio, ...rest } = props;
+  const sound = new Audio.Sound();
+  
+  // Unloads the sound when it finishes playinb back
+  const statusUpdate = async (playbackStatus: AVPlaybackStatus | AVPlaybackStatusSuccess | AVPlaybackStatusError) => {
+    if (playbackStatus.isLoaded) {
+      if (playbackStatus.didJustFinish) {
+        await sound.unloadAsync();
       }
-    },
-    [playing, audio, isBlocked, onPress]
-  );
+    }
+  }
 
-  return <IconButton {...rest} icon="sound" onPress={handlePress} />;
-};
+  sound.setOnPlaybackStatusUpdate(statusUpdate);
+
+  // loads and plays the sound, restart if pressed again during playback
+  async function playSound() {
+    if (sound._loaded) {
+      await sound.replayAsync();
+    } else {
+      await sound.loadAsync({ uri: audio });
+      await sound.playAsync();
+    }
+  }
+
+  // Stops playing audio if the component is unmounted.
+  useEffect(() => {
+    return () => {
+      sound.unloadAsync()
+    }
+  }, [sound])
+
+  return <IconButton {...rest} icon="sound" onPress={playSound} />;
+}
 
 export default AudioButton;
+  

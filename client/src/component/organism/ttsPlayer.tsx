@@ -10,7 +10,6 @@ interface TTSPlayerProps extends ShadowPanelProps {
 }
 
 enum PlayerState {
-  Paused,
   Playing,
   Stopped,
 }
@@ -32,7 +31,7 @@ const PlayButton = styled(Button)`
 `;
 
 /** A minimal text reader using TTS */
-const TTSPlayer: React.VoidFunctionComponent<TTSPlayerProps> = (props) => {
+function TTSPlayer(props: TTSPlayerProps) {
   const [state, setState] = useState(PlayerState.Stopped);
 
   /** Stops a tts speech */
@@ -46,9 +45,6 @@ const TTSPlayer: React.VoidFunctionComponent<TTSPlayerProps> = (props) => {
     if (state == PlayerState.Playing) {
       await Speech.stop();
       setState(PlayerState.Stopped);
-    } else if (state == PlayerState.Paused) {
-      await Speech.resume();
-      setState(PlayerState.Playing);
     } else {
       Speech.speak(props.text, {
         onDone: () => setState(PlayerState.Stopped),
