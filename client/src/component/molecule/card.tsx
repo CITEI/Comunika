@@ -5,7 +5,7 @@ import BaseTitle from "../atom/title";
 import RawText from "../atom/text";
 import BaseButton from "../atom/button";
 import ShadowPanel from "../atom/shadowPanel";
-import { SvgUri } from "react-native-svg";
+import { Image } from "expo-image";
 
 interface CardProps {
   /** image url */
@@ -80,16 +80,6 @@ const ContentContainer = styled.View`
   flex: 1;
 `;
 
-const Icon = styled.Image`
-  flex: 1;
-  width: 100%;
-  height: 100%;
-`;
-
-const SvgIcon = styled(SvgUri)`
-  flex: 1;
-`;
-
 const ContentRightContainer = styled.View`
   min-width: ${10}%;
   flex-flow: column;
@@ -109,6 +99,12 @@ const Description = styled(RawText)`
 const Button = styled(BaseButton)`
   width: 100%;
   font-size: ${sp(14)}px;
+`;
+
+const Icon = styled(Image)`
+  flex: 1;
+  width: 100%;
+  height: 100%;
 `;
 
 /** Card is a component that displays the summarized information of a group
@@ -139,21 +135,7 @@ const Card: React.VoidFunctionComponent<CardProps> = (props) => {
         }
       </Header>
       <ContentContainer>
-        {props.image.slice(-3) == "svg" ? (
-          <SvgIcon
-            width="100%"
-            height="100%"
-            accessibilityLabel={props.imageAlt}
-            uri={props.image}
-          ></SvgIcon>
-        ) : (
-          <Icon
-            source={{ uri: props.image }}
-            accessibilityLabel={props.imageAlt}
-            style={{}}
-            resizeMode="contain"
-          />
-        )}
+        <Icon source={props.image} alt={props.imageAlt} contentFit="contain" />
         <ContentRightContainer>
           <Description>{props.description}</Description>
           {(props.status == "incomplete" ||

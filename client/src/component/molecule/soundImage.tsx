@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";
 import AudioButton from "../atom/audioButton";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons"
 import ImageModal from "./imageModal";
 import { Image } from 'expo-image';
 
 export interface SoundImageProps {
   /** image uri */
   image: string;
-  /** image alt description */
+  /** image alt de]ription */
   imageAlt: string;
   /** audio uri */
   audio?: string;
 }
 
 const Container = styled.View`
-  position: relative;
   width: 100%;
-  height: ${dp(140)}px;
-  background-color: ${(props) => props.theme.color.secondary};
+  height: ${dp(120)}px;
+  background-color: ${props => props.theme.color.secondary};
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 `;
 
 const Audio = styled(AudioButton)`
@@ -39,7 +39,7 @@ const StyledIcon = styled(Icon)`
 `
 
 /** Image with an optional sound */
-const SoundImage: React.VoidFunctionComponent<SoundImageProps> = (props) => {
+function SoundImage (props: SoundImageProps) {
   const [displayVisible, setDisplayVisible] = useState<boolean>(false);
 
   return (
@@ -51,7 +51,7 @@ const SoundImage: React.VoidFunctionComponent<SoundImageProps> = (props) => {
         imageAlt={props.imageAlt} 
       />
       <Image
-        style={{width: '100%', flex: 1}}
+        style={{width: "90%", flex: 1}}
         source={props.image}
         alt={props.imageAlt}
         contentFit="contain"

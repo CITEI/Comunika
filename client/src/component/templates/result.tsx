@@ -14,7 +14,8 @@ import useModules from "../../hooks/useModules";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import { addToStreak, resetStreak } from "../../store/progress";
 import { resetModules } from "../../store/modules";
-import { SvgUri } from "react-native-svg";
+import { Image } from "expo-image";
+
 interface ResultProps {
   module: Module;
   grade: number;
@@ -31,14 +32,9 @@ const Title = styled(BaseTitle)`
   text-align: center;
 `;
 
-const Image = styled.Image`
+const Icon = styled(Image)`
   width: ${dp(180)}px;
   height: ${dp(180)}px;
-  margin-bottom: ${dp(19)}px;
-  margin-top: ${dp(37)}px;
-`;
-
-const SvgImage = styled(SvgUri)`
   margin-bottom: ${dp(19)}px;
   margin-top: ${dp(37)}px;
 `;
@@ -54,16 +50,6 @@ const Text = styled(BaseText)`
 const Footer = styled.View`
   width: 100%;
 `;
-/**
-const TITLE_MESSAGES: {[key in ResultProps["status"]]: string} = {
-  "ended": t("You finished %s"),
-};
-
-const CONTENT_MESSAGES: {[key in ResultProps["status"]]: string} = {
-  "approved": t("StageSucceeded"),
-  "ended": t("NoContent"),
-  "reproved": t("StageFailed"),
-}; */
 
 /** Templated result screen */
 const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
@@ -113,26 +99,13 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
 
   return (
     <MainContainer>
-      <Toolbar
-        accountButton={true}
-        logo={true}
-        shadow={true}
-      />
+      <Toolbar accountButton={true} logo={true} shadow={true} />
       <Container>
-        {props.module.image.slice(-3) == "svg" ? (
-          <SvgImage
-            width={dp(180)}
-            height={dp(180)}
-            accessibilityLabel={props.module.imageAlt}
-            uri={props.module.image}
-          />
-        ) : (
-          <Image
-            source={{ uri: props.module.image }}
-            accessibilityLabel={props.module.imageAlt}
-            resizeMode="contain"
-          />
-        )}
+        <Icon
+          source={props.module.image}
+          alt={props.module.image}
+          contentFit="contain"
+        />
         <Title>{`Parabéns!`}</Title>
         <Text>
           {approved

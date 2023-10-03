@@ -35,7 +35,7 @@ const Counter = styled(RawText)`
 `;
 
 const CounterCurrent = styled(Title)`
-  font-family: ${(props) => props.theme.fontFamily.textBold}
+  font-family: ${(props) => props.theme.fontFamily.textBold};
   font-size: ${sp(16)}px;
   margin-bottom: ${dp(8)}px;
   color: ${(props) => props.theme.color.notes};

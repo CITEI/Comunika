@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MainContainer from "../component/atom/mainContainer";
 import Toolbar from "../component/organism/toolbar";
 import BaseTitle from "../component/atom/title";
@@ -9,13 +9,10 @@ import { useRoute } from "@react-navigation/native";
 import { GameProps } from "../route/game";
 import ContentContainer from "../component/atom/contentContainer";
 import GeneralInstructions from "../component/organism/generalnstructions";
-import { GameNavigatorProps } from "../route/game";
-import { useNavigation } from "@react-navigation/native";
-import t from "../pre-start/i18n";
+import { Image } from "expo-image";
 import useAnswers from "../hooks/useAnswers";
-import { SvgUri } from "react-native-svg";
 
-interface TransitionProps {}
+interface TransitionProps {};
 
 const Content = styled(ContentContainer)`
   align-items: center;
@@ -32,13 +29,9 @@ const Subtitle = styled(BaseText)`
   margin-top: ${dp(8)}px;
 `;
 
-const Image = styled.Image`
+const Icon = styled(Image)`
   width: ${dp(180)}px;
   height: ${dp(180)}px;
-  margin-top: ${dp(76)}px;
-`;
-
-const SvgImage = styled(SvgUri)`
   margin-top: ${dp(76)}px;
 `;
 
@@ -60,11 +53,7 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
 
   return (
     <MainContainer>
-      <Toolbar
-        logo={true}
-        shadow={false}
-        accountButton={false}
-      />
+      <Toolbar logo={true} shadow={false} accountButton={false} />
       <Content>
         {timer ? (
           <GeneralInstructions
@@ -78,20 +67,11 @@ const Transition: React.VoidFunctionComponent<TransitionProps> = (props) => {
               {(answers[module.id]?.answers.length ?? 0) + 1}
             </Title>
             <Subtitle>{module.name}</Subtitle>
-            {module.image.slice(-3) == "svg" ? (
-              <SvgImage
-                width={dp(180)}
-                height={dp(180)}
-                uri={module.image}
-                accessibilityLabel={module.imageAlt}
-              />
-            ) : (
-              <Image
-                resizeMode="contain"
-                source={{ uri: module.image }}
-                accessibilityLabel={module.imageAlt}
-              />
-            )}
+            <Icon
+              contentFit="contain"
+              source={ module.image }
+              alt={module.imageAlt}
+            />
           </>
         )}
       </Content>

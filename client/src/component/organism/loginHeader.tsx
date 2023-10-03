@@ -3,7 +3,7 @@ import { dp } from '../../helper/resolution'
 import styled from '../../pre-start/themes'
 import Title from '../atom/title'
 import logo from "../../../assets/logo.png";
-import t from '../../pre-start/i18n';
+import { Image } from 'expo-image';
 
 const Header = styled.View`
   align-items: center;
@@ -12,7 +12,7 @@ const Header = styled.View`
   margin-bottom: ${dp(31)}px;
 `
 
-const Logo = styled.Image`
+const Logo = styled(Image)`
   width: ${dp(185)}px;
   height: ${dp(40)}px;
   margin-bottom: ${dp(30)}px;
@@ -22,7 +22,7 @@ const Logo = styled.Image`
 const LoginHeader: React.VoidFunctionComponent = () => {
   return (
     <Header>
-      <Logo source={logo} resizeMode="contain" />
+      <Logo source={logo} contentFit='contain' />
       <Title>{"Boas vindas!"}</Title>
     </Header>
   )

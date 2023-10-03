@@ -4,7 +4,7 @@ import styled from "../../pre-start/themes";
 import IconButton from "../atom/iconButton";
 import AudioButton from "../atom/audioButton";
 import { TouchableOpacity } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Image } from "expo-image";
 
 interface CarrouselProps {
   /** slides definition */
@@ -46,7 +46,7 @@ const Content = styled.View`
   padding-top: ${dp(5)}px;
 `;
 
-const Image = styled.Image`
+const StyledImage = styled(Image)`
   flex: 2;
   width: 100%;
   height: 100%;
@@ -67,7 +67,7 @@ const Icon = styled(Image)`
   margin-right: ${dp(5)}px;
 `;
 
-const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
+function Carrousel(props: CarrouselProps) {
   const [preview, setPreview] = useState<boolean>(props.preview || false);
   const [index, setIndex] = useState(0);
 
@@ -89,8 +89,6 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
     setPreview(false);
   }, [preview]);
 
-  console.log(props.slides[1].audio)
-
   return (
     <Container>
       {preview ? (
@@ -99,7 +97,7 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
             .filter((el) => "image" in el)
             .map((el, i) => (
               <Container key={i}>
-                <Icon source={{ uri: el.image }} resizeMode="contain"/>
+                <Icon source={el.image} contentFit="contain"/>
                 {el.audio && <AudioButton audio={el.audio} />}
               </Container>
             ))}
@@ -109,10 +107,10 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
           <Arrow icon="caretleft" onPress={handlePrevious} />
           <Content>
             {current.image && (
-              <Image
-                source={{ uri: current.image }}
-                resizeMode="contain"
-                accessibilityLabel={current.imageAlt}
+              <StyledImage
+                source={current.image}
+                contentFit="contain"
+                
               />
             )}
             {current.audio && <AudioButton audio={current.audio} />}
@@ -122,6 +120,6 @@ const Carrousel: React.VoidFunctionComponent<CarrouselProps> = (props) => {
       )}
     </Container>
   );
-};
+}
 
 export default Carrousel;

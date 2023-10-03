@@ -1,6 +1,4 @@
-import baseStyled, {
-  ReactNativeStyledInterface,
-} from "styled-components/native";
+import styled from "styled-components/native";
 
 const lightTheme = {
   color: {
@@ -27,11 +25,7 @@ const lightTheme = {
   },
 };
 
-export const themes = {
-  light: lightTheme,
-};
-
 export const defaultTheme = lightTheme;
 
 export type Theme = typeof defaultTheme;
-export default baseStyled as unknown as ReactNativeStyledInterface<Theme>;
+export default styled;

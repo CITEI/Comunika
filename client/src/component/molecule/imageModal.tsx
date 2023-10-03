@@ -1,7 +1,7 @@
 import { Modal } from "react-native";
 import styled from "../../pre-start/themes";
 import { vw, vh, dp, sp } from "../../helper/resolution";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { Image } from "expo-image";
 
 const ModalBackground = styled.View`

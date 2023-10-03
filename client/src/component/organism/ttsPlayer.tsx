@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import ShadowPanel, { ShadowPanelProps } from "../atom/shadowPanel";
 import * as Speech from "expo-speech";
-import Icon from "react-native-vector-icons/AntDesign";
+import Icon from "@expo/vector-icons/AntDesign";
 import { sp, dp } from "../../helper/resolution";
 import styled from "../../pre-start/themes";
 

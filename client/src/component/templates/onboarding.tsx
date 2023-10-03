@@ -8,6 +8,7 @@ import BaseTitle from "../atom/title";
 import BaseText from "../atom/text";
 import { dp, sp } from "../../helper/resolution";
 import Button from "../atom/button";
+import { Image } from "expo-image";
 
 interface OnboardingProps {
   slides: {
@@ -32,7 +33,7 @@ const Title = styled(BaseTitle)`
   margin-bottom: ${dp(18)}px;
 `;
 
-const Image = styled.Image`
+const StyledImage = styled(Image)`
   width: ${dp(200)}px;
   height: ${dp(200)}px;
   margin-bottom: ${dp(38)}px;
@@ -72,10 +73,10 @@ const Onboarding: React.VoidFunctionComponent<OnboardingProps> = (props) => {
       <Container>
         <Title>{slide.title}</Title>
         <Text>{slide.text}</Text>
-        <Image
+        <StyledImage
           source={slide.image}
-          accessibilityLabel={slide.imageAlt}
-          resizeMode="contain"
+          alt={slide.imageAlt}
+          contentFit="contain"
         />
         <Footer>
           <Button

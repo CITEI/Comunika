@@ -4,7 +4,7 @@ import {
   TouchableOpacityProps,
   ViewStyle,
 } from "react-native";
-import RawIcon from "react-native-vector-icons/AntDesign";
+import RawIcon from "@expo/vector-icons/AntDesign";
 import React, { useMemo } from "react";
 import styled from "../../pre-start/themes";
 import { dp, sp } from "../../helper/resolution";

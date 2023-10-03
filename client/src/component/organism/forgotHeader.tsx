@@ -4,6 +4,7 @@ import styled from "../../pre-start/themes";
 import Title from "../atom/title";
 import logo from "../../../assets/logo.png";
 import RawText from "../atom/text";
+import { Image } from "expo-image";
 
 const Header = styled.View`
   align-items: center;
@@ -12,7 +13,7 @@ const Header = styled.View`
   margin-bottom: ${dp(30)}px;
 `;
 
-const Logo = styled.Image`
+const Logo = styled(Image)`
   width: ${dp(200)}px;
   height: ${dp(40)}px;
   margin-bottom: ${dp(39)}px;
@@ -29,7 +30,7 @@ const Text = styled(RawText)`
 function ForgotHeader(props: {text: string}) {
   return (
     <Header>
-      <Logo source={logo} resizeMode="contain" />
+      <Logo source={logo} contentFit="contain" />
       <Title>Recuperar Senha</Title>
       <Text>{props.text}</Text>
     </Header>
