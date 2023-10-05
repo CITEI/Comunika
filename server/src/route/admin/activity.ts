@@ -38,6 +38,7 @@ const activityValidatorSchema = {
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
           audio: CustomJoi.UploadStatus(),
+          position: CustomJoi.RequiredString().valid('center', 'right', 'left')
         }),
         Joi.object({
           ...baseNodeCreateSchema,
@@ -70,7 +71,7 @@ const activityValidatorSchema = {
     .items(
       Joi.object({
         question: CustomJoi.RequiredString(),
-        notes: Joi.string(),
+        notes: Joi.string().allow(""),
       })
     )
     .min(MIN_QUESTION_NODES)
@@ -111,6 +112,12 @@ const activityOptions: ResourceOptions = {
       dependency: "nodes.$.type",
       isin: ["text"],
       extensions: ["png", "svg", "gif"],
+    }),
+    "nodes.position": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ['text'],
+      type: 'string',
+      availableValues: [{value: 'center', label: 'Centro'}, {value: 'right', label: 'Direita'}, {value: 'left', label: 'Esquerda'}]
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",

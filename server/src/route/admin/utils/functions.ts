@@ -117,11 +117,13 @@ export function buildConditionalProperty({
   isin,
   type,
   isArray,
+  availableValues
 }: {
   type: PropertyType;
   dependency: string;
   isin: string[];
   isArray?: boolean;
+  availableValues?: {value: string, label: string}[]
 }): PropertyOptions {
   return {
     components: {
@@ -129,6 +131,7 @@ export function buildConditionalProperty({
       show: bundleFromView("conditional_property"),
     },
     type,
+    availableValues: availableValues,
     custom: {
       dependency,
       isin,

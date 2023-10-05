@@ -29,6 +29,7 @@ const TextNodeSchema = new mongoose.Schema(
     image: { type: String, required: true },
     imageAlt: { type: String, required: true },
     audio: { type: String, required: false },
+    position: {type: String, required: false}
   },
   NO_ID
 );
