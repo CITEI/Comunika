@@ -92,7 +92,7 @@ const activityOptions: ResourceOptions = {
       isVisible: { edit: true, filter: false, list: false, show: false },
     },
     questionCount: {
-      isVisible: { edit: false, filter: false, list: false, show: false },
+      isVisible: { edit: false, filter: false, list: false, show: true },
     },
     nodes: {
       type: "mixed",
@@ -250,6 +250,16 @@ const activityOptions: ResourceOptions = {
     },
     edit: {
       before: [
+        (request) => {
+          const regex = /(questionNodes\.[0-9]+\.question)/ 
+
+          if (request.payload) {
+            const numberOfQuestions = Object.entries(request.payload!).filter((value, _) => regex.test(value[0])).length;
+            request.payload.questionCount = numberOfQuestions;
+          }
+
+          return request;
+        },
         buildFileUploadBefore([
           { attribute: "nodes.$.image", extensions: ["png", "svg", "gif"] },
           { attribute: "nodes.$.audio", extensions: ["ogg"] },
