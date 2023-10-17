@@ -10,6 +10,7 @@ import TTSLabel from "../atom/ttsLabel";
 import t from "../../pre-start/i18n";
 import util from "util";
 import { extractText } from "../../helper/markdown";
+import StepText from "../atom/StepText";
 
 interface InstructionProps {
   title: string;
@@ -64,6 +65,7 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
       <Header>
         <ModuleInfo>{props.module}</ModuleInfo>
         <Title>{props.title}</Title>
+        {props.nodes.length > 1 ? <StepText number={nodeIndex} /> : <></>}
       </Header>
       <TTSPlayer text={extractText(currentNode.text)} />
       <Node {...currentNode} />

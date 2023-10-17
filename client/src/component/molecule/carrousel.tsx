@@ -45,7 +45,6 @@ const Content = styled.View`
   flex-flow: column;
   align-items: center;
   justify-content: center;
-  padding-bottom: ${dp(10)}px;
   padding-top: ${dp(5)}px;
 `;
 
@@ -53,8 +52,6 @@ const StyledImage = styled(Image)`
   flex: 2;
   width: 100%;
   height: 100%;
-  margin-top: ${dp(5)}px;
-  margin-bottom: ${dp(5)}px;
 `;
 
 const Preview = styled(TouchableOpacity)`
@@ -109,7 +106,7 @@ function Carrousel(props: CarrouselProps) {
   }, [current]);
 
   return (
-    <Container>
+    <Container style={{paddingBottom: current.audio || preview ? dp(5) : 0}}>
       {preview ? (
         <Preview onPress={handlePreview}>
           {props.slides
@@ -131,7 +128,7 @@ function Carrousel(props: CarrouselProps) {
           <Arrow icon="caretleft" onPress={handlePrevious} />
           <Content>
             {current.image && (
-              <StyledImage source={current.image} contentFit="contain" />
+              <StyledImage source={current.image} contentFit="contain" style={{marginBottom: current.audio ? dp(5) : 0}}/>
             )}
             {current.audio && (
               <AudioButton
