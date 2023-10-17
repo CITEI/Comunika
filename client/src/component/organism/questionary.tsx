@@ -134,11 +134,14 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         <CounterTotal> / {answers.length}</CounterTotal>
       </Counter>
       <Md>{`# ${currentNode.question}`}</Md>
-      <Notes>{currentNode.notes}</Notes>
+      {currentNode.notes && <Notes>{currentNode.notes}</Notes>}
       <RadioQuestions
         questions={["Sim", "Não", "Outros"]}
         onSelected={handleRadioSelect}
         selected={answers[index]}
+        style={{
+          marginTop: currentNode.notes ? 0 : dp(24)
+        }}
       />
 
       {haveOther ? (
@@ -158,13 +161,9 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         <></>
       )}
 
-      <BackButton
-        label={"Voltar"}
-        backButton={true}
-        onPress={handleBackPressed}
-      >
-        {"AAAAAA"}
-      </BackButton>
+      {
+        index != 0 && <BackButton label={"Voltar"} backButton={true} onPress={handleBackPressed} />
+      }
     </>
   ) : (
     <></>

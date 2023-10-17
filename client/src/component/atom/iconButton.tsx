@@ -11,6 +11,7 @@ import { dp, sp } from "../../helper/resolution";
 
 export interface IconButtonProps extends TouchableOpacityProps {
   icon: string;
+  fontSize?: number;
 }
 
 const Container = styled(TouchableOpacity)`
@@ -43,7 +44,7 @@ const IconButton: React.VoidFunctionComponent<IconButtonProps> = (props) => {
 
   return (
     <Container {...rest}>
-      <Icon name={icon} color={style.color} fontSize={style.fontSize} />
+      <Icon name={icon as any} color={style.color} fontSize={props.fontSize || style.fontSize} />
     </Container>
   );
 };

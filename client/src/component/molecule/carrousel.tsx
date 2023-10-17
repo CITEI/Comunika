@@ -1,5 +1,5 @@
 import { dp } from "../../helper/resolution";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "../../pre-start/themes";
 import IconButton from "../atom/iconButton";
 import AudioButton from "../atom/audioButton";
@@ -15,8 +15,11 @@ interface CarrouselProps {
     imageAlt?: string;
     /** audio uri */
     audio?: string;
+    uniqueText?: string;
   }[];
   preview?: boolean;
+  text: string;
+  setText: (newText: string) => void;
 }
 
 const Container = styled.View`
@@ -57,14 +60,26 @@ const StyledImage = styled(Image)`
 const Preview = styled(TouchableOpacity)`
   display: flex;
   flex-direction: row;
+  gap: ${dp(8)}px;
   width: 100%;
+  height: 100%;
+  padding: ${dp(8)}px;
+  padding-left: ${dp(10)}px;
+  padding-right: ${dp(10)}px;
+`;
+
+const Group = styled.View`
+  width: 100%;
+  height: ${dp(80)}px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-end;
 `;
 
 const Icon = styled(Image)`
-  max-width: 30%;
   flex: 1;
-  margin-left: ${dp(5)}px;
-  margin-right: ${dp(5)}px;
+  margin-bottom: ${dp(5)}px;
 `;
 
 function Carrousel(props: CarrouselProps) {
@@ -89,6 +104,10 @@ function Carrousel(props: CarrouselProps) {
     setPreview(false);
   }, [preview]);
 
+  useEffect(() => {
+    props.setText(props.text.replace("$uniqueText", current.uniqueText ?? ""));
+  }, [current]);
+
   return (
     <Container>
       {preview ? (
@@ -96,10 +115,15 @@ function Carrousel(props: CarrouselProps) {
           {props.slides
             .filter((el) => "image" in el)
             .map((el, i) => (
-              <Container key={i}>
-                <Icon source={el.image} contentFit="contain"/>
-                {el.audio && <AudioButton audio={el.audio} />}
-              </Container>
+              <Group key={i}>
+                <Icon
+                  key={i}
+                  source={el.image}
+                  contentFit="contain"
+                  contentPosition={"bottom"}
+                />
+                {el.audio && <AudioButton audio={el.audio} iconSize="small" />}
+              </Group>
             ))}
         </Preview>
       ) : (
@@ -107,13 +131,14 @@ function Carrousel(props: CarrouselProps) {
           <Arrow icon="caretleft" onPress={handlePrevious} />
           <Content>
             {current.image && (
-              <StyledImage
-                source={current.image}
-                contentFit="contain"
-                
+              <StyledImage source={current.image} contentFit="contain" />
+            )}
+            {current.audio && (
+              <AudioButton
+                audio={current.audio}
+                iconSize={current.image ? "normal" : "big"}
               />
             )}
-            {current.audio && <AudioButton audio={current.audio} />}
           </Content>
           <Arrow icon="caretright" onPress={handleNext} />
         </>

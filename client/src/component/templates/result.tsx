@@ -110,7 +110,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         <Text>
           {approved
             ? "Você concluiu o módulo!"
-            : "Que legal você concluiu o módulo! Que tal rever alguns conceitos?"}
+            : "Que legal, você concluiu o módulo! Que tal rever alguns conceitos?"}
         </Text>
         <Footer>
           {approved ? buttons[0] : buttons[1]}

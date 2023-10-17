@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TextStyle, View, ViewStyle } from 'react-native';
-import Markdown, { MarkdownIt } from 'react-native-markdown-display'
+import Markdown, { MarkdownIt } from '@ronradtke/react-native-markdown-display'
 import Title from '../atom/title'
 import styled from '../../pre-start/themes'
 import { dp, sp } from '../../helper/resolution';
@@ -11,20 +11,19 @@ interface MdProps {
   textStyle?: TextStyle;
   boldStyle?: TextStyle;
   titleStyle?: TextStyle;
-}
+};
 
 const Body = styled.View`
   margin-top: ${dp(10)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
   color: ${(props) => props.theme.color.text};
   font-size: ${sp(12)}px;
-  text-align: center;
-`
+`;
 
 const Bold = styled.Text`
   font-weight: bold;
   color: ${(props) => props.theme.color.bold};
-`
+`;
 
 /** Parses text as markdown
  *
@@ -33,7 +32,7 @@ const Bold = styled.Text`
  * - Parses h1 as title
  * - Parses italic and bold
  */
-const Md: React.VoidFunctionComponent<MdProps> = (props) => {
+function Md (props: MdProps) {
   /** Parses ordered lists as bold */
   const text = React.useMemo(() => {
     const regex = '(\\d+\\s?[|.])\\s';
@@ -44,7 +43,6 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
 
   /** Configures markdown parser */
   const markdownit = React.useMemo(() => MarkdownIt({ typographer: true }).disable(['list']), [])
-
   return (
     <View style={props.style}>
       <Markdown
@@ -69,7 +67,7 @@ const Md: React.VoidFunctionComponent<MdProps> = (props) => {
         markdownit={markdownit}
       >
         {text}
-      </Markdown>
+      </ Markdown>
     </View>
   )
 }

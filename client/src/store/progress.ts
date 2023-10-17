@@ -20,6 +20,7 @@ export interface TextNode extends BaseNode {
   image: string;
   imageAlt: string;
   audio?: string;
+  position?: string;
 }
 
 /** Node that shows a text along with an image/audio carrousel */
@@ -30,13 +31,16 @@ export interface CarrouselNode extends BaseNode {
       image: string;
       imageAlt: string;
       audio: string;
+      uniqueText: string;
     }
     | {
       image: string;
       imageAlt: string;
+      uniqueText: string;
     }
     | {
       audio: string;
+      uniqueText: string;
     }
   >;
   preview: boolean;
@@ -91,7 +95,7 @@ export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
   const box = {
     createdAt: data.createdAt,
     module: data.module,
-    answers: local?.answers ?? [],
+    answers: local?.createdAt == data.createdAt ? local.answers : [],
     attempt: data.attempt,
     activities: data.activities.map(el => {
       const activity = el.activity;

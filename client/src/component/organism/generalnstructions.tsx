@@ -21,7 +21,6 @@ interface GeneralInstructionsProps {
 
 const Container = styled.View`
   width: 100%;
-  text-align: left;
 `;
 
 const Title = styled(BaseTitle)`
@@ -32,7 +31,6 @@ const Title = styled(BaseTitle)`
 `;
 
 const Text = styled(Md)`
-
 `;
 
 const TTSPlayer = styled(BaseTTSPlayer)`

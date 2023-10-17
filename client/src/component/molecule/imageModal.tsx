@@ -2,7 +2,7 @@ import { Modal } from "react-native";
 import styled from "../../pre-start/themes";
 import { vw, vh, dp, sp } from "../../helper/resolution";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Image } from "expo-image";
+import { Image, ImageContentPosition } from "expo-image";
 
 const ModalBackground = styled.View`
   background-color: rgba(0, 0, 0, 0.6);
@@ -14,27 +14,21 @@ const ModalBackground = styled.View`
   z-index: 999;
 `;
 
-const ImageStyled = styled(Image)`
-  width: 100%;
-  height: 100%;
-`;
-
 interface ImageModalProps {
   visible: boolean,
   close: () => void,
   imageUri: string,
   imageAlt: string,
+  position?: string,
 }
 
 const ImageBackground = styled.View`
+  display: flex;
   flex: 1;
   background-color: ${(props) => props.theme.color.secondary};
   margin-top: ${dp(170)}px;
   width: ${vw(95)}px;
   max-height: ${vh(30)}px;
-  align-items: flex-end;
-  justify-content: center;
-  flex-direction: row;
 `;
 
 const StyledIcon = styled(Icon)`
@@ -54,11 +48,12 @@ function ImageModal(props: ImageModalProps) {
     >
       <ModalBackground>
         <ImageBackground>
-          <ImageStyled 
+          <Image
+            style={{width: "100%", flex: 1}}
             source={props.imageUri}
             alt={props.imageAlt}
             contentFit="contain"
-            contentPosition={'bottom center'}
+            contentPosition={`bottom ${props.position}` as ImageContentPosition}
           />
           <StyledIcon name="arrow-collapse" size={sp(16)} onPress={props.close}/>
         </ImageBackground>

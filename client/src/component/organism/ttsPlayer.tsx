@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ShadowPanel, { ShadowPanelProps } from "../atom/shadowPanel";
 import * as Speech from "expo-speech";
 import Icon from "@expo/vector-icons/AntDesign";
@@ -52,6 +52,13 @@ function TTSPlayer(props: TTSPlayerProps) {
       setState(PlayerState.Playing);
     }
   }, [props.text, state]);
+
+  // Stops playing audio if the component is unmounted.
+  useEffect(() => {
+    return () => {
+      Speech.stop();
+    }
+  }, [])
 
   return (
     <Container elevation={7} {...props}>

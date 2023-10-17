@@ -32,7 +32,7 @@ const Header = styled.View`
 const ModuleInfo = styled(BaseTitle)`
   font-family: ${(props) => props.theme.fontFamily.titleLight};
   font-size: ${sp(14)}px;
-  margin-bottom: ${dp(3)}px;
+  margin-bottom: ${dp(10)}px;
 `;
 
 const Title = styled(BaseTitle)`
@@ -48,7 +48,8 @@ const TTSPlayer = styled(BaseTTSPlayer)`
 const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
   const [nodeIndex, setNodeIndex] = React.useState(0);
 
-  const currentNode = props.nodes[nodeIndex] || {};
+  let currentNode = props.nodes[nodeIndex] || {};
+
   const isLast = nodeIndex == props.nodes.length - 1;
 
   /** Moves to the next activity node */
@@ -67,7 +68,7 @@ const Instructions: React.VoidFunctionComponent<InstructionProps> = (props) => {
       <TTSPlayer text={extractText(currentNode.text)} />
       <Node {...currentNode} />
       <Button
-        label={isLast ? "Finalizar" : "Próximo"}
+        label={isLast ? "Finalizar Atividade" : "Próximo"}
         onPress={handleNextPressed}
       />
     </>

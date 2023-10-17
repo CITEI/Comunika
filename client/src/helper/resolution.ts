@@ -23,5 +23,5 @@ export const sp = (px: number) => {
   );
 };
 
-export const vw = (value: number) => Math.ceil(vw_(value))
-export const vh = (value: number) => Math.ceil(vh_(value))
+export const vw = (value: number) => Math.ceil(Dimensions.get('window').width * (value / 100))
+export const vh = (value: number) => Math.ceil(Dimensions.get('window').height * (value / 100))

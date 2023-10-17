@@ -129,7 +129,7 @@ export const codeverify = createAsyncThunk<
 interface InitialState {
   authentication: {
     status: boolean;
-    message: string;
+    message: string | number;
   };
   disabilities: Disability[];
 }
