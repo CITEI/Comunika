@@ -49,15 +49,18 @@ const activityValidatorSchema = {
               Joi.alternatives().try(
                 Joi.object({
                   audio: CustomJoi.UploadStatus().required(),
+                  uniqueText: CustomJoi.String(),
                 }),
                 Joi.object({
                   image: CustomJoi.UploadStatus().required(),
                   imageAlt: CustomJoi.RequiredString(),
+                  uniqueText: CustomJoi.String(),
                 }),
                 Joi.object({
                   image: CustomJoi.UploadStatus().required(),
                   imageAlt: CustomJoi.RequiredString(),
                   audio: CustomJoi.UploadStatus().required(),
+                  uniqueText: CustomJoi.String(),
                 })
               )
             )
@@ -154,6 +157,11 @@ const activityOptions: ResourceOptions = {
       dependency: "nodes.$.type",
       isin: ["carrousel"],
       extensions: ["ogg"],
+    }),
+    "nodes.images.uniqueText": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel"],
+      type: "string",
     }),
   },
   actions: {
