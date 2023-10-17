@@ -5,6 +5,7 @@
         "buildType": "app-bundle"
       },
       "env": {
+        "ENV": "production",
         "API_DOMAIN": "http://comunizika.im.ufrrj.br"
       }
     },
