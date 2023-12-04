@@ -38,11 +38,11 @@ const activityValidatorSchema = {
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
           audio: CustomJoi.UploadStatus(),
+          sideBySide: Joi.boolean(),
           position: CustomJoi.RequiredString().valid('center', 'right', 'left')
         }),
         Joi.object({
           ...baseNodeCreateSchema,
-          preview: Joi.bool().default(false),
           type: CustomJoi.RequiredString().valid("carrousel"),
           slides: Joi.array()
             .items(
@@ -60,6 +60,7 @@ const activityValidatorSchema = {
                   image: CustomJoi.UploadStatus().required(),
                   imageAlt: CustomJoi.RequiredString(),
                   audio: CustomJoi.UploadStatus().required(),
+                  sideBySide: Joi.boolean(),
                   uniqueText: CustomJoi.String(),
                 })
               )
@@ -132,9 +133,9 @@ const activityOptions: ResourceOptions = {
       isin: ["text"],
       extensions: ["ogg"],
     }),
-    "nodes.preview": buildConditionalProperty({
+    "nodes.sideBySide": buildConditionalProperty({
       dependency: "nodes.$.type",
-      isin: ["carrousel"],
+      isin: ["text"],
       type: "boolean",
     }),
     "nodes.images": buildConditionalProperty({
@@ -157,6 +158,11 @@ const activityOptions: ResourceOptions = {
       dependency: "nodes.$.type",
       isin: ["carrousel"],
       extensions: ["ogg"],
+    }),
+    "nodes.images.sideBySide": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel"],
+      type: "boolean",
     }),
     "nodes.images.uniqueText": buildConditionalProperty({
       dependency: "nodes.$.type",
