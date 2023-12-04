@@ -29,6 +29,8 @@ const TextNodeSchema = new mongoose.Schema(
     image: { type: String, required: true },
     imageAlt: { type: String, required: true },
     audio: { type: String, required: false },
+    sideBySide: { type: Boolean, require: false, default: false },
+    position: { type: String, required: false }
   },
   NO_ID
 );
@@ -45,12 +47,13 @@ const CarrouselNodeSchema = new mongoose.Schema(
           image: { type: String, required: false },
           imageAlt: { type: String, required: false },
           audio: { type: String, required: false },
+          sideBySide: { type: Boolean, require: false, default: false },
+          uniqueText: { type: String, required: false }
         },
       ],
       required: true,
       minlength: 1,
     },
-    preview: { type: Boolean, required: true, default: false }
   },
   NO_ID
 );

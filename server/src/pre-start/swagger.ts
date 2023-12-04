@@ -1,15 +1,15 @@
 import swaggerJSDoc, { Options } from "swagger-jsdoc";
-import { BASE_PATH } from "./constants";
+import {ORIGIN, BASE_PATH } from "./constants";
 
 const opts: Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "EducaZikaAPI",
-      version: "0.0.1",
+      title: "Comunizika API",
+      version: "1.0.0",
       description: "API for the Comunika App."
     },
-    servers: [{url: "http://localhost:3000/api/v1"}]
+    servers: [{url: ORIGIN + BASE_PATH}]
   },
   apis: ['src/swagger/*.yaml'],
 };

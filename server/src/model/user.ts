@@ -9,16 +9,18 @@ import { ProgressInput, ProgressSchema } from "./progress";
 
 /** Interface for creating a new user */
 export interface UserInput {
+  name: string;
   email: string;
   password: string;
-  guardian: string;
-  relationship: string;
-  birth: Date;
-  region: string;
   disabilities: string;
 }
 
 export const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: MIN_STRING_LENGTH,
+  },
   email: {
     type: String,
     required: true,
@@ -31,10 +33,6 @@ export const UserSchema = new mongoose.Schema({
     minlength: MIN_PASSWORD_LENGTH,
     maxlength: MAX_PASSWORD_LENGTH,
   },
-  guardian: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  relationship: { type: String, required: true, minlength: MIN_STRING_LENGTH },
-  birth: { type: Date, required: true },
-  region: { type: String, required: true, minlength: MIN_STRING_LENGTH },
   disabilities: [
     {
       type: mongoose.Types.ObjectId,
@@ -45,7 +43,8 @@ export const UserSchema = new mongoose.Schema({
   ],
   progress: { type: ProgressSchema, required: true, default: () => ({}) },
 }, {
-  timestamps: true
+  timestamps: true,
+  discriminatorKey: 'user',
 });
 
 // Hashes password before saving to db

@@ -6,18 +6,20 @@ import passport from "passport";
 import { UserInput, UserDocument } from "../../model/user";
 import { userAuthenticationService, userService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
+import { ParentInput } from "src/model/parent";
+import { EducatorInput } from "src/model/educator";
 import { tokenService } from "../../service/token";
 import { sendResetToken, sendResetNotification } from "../../service/email";
 
 const router = Router();
 
 router.post(
-  "/register",
+  "/register/parent",
   celebrate({
     body: {
-      email: CustomJoi.RequiredString(),
+      email: Joi.string().email({tlds: {allow: false}}).required(),
       password: CustomJoi.RequiredString(),
-      guardian: CustomJoi.RequiredString(),
+      name: CustomJoi.RequiredString(),
       relationship: CustomJoi.RequiredString(),
       birth: Joi.date().required(),
       region: CustomJoi.RequiredString(),
@@ -25,7 +27,25 @@ router.post(
     },
   }),
   async (req: Request, res: Response) => {
-    await userAuthenticationService.registerUser(req.body as UserInput);
+    await userAuthenticationService.registerUser(req.body as ParentInput, 'parent');
+    res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
+  }
+);
+
+router.post(
+  "/register/educator",
+  celebrate({
+    body: {
+      email: Joi.string().email({tlds: {allow: false}}).required(),
+      password: CustomJoi.RequiredString(),
+      name: CustomJoi.RequiredString(),
+      numberOfDisabledStudents: Joi.number().required(),
+      school: CustomJoi.RequiredString(),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
+    },
+  }),
+  async (req: Request, res: Response) => {
+    await userAuthenticationService.registerUser(req.body as UserInput, 'educator');
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );

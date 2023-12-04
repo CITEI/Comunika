@@ -264,12 +264,26 @@ class UserService extends BasicService<UserDocument> {
       id,
       select: "progress",
     });
+    // Getting the current user's box.
+    const userBox = user.progress.box.get(module);
+    let activitiesMissing = 0;
 
-    // Check if the box ins't yet created
-    if (!user.progress.box.get(module)) {
+    if (userBox && userBox.data.activities.length != 0) {
+      // Populating to check the health of activities
+      await user.populate([{
+        path: `progress.box.${module}.data.activities.activity`,
+        model: "Activity",
+      }]);
+
+      // If any of the activities is "null", it was deleted in the database but the user still had it.
+      activitiesMissing = userBox?.data.activities.filter(e => e.activity == null).length;
+    }
+
+    // Check if the box ins't yet created or is empty.
+    if (!userBox || userBox?.data.activities.length === 0 || activitiesMissing) {
       const newBox = await this.createBox({ module: module });
       // This is necessary because the call to populate below woudn't work otherwise
-      user.progress.box.set(module, {done: false, data: newBox});
+      user.progress.box.set(module, { done: false, data: newBox });
 
       await User.findByIdAndUpdate(user._id, {
         $set: {
@@ -319,7 +333,7 @@ class UserService extends BasicService<UserDocument> {
     return await this.find({
       id,
       select:
-        "createdAt updatedAt email guardian relationship birth region disabilities progress.module",
+        "createdAt updatedAt email name relationship birth region disabilities progress.module school numberOfDisabledStudents",
     });
   }
 }

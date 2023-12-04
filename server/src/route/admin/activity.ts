@@ -38,30 +38,35 @@ const activityValidatorSchema = {
           image: CustomJoi.UploadStatus().required(),
           imageAlt: CustomJoi.RequiredString(),
           audio: CustomJoi.UploadStatus(),
+          sideBySide: Joi.boolean(),
+          position: CustomJoi.RequiredString().valid('center', 'right', 'left')
         }),
         Joi.object({
           ...baseNodeCreateSchema,
-          preview: Joi.bool().default(false),
           type: CustomJoi.RequiredString().valid("carrousel"),
           slides: Joi.array()
             .items(
               Joi.alternatives().try(
                 Joi.object({
                   audio: CustomJoi.UploadStatus().required(),
+                  uniqueText: CustomJoi.String(),
                 }),
                 Joi.object({
                   image: CustomJoi.UploadStatus().required(),
                   imageAlt: CustomJoi.RequiredString(),
+                  uniqueText: CustomJoi.String(),
                 }),
                 Joi.object({
                   image: CustomJoi.UploadStatus().required(),
                   imageAlt: CustomJoi.RequiredString(),
                   audio: CustomJoi.UploadStatus().required(),
+                  sideBySide: Joi.boolean(),
+                  uniqueText: CustomJoi.String(),
                 })
               )
             )
             .min(1),
-        }),
+        })
       )
     )
     .min(MIN_NODES)
@@ -70,7 +75,7 @@ const activityValidatorSchema = {
     .items(
       Joi.object({
         question: CustomJoi.RequiredString(),
-        notes: Joi.string(),
+        notes: Joi.string().allow(""),
       })
     )
     .min(MIN_QUESTION_NODES)
@@ -91,7 +96,7 @@ const activityOptions: ResourceOptions = {
       isVisible: { edit: true, filter: false, list: false, show: false },
     },
     questionCount: {
-      isVisible: { edit: false, filter: false, list: false, show: false },
+      isVisible: { edit: false, filter: false, list: false, show: true },
     },
     nodes: {
       type: "mixed",
@@ -110,7 +115,13 @@ const activityOptions: ResourceOptions = {
     "nodes.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["text"],
-      extensions: ["png", "gif"],
+      extensions: ["png", "svg", "gif"],
+    }),
+    "nodes.position": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ['text'],
+      type: 'string',
+      availableValues: [{value: 'center', label: 'Centro'}, {value: 'right', label: 'Direita'}, {value: 'left', label: 'Esquerda'}]
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -122,9 +133,9 @@ const activityOptions: ResourceOptions = {
       isin: ["text"],
       extensions: ["ogg"],
     }),
-    "nodes.preview": buildConditionalProperty({
+    "nodes.sideBySide": buildConditionalProperty({
       dependency: "nodes.$.type",
-      isin: ["carrousel"],
+      isin: ["text"],
       type: "boolean",
     }),
     "nodes.images": buildConditionalProperty({
@@ -136,7 +147,7 @@ const activityOptions: ResourceOptions = {
     "nodes.images.image": buildFileUploadProperty({
       dependency: "nodes.$.type",
       isin: ["carrousel"],
-      extensions: ["png", "gif"],
+      extensions: ["png", "svg", "gif"],
     }),
     "nodes.images.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -148,6 +159,16 @@ const activityOptions: ResourceOptions = {
       isin: ["carrousel"],
       extensions: ["ogg"],
     }),
+    "nodes.images.sideBySide": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel"],
+      type: "boolean",
+    }),
+    "nodes.images.uniqueText": buildConditionalProperty({
+      dependency: "nodes.$.type",
+      isin: ["carrousel"],
+      type: "string",
+    }),
   },
   actions: {
     bulkDelete: {
@@ -156,9 +177,12 @@ const activityOptions: ResourceOptions = {
     new: {
       before: [
         buildFileUploadBefore([
-          { attribute: "nodes.$.image", extensions: ["png", "gif"] },
+          { attribute: "nodes.$.image", extensions: ["png", "svg", "gif"] },
           { attribute: "nodes.$.audio", extensions: ["ogg"] },
-          { attribute: "nodes.$.images.$.image", extensions: ["png", "gif"] },
+          {
+            attribute: "nodes.$.images.$.image",
+            extensions: ["png", "svg", "gif"],
+          },
           { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
         ]),
         unflattenRequest,
@@ -239,10 +263,58 @@ const activityOptions: ResourceOptions = {
       },
     },
     edit: {
-      before: [unflattenRequest, buildValidator(activityValidatorSchema)],
+      before: [
+        (request) => {
+          const regex = /(questionNodes\.[0-9]+\.question)/ 
+
+          if (request.payload) {
+            const numberOfQuestions = Object.entries(request.payload!).filter((value, _) => regex.test(value[0])).length;
+            request.payload.questionCount = numberOfQuestions;
+          }
+
+          return request;
+        },
+        buildFileUploadBefore([
+          { attribute: "nodes.$.image", extensions: ["png", "svg", "gif"] },
+          { attribute: "nodes.$.audio", extensions: ["ogg"] },
+          {
+            attribute: "nodes.$.images.$.image",
+            extensions: ["png", "svg", "gif"],
+          },
+          { attribute: "nodes.$.images.$.audio", extensions: ["ogg"] },
+        ]),
+        unflattenRequest,
+        buildValidator({
+          ...activityValidatorSchema,
+        }),
+      ],
       layout: Object.keys(ActivitySchema.paths).filter(
         (key) => !["_id", "__v", "questionCount"].includes(key)
       ),
+      after: [
+        buildFileUploadAfter({
+          "nodes.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.audio": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.images.$.image": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+          "nodes.$.images.$.audio": {
+            staticFolderEndpoint: "public",
+            staticFolderPath: PUBLIC_PATH,
+            subPath: "activity",
+          },
+        }),
+      ],
     },
   },
 };

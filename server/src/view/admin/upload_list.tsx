@@ -7,7 +7,7 @@ import urlJoin from "url-join";
  * Required because adminjs doesn't support custom libs
  */
 const EXTENSIONS = {
-  image: new Set(["png", "jpg", "jpeg", "gif"]),
+  image: new Set(["png", "svg", "jpg", "jpeg", "gif"]),
   video: new Set(["mp4", "webm"]),
   audio: new Set(["mp3", "wav", "ogg"]),
 };

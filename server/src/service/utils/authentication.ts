@@ -8,6 +8,8 @@ import {
 import { DuplicatedError, UserNotFoundError, WrongPasswordError } from "../errors";
 import { BasicService } from "./basic";
 import Service from "./service";
+import Educator from '../../model/educator';
+import Parent from '../../model/parent';
 
 interface BaseUserInput {
   email: string;
@@ -39,9 +41,18 @@ export class AuthenticationService<
   /**
    * Registers a new user into the db
    */
-  async registerUser(payload: I): Promise<D> {
-    if (!(await this.service.exists({ email: payload.email })))
-      return await this.service.create(payload);
+  async registerUser(payload: I, type: string): Promise<void> {
+    if (!(await this.service.exists({ email: payload.email }))){
+      let doc = null;
+      
+      if (type == 'parent') {
+        doc = new Parent(payload);
+      } else {
+        doc = new Educator(payload);
+      }
+      
+      await doc.save();
+    }
     else throw new DuplicatedError("User", "email");
   }
 
