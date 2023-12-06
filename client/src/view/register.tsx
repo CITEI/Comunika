@@ -21,6 +21,7 @@ const validators = {
   password: isPassword,
   confirm: isPassword,
   disabilities: (arr: string[]) => arr.length > 0,
+  tos: (accepted: boolean) => accepted,
 };
 
 const parentValidator = {
@@ -119,7 +120,6 @@ const Register: React.VoidFunctionComponent = () => {
             validated={validated}
           />
         )}
-        <ToS />
         <TextLink
           style={{ paddingTop: 0 }}
           text={"Já é usuário?" + " "}

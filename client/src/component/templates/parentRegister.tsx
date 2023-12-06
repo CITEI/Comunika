@@ -1,9 +1,7 @@
-import { useState } from "react";
 import Form from "../organism/form";
 import useDisabilities from "../../hooks/useDisabilities";
-import { isEmail, isPassword } from "../../helper/validators";
-
-const isLongerThanTwo = (txt: string) => txt.length > 2;
+import Text from "../atom/text";
+import ToS from "../molecule/tos";
 
 interface props {
   handleSubmit(map: Map<string, string>): void;
@@ -41,6 +39,12 @@ function ParentRegisterForm(props: props) {
         { type: "text", label: "E-mail", name: "email" },
         { type: "password", label: "Senha", name: "password" },
         { type: "password", label: "Confirmar senha", name: "confirm" },
+        {
+          type: "checkbox",
+          label: "ToS",
+          customLabel: <ToS />,
+          name: "tos",
+        },
         {
           type: "submit",
           label: "Entrar",

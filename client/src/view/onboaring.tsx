@@ -21,7 +21,7 @@ const Onboarding: React.VoidFunctionComponent = () => {
         {
           image: onb1,
           imageAlt: "Ilustração de uma mulher com uma lâmpada",
-          text: "O Comunizika tem o objetivo de auxiliar no desenvolvimento da comunicação de crianças afetadas pelo Zica Virus e por outros problemas genéticos ou cogênitos.",
+          text: "O Comunizika tem o objetivo de auxiliar no desenvolvimento da comunicação de crianças afetadas pelo Zica Virus e por outros problemas genéticos ou congênitos.",
           title: "Olá! :)",
         },
         {
@@ -29,12 +29,6 @@ const Onboarding: React.VoidFunctionComponent = () => {
           imageAlt: "Ilustração de pessoas resolvendo um quebra-cabeça.",
           text: "Todas as atividades contarão com instruções detalhadas de como realiza-las e ao final você poderá registrar o desempenho da criança.",
           title: "Para começar",
-        },
-        {
-          image: onb3,
-          imageAlt: "Ilustração de uma mulher com um lápis.",
-          text: "Clique em saiba mais caso queira informações sobre o Comunizika e sobre a metodologia que utilizamos em nossas atividades!",
-          title: "Ainda tem dúvidas?",
         },
       ]}
       onFinish={handleFinish}
