@@ -21,6 +21,7 @@ const lightTheme = {
     title: "DMSans_700Bold",
     titleLight: "OpenSans_300Light",
     textBold: "OpenSans_700Bold",
+    textExtraBold: "OpenSans_800ExtraBold",
     textSemiBold: "OpenSans_600SemiBold",
   },
 };

@@ -12,7 +12,7 @@ import Input from "../component/molecule/input";
 import Button from "../component/atom/button";
 import ErrorModal from "../component/organism/errorModal";
 
-export interface ForgotPassProps { }
+export interface ForgotPassProps {}
 
 const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   const navigation = useNavigation<AuthNavigatorProps>();
@@ -28,7 +28,7 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
     if (typeof result === "number") {
       navigation.navigate("ValidateCode", { email: email });
     } else {
-      setError(result)
+      setError(result);
     }
   };
 
@@ -45,7 +45,11 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
   return (
     <MainContainer>
       <ContentContainer>
-        <ErrorModal visible={!!error} close={() => setError(undefined)} errorMessage={error!} />
+        <ErrorModal
+          visible={!!error}
+          close={() => setError(undefined)}
+          errorMessage={error!}
+        />
         <ForgotHeader text="Digite o seu e-mail para recuperação de senha" />
         <VerticalContainer>
           <Input label="E-mail" onChangeText={onEmailChange} />
@@ -58,7 +62,9 @@ const ForgotPass: React.VoidFunctionComponent<ForgotPassProps> = (props) => {
             disabled={!isValidEmail}
             variant="outline"
             label="Já tenho o código"
-            onPress={() => navigation.navigate("ValidateCode", { email: email })}
+            onPress={() =>
+              navigation.navigate("ValidateCode", { email: email })
+            }
           />
         </VerticalContainer>
       </ContentContainer>

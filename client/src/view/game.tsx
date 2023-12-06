@@ -25,12 +25,13 @@ const Game: React.VoidFunctionComponent = () => {
 
   /** Sends answers to the api */
   useEffect(() => {
-    if (answers.length > 0) dispatch(evaluate({module: module.id, answers: answers}));
+    if (answers.length > 0)
+      dispatch(evaluate({ module: module.id, answers: answers }));
   }, [answers]);
 
   /** Navigates to the next screen after sending answers */
   useEffect(() => {
-    if (answers.length > 0) navigation.replace("Result", {module: module});
+    if (answers.length > 0) navigation.replace("Result", { module: module });
   }, [answers]);
 
   return box && module ? (

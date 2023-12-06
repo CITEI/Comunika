@@ -73,7 +73,11 @@ const Login: React.VoidFunctionComponent<LoginProps> = (props) => {
   return (
     <MainContainer>
       <ContentContainer>
-        <ErrorModal visible={!!error} close={clearError} errorMessage={error!}/>
+        <ErrorModal
+          visible={!!error}
+          close={clearError}
+          errorMessage={error!}
+        />
         <LoginHeader />
         <VerticalContainer>
           <Form
