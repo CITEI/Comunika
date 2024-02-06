@@ -1,7 +1,12 @@
 import IconButton, { IconButtonProps } from "./iconButton";
 import React, { useEffect } from "react";
-import { AVPlaybackStatus, AVPlaybackStatusError, AVPlaybackStatusSuccess, Audio } from "expo-av";
-import { Foundation } from '@expo/vector-icons'; 
+import {
+  AVPlaybackStatus,
+  AVPlaybackStatusError,
+  AVPlaybackStatusSuccess,
+  Audio,
+} from "expo-av";
+import { Foundation } from "@expo/vector-icons";
 import styled from "../../pre-start/themes";
 import { TouchableOpacity } from "react-native";
 import { dp, sp } from "../../helper/resolution";
@@ -11,15 +16,15 @@ export interface AudioButtonProps extends Omit<IconButtonProps, "icon"> {
   iconSize?: "small" | "normal" | "big";
 }
 
-const Icon = styled(Foundation)<{$iconSize?: string;}>`
+const Icon = styled(Foundation)<{ $iconSize?: string }>`
   font-size: ${(props) => {
-    switch(props.$iconSize) {
-      case ('small'):
-        return sp(12)
-      case ('normal'):
-        return sp(16)
-      case ('big'):
-        return sp(32)
+    switch (props.$iconSize) {
+      case "small":
+        return sp(12);
+      case "normal":
+        return sp(16);
+      case "big":
+        return sp(32);
     }
   }}px;
   color: #424242;
@@ -36,15 +41,20 @@ const Container = styled(TouchableOpacity)`
 function AudioButton(props: AudioButtonProps) {
   const { audio, iconSize, ...other } = props;
   const sound = new Audio.Sound();
-  
+
   // Unloads the sound when it finishes playinb back
-  const statusUpdate = async (playbackStatus: AVPlaybackStatus | AVPlaybackStatusSuccess | AVPlaybackStatusError) => {
+  const statusUpdate = async (
+    playbackStatus:
+      | AVPlaybackStatus
+      | AVPlaybackStatusSuccess
+      | AVPlaybackStatusError
+  ) => {
     if (playbackStatus.isLoaded) {
       if (playbackStatus.didJustFinish) {
         await sound.unloadAsync();
       }
     }
-  }
+  };
 
   sound.setOnPlaybackStatusUpdate(statusUpdate);
 
@@ -61,12 +71,12 @@ function AudioButton(props: AudioButtonProps) {
   // Stops playing audio if the component is unmounted.
   useEffect(() => {
     return () => {
-      sound.unloadAsync()
-    }
-  }, [sound])
+      sound.unloadAsync();
+    };
+  }, [sound]);
 
   function getWidth() {
-    switch(props.iconSize ?? "normal") {
+    switch (props.iconSize ?? "normal") {
       case "small":
         return dp(20);
       case "normal":
@@ -77,7 +87,7 @@ function AudioButton(props: AudioButtonProps) {
   }
 
   function getHeight() {
-    switch(props.iconSize ?? "normal") {
+    switch (props.iconSize ?? "normal") {
       case "small":
         return dp(15);
       case "normal":
@@ -88,7 +98,7 @@ function AudioButton(props: AudioButtonProps) {
   }
 
   function getBorderRadious() {
-    switch(props.iconSize ?? "normal") {
+    switch (props.iconSize ?? "normal") {
       case "small":
         return dp(5);
       case "normal":
@@ -99,16 +109,18 @@ function AudioButton(props: AudioButtonProps) {
   }
 
   return (
-    <Container onPress={playSound} style={{
-      width: getWidth(),
-      height: getHeight(),
-      borderRadius: getBorderRadious(),
-    }}  {...other}>
-      <Icon name="volume" $iconSize={props.iconSize ?? "normal"}/>
+    <Container
+      onPress={playSound}
+      style={{
+        width: getWidth(),
+        height: getHeight(),
+        borderRadius: getBorderRadious(),
+      }}
+      {...other}
+    >
+      <Icon name="volume" $iconSize={props.iconSize ?? "normal"} />
     </Container>
-  )
-  
+  );
 }
 
 export default AudioButton;
-  

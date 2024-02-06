@@ -20,7 +20,7 @@ const Container = styled.View`
 function Node(props: NodeProps) {
   const [text, setText] = useState<string>(
     props.type == "carrousel"
-      ? props.text.replace("$uniqueText", props.images[0].uniqueText ?? '')
+      ? props.text.replace("$uniqueText", props.images[0].uniqueText ?? "")
       : props.text
   );
 
@@ -39,7 +39,6 @@ function Node(props: NodeProps) {
           carrousel: (
             <Carrousel
               slides={props.images}
-              preview={props.preview}
               text={props.text}
               setText={setText}
             />

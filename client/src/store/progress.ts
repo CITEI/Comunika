@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getBox, insertBox, readBox, StorageBox, deleteBox } from './local/GameStorage';
+import {
+  getBox,
+  insertBox,
+  readBox,
+  StorageBox,
+  deleteBox,
+} from "./local/GameStorage";
 import { toUri } from "../helper/api";
 import api from "../helper/api";
 
@@ -21,6 +27,7 @@ export interface TextNode extends BaseNode {
   imageAlt: string;
   audio?: string;
   position?: string;
+  sideBySide?: boolean;
 }
 
 /** Node that shows a text along with an image/audio carrousel */
@@ -28,22 +35,24 @@ export interface CarrouselNode extends BaseNode {
   type: "carrousel";
   images: Array<
     | {
-      image: string;
-      imageAlt: string;
-      audio: string;
-      uniqueText: string;
-    }
+        image: string;
+        imageAlt: string;
+        audio: string;
+        uniqueText: string;
+        sideBySide?: boolean;
+      }
     | {
-      image: string;
-      imageAlt: string;
-      uniqueText: string;
-    }
+        image: string;
+        imageAlt: string;
+        uniqueText: string;
+        sideBySide?: boolean;
+      }
     | {
-      audio: string;
-      uniqueText: string;
-    }
+        audio: string;
+        uniqueText: string;
+        sideBySide?: boolean;
+      }
   >;
-  preview: boolean;
 }
 
 /** Type for nodes all kinds of nodes */
@@ -84,7 +93,7 @@ export interface AppBox extends Box {
 }
 
 export interface BoxMap {
-  [key: string]: AppBox
+  [key: string]: AppBox;
 }
 
 export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
@@ -97,12 +106,12 @@ export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
     module: data.module,
     answers: local?.createdAt == data.createdAt ? local.answers : [],
     attempt: data.attempt,
-    activities: data.activities.map(el => {
+    activities: data.activities.map((el) => {
       const activity = el.activity;
       return {
         _id: activity._id,
         name: activity.name,
-        nodes: activity.nodes.map(node => {
+        nodes: activity.nodes.map((node) => {
           if (node.type == "text") {
             const newNode = {
               ...node,
@@ -121,26 +130,35 @@ export const fetchBox = createAsyncThunk("user/box", async (id: string) => {
             };
           }
         }),
-        questionNodes: activity.questionNodes
-      }
-    })
+        questionNodes: activity.questionNodes,
+      };
+    }),
   } as AppBox;
 
   await insertBox(box);
   return box;
 });
 
-export const readAnswers = createAsyncThunk("user/storage/answers", async () => {
-  const box = await readBox();
-  return box;
-});
+export const readAnswers = createAsyncThunk(
+  "user/storage/answers",
+  async () => {
+    const box = await readBox();
+    return box;
+  }
+);
 
 export const evaluate = createAsyncThunk(
   "user/evaluate",
-  async ({ module, answers }: { module: string, answers: (string | boolean)[][] }) => {
+  async ({
+    module,
+    answers,
+  }: {
+    module: string;
+    answers: (string | boolean)[][];
+  }) => {
     const res = (await api.post(`/user/box/${module}`, { answers })).data;
     await deleteBox(module);
-    return {grade: res, module: module};
+    return { grade: res, module: module };
   }
 );
 
@@ -156,19 +174,19 @@ const progressSlice = createSlice({
     disableBoxLoaded: (state) => {
       state.box = undefined;
       state.flags.box = false;
-    }
+    },
   },
   initialState: {
-    box: undefined as (AppBox | undefined),
+    box: undefined as AppBox | undefined,
     answers: {} as StorageBox,
     activityStreak: 0,
     history: undefined,
-    grade: undefined as (number | undefined),
+    grade: undefined as number | undefined,
     flags: {
       box: false,
       answers: false,
-      history: false
-    }
+      history: false,
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBox.fulfilled, (state, action) => {
@@ -185,8 +203,9 @@ const progressSlice = createSlice({
       state.flags.box = false;
       state.flags.answers = false;
     });
-  }
+  },
 });
 
 export default progressSlice;
-export const { disableBoxLoaded, addToStreak, resetStreak } = progressSlice.actions;
+export const { disableBoxLoaded, addToStreak, resetStreak } =
+  progressSlice.actions;
