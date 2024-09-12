@@ -102,7 +102,11 @@ function Carrousel(props: CarrouselProps) {
           )}
         </SideBySide>
       ) : (
-        <Content>
+        //TODO: algumas imagens precisam tocar embaixo
+        <Content style={{
+          height: "85%",
+          alignSelf: "center"
+        }}>
           {current.image && (
             <StyledImage
               source={current.image}

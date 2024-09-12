@@ -73,6 +73,7 @@ const Activity: React.VoidFunctionComponent<ActivityProps> = (props) => {
       <ContentContainer>
         {answering ? (
           <Questionary
+            id={activity._id}
             questions={activity.questionNodes}
             onFinish={handleFinishedQuestionary}
           />

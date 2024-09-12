@@ -12,7 +12,6 @@ const MaskInput = styled(MaskedInput).attrs(
   padding: ${(props) => dp(10)}px;
   margin-top: ${(props) => dp(8)}px;
   margin-bottom: 0;
-  border-radius: ${(props) => dp(18)}px;
   border: 1px solid
     ${(props) =>
       props.focused
@@ -29,8 +28,8 @@ export interface AreaInputProps extends Omit<MaskInputProps, "value"> {
 }
 
 const Container = styled.View`
-  margin-top: ${(props) => dp(12)}px;
-  margin-bottom: ${(props) => dp(8)}px;
+  margin-top: ${(props) => dp(6)}px;
+  margin-bottom: ${(props) => dp(0)}px;
 `;
 /** A component that receives user information. */
 const AreaInput: React.VoidFunctionComponent<AreaInputProps> = (props) => {

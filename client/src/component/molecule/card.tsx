@@ -30,6 +30,7 @@ const Container = styled(ShadowPanel)`
   background: ${(props) => props.theme.color.background};
   padding: ${dp(20)}px;
   padding-top: ${dp(12)}px;
+  padding-bottom: ${dp(15)}px;
   border-radius: ${dp(10)}px;
   margin-bottom: ${dp(24)}px;
   font-family: ${(props) => props.theme.fontFamily.textBold};
@@ -76,7 +77,8 @@ const ContentContainer = styled.View`
   margin-top: ${dp(5)}px;
   border-top-color: ${(props) => props.theme.color.hr};
   border-top-width: 1px;
-  padding-top: ${dp(14)}px;
+  padding-top: ${dp(16)}px;
+  padding-bottom: ${dp(5)}px;
   flex: 1;
 `;
 
@@ -102,7 +104,7 @@ const Button = styled(BaseButton)`
 `;
 
 const Icon = styled(Image)`
-  flex: 1;
+  flex: 1.5;
   width: 100%;
   height: 100%;
 `;

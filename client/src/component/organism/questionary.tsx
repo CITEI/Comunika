@@ -12,12 +12,14 @@ import Md from "../molecule/md";
 import util from "util";
 
 interface QuestionaryProps {
+  id: string;
   questions: QuestionNode[];
   onFinish: (answers: (string | boolean)[]) => void;
 }
 
 const BackButton = styled(BaseButton)`
   margin-top: ${dp(4)}px;
+  margin-bottom: ${dp(13)}px;
   padding: ${dp(3)}px;
   padding-right: ${dp(17)}px;
   padding-left: ${dp(17)}px;
@@ -54,6 +56,7 @@ const Notes = styled(RawText)`
 
 const Button = styled(BaseButton)`
   margin-top: ${dp(25)}px;
+  margin-bottom: ${dp(13)}px;
 `;
 
 /** A form that shows boolean questions to answer */
@@ -78,7 +81,16 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
     newAnswers[index] = option;
     setAnswers(newAnswers);
     if (option != 2) {
-      const next = index + 1;
+
+      let next = index + 1;
+
+      // Exceção pra única atividade que tem perguntas opcionais.
+      if (option == 0 && props.id == "65299dfebb17c70be4dfd3f1" && (index == 2 || index == 4)) {
+        newAnswers[index+1] = option;
+        setAnswers(newAnswers)
+        next = index + 2;
+      }
+
       if (next < answers.length) setTimeout(() => setIndex(next), 500);
     } else {
       setHaveOther(true);
@@ -123,6 +135,7 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
       );
     } else {
       const next = index + 1;
+      
       if (next < answers.length) setTimeout(() => setIndex(next), 500);
     }
   }
@@ -140,7 +153,8 @@ const Questionary: React.VoidFunctionComponent<QuestionaryProps> = (props) => {
         onSelected={handleRadioSelect}
         selected={answers[index]}
         style={{
-          marginTop: currentNode.notes ? 0 : dp(24)
+          marginTop: currentNode.notes ? 0 : dp(24),
+          paddingBottom: dp(10)
         }}
       />
 

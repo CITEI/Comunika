@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../store/store";
 import { addToStreak, resetStreak } from "../../store/progress";
 import { resetModules } from "../../store/modules";
 import { Image } from "expo-image";
+import img from "../../../assets/finalatividade.png";
 
 interface ResultProps {
   module: Module;
@@ -84,7 +85,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
     next ? (
       <Button
         variant={approved ? undefined : "outline"}
-        label={"Iniciar o próximo módulo"}
+        label={"Próximo módulo"}
         onPress={handleNext}
       />
     ) : (
@@ -101,11 +102,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
     <MainContainer>
       <Toolbar accountButton={true} logo={true} shadow={true} />
       <Container>
-        <Icon
-          source={props.module.image}
-          alt={props.module.image}
-          contentFit="contain"
-        />
+        <Icon source={img} alt={props.module.image} contentFit="contain" />
         <Title>{`Parabéns!`}</Title>
         <Text>
           {approved
@@ -115,11 +112,7 @@ const Result: React.VoidFunctionComponent<ResultProps> = (props) => {
         <Footer>
           {approved ? buttons[0] : buttons[1]}
           {approved ? buttons[1] : buttons[0]}
-          <Button
-            variant="outline"
-            label={"Voltar ao menu"}
-            onPress={handleBack}
-          />
+          <Button variant="outline" label={"Atividades"} onPress={handleBack} />
         </Footer>
       </Container>
     </MainContainer>

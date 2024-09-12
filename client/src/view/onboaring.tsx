@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from "react";
 import OnboardingTemplate from "../component/templates/onboarding";
 import onb1 from "../../assets/onboarding/1.png";
 import onb2 from "../../assets/onboarding/2.png";
-import onb3 from "../../assets/onboarding/3.png";
 import { setOnboardingComplete } from "../helper/settings";
 import { useNavigation } from "@react-navigation/native";
 import { GameNavigatorProps } from "../route/game";

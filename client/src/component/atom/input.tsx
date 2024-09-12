@@ -1,9 +1,10 @@
 import styled from "../../pre-start/themes"
 import React, { useState, useEffect, useCallback } from "react";
-import { dp } from "../../helper/resolution";
+import { dp, sp } from "../../helper/resolution";
 import MaskedInput, { MaskInputProps } from 'react-native-mask-input'
 
 const MaskInput = styled(MaskedInput).attrs((props: {focused: boolean}) => props)`
+  font-size: ${sp(12)}px;
   margin: 5px 0 5px 0;
   height: ${(props) => dp(36)}px;
   padding: ${(props) => dp(10)}px;
