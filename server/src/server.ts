@@ -13,7 +13,6 @@ import authRouter from "./route/game/authentication";
 import moduleRouter from "./route/game/module";
 import userRouter from "./route/game/user";
 import deleteRouter from "./route/game/deleteAccout";
-import adminjs from "./pre-start/adminjs";
 
 // Constants
 const app = express();
@@ -21,8 +20,6 @@ const app = express();
 /***********************************************************************************
  *                                  Admin Panel
  **********************************************************************************/
-
-app.use(`${BASE_PATH}/admin`, adminjs({ route: `${BASE_PATH}/admin` }));
 
 /***********************************************************************************
  *                                  Middlewares

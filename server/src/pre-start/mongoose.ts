@@ -10,15 +10,15 @@ import {
 
 export const uri = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}`;
 
-mongoose.set('strictQuery', true);
+mongoose.set("strictQuery", true);
 
-let mongo = mongoose
-  .connect(uri, {
-    dbName: DB_DATABASE,
-    replicaSet: DB_REPLICA_SET,
-  })
+let mongo = mongoose.connect(uri, {
+  dbName: DB_DATABASE,
+  replicaSet: DB_REPLICA_SET,
+});
 
-  mongo.then(() => {
+mongo
+  .then(() => {
     console.log("DB Connected");
   })
   .catch((err) => {
