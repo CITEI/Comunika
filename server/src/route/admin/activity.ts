@@ -39,7 +39,7 @@ const activityValidatorSchema = {
           imageAlt: CustomJoi.RequiredString(),
           audio: CustomJoi.UploadStatus(),
           sideBySide: Joi.boolean(),
-          position: CustomJoi.RequiredString().valid('center', 'right', 'left')
+          position: CustomJoi.RequiredString().valid("center", "right", "left"),
         }),
         Joi.object({
           ...baseNodeCreateSchema,
@@ -88,12 +88,12 @@ const activityOptions: ResourceOptions = {
       type: "reference",
       reference: "Module",
       isRequired: true,
-      isVisible: { edit: true, filter: false, list: false, show: false },
+      isVisible: { edit: true, filter: false, list: false, show: true },
     },
     alternative: {
       type: "boolean",
       isRequired: true,
-      isVisible: { edit: true, filter: false, list: false, show: false },
+      isVisible: { edit: true, filter: false, list: false, show: true },
     },
     questionCount: {
       isVisible: { edit: false, filter: false, list: false, show: true },
@@ -119,9 +119,13 @@ const activityOptions: ResourceOptions = {
     }),
     "nodes.position": buildConditionalProperty({
       dependency: "nodes.$.type",
-      isin: ['text'],
-      type: 'string',
-      availableValues: [{value: 'center', label: 'Centro'}, {value: 'right', label: 'Direita'}, {value: 'left', label: 'Esquerda'}]
+      isin: ["text"],
+      type: "string",
+      availableValues: [
+        { value: "center", label: "Centro" },
+        { value: "right", label: "Direita" },
+        { value: "left", label: "Esquerda" },
+      ],
     }),
     "nodes.imageAlt": buildConditionalProperty({
       dependency: "nodes.$.type",
@@ -265,10 +269,12 @@ const activityOptions: ResourceOptions = {
     edit: {
       before: [
         (request) => {
-          const regex = /(questionNodes\.[0-9]+\.question)/ 
+          const regex = /(questionNodes\.[0-9]+\.question)/;
 
           if (request.payload) {
-            const numberOfQuestions = Object.entries(request.payload!).filter((value, _) => regex.test(value[0])).length;
+            const numberOfQuestions = Object.entries(request.payload!).filter(
+              (value, _) => regex.test(value[0])
+            ).length;
             request.payload.questionCount = numberOfQuestions;
           }
 

@@ -17,7 +17,9 @@ router.post(
   "/register/parent",
   celebrate({
     body: {
-      email: Joi.string().email({tlds: {allow: false}}).required(),
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
       password: CustomJoi.RequiredString(),
       name: CustomJoi.RequiredString(),
       relationship: CustomJoi.RequiredString(),
@@ -27,7 +29,10 @@ router.post(
     },
   }),
   async (req: Request, res: Response) => {
-    await userAuthenticationService.registerUser(req.body as ParentInput, 'parent');
+    await userAuthenticationService.registerUser(
+      req.body as ParentInput,
+      "parent"
+    );
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
@@ -36,7 +41,9 @@ router.post(
   "/register/educator",
   celebrate({
     body: {
-      email: Joi.string().email({tlds: {allow: false}}).required(),
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
       password: CustomJoi.RequiredString(),
       name: CustomJoi.RequiredString(),
       numberOfDisabledStudents: Joi.number().required(),
@@ -45,69 +52,90 @@ router.post(
     },
   }),
   async (req: Request, res: Response) => {
-    await userAuthenticationService.registerUser(req.body as UserInput, 'educator');
+    await userAuthenticationService.registerUser(
+      req.body as EducatorInput,
+      "educator"
+    );
     res.status(StatusCodes.CREATED).send(ReasonPhrases.CREATED);
   }
 );
 
-router.post("/reset-password/send", celebrate({
-  body: {
-    email: Joi.string().email({ tlds: { allow: false } }).required()
-  }
-}), async (req, res) => {
-  const { email } = req.body;
+router.post(
+  "/reset-password/send",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+    },
+  }),
+  async (req, res) => {
+    const { email } = req.body;
 
-  if (!(await userService.exists({ email: email }))) {
+    if (!(await userService.exists({ email: email }))) {
+      res.status(StatusCodes.UNAUTHORIZED);
+      return res.send(ReasonPhrases.UNAUTHORIZED);
+    }
+
+    if (await tokenService.exists({ email: email })) {
+      res.status(StatusCodes.CONTINUE);
+      return res.send(ReasonPhrases.CONTINUE);
+    }
+
+    const token = await tokenService.generateToken(6);
+    await tokenService.create({ email: email, token: token });
+
+    return await sendResetToken(email, token, res);
+  }
+);
+
+router.post(
+  "/reset-password/validate",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      token: Joi.string().required(),
+    },
+  }),
+  async (req, res) => {
+    const { email, token } = req.body;
+
+    if (await tokenService.validate(email, token)) {
+      res.status(StatusCodes.OK);
+      return res.send(ReasonPhrases.OK);
+    }
+
     res.status(StatusCodes.UNAUTHORIZED);
     return res.send(ReasonPhrases.UNAUTHORIZED);
   }
+);
 
-  if (await tokenService.exists({ email: email })) {
-    res.status(StatusCodes.CONTINUE);
-    return res.send(ReasonPhrases.CONTINUE);
+router.post(
+  "/reset-password",
+  celebrate({
+    body: {
+      email: Joi.string()
+        .email({ tlds: { allow: false } })
+        .required(),
+      token: Joi.string().required(),
+      password: CustomJoi.RequiredString(),
+    },
+  }),
+  async (req, res) => {
+    const { email, token, password } = req.body;
+
+    if (!(await tokenService.validate(email, token))) {
+      res.status(StatusCodes.UNAUTHORIZED);
+      return res.send(ReasonPhrases.UNAUTHORIZED);
+    }
+
+    await tokenService.delete({ email });
+    await userService.resetPassword(email, password);
+    return await sendResetNotification(email, res);
   }
-
-  const token = await tokenService.generateToken(6);
-  await tokenService.create({ email: email, token: token });
-
-  return await sendResetToken(email, token, res);
-});
-
-router.post("/reset-password/validate", celebrate({
-  body: {
-    email: Joi.string().email({ tlds: { allow: false } }).required(),
-    token: Joi.string().required(),
-  }
-}), async (req, res) => {
-  const { email, token } = req.body;
-
-  if (await tokenService.validate(email, token)) {
-    res.status(StatusCodes.OK);
-    return res.send(ReasonPhrases.OK);
-  }
-
-  res.status(StatusCodes.UNAUTHORIZED);
-  return res.send(ReasonPhrases.UNAUTHORIZED);
-});
-
-router.post("/reset-password", celebrate({
-  body: {
-    email: Joi.string().email({ tlds: { allow: false } }).required(),
-    token: Joi.string().required(),
-    password: CustomJoi.RequiredString(),
-  },
-}), async (req, res) => {
-  const { email, token, password } = req.body;
-
-  if (!(await tokenService.validate(email, token))) {
-    res.status(StatusCodes.UNAUTHORIZED);
-    return res.send(ReasonPhrases.UNAUTHORIZED);
-  }
-
-  await tokenService.delete({ email });
-  await userService.resetPassword(email, password);
-  return await sendResetNotification(email, res);
-})
+);
 
 router.post(
   "/",
@@ -141,9 +169,9 @@ router.get(
   }
 );
 
-router.get('/disabilities', async (req, res) => {
-  const disabilities = await disabilityService.findAll()
-  res.status(StatusCodes.OK).send(disabilities)
-})
+router.get("/disabilities", async (req, res) => {
+  const disabilities = await disabilityService.findAll();
+  res.status(StatusCodes.OK).send(disabilities);
+});
 
 export default router;
