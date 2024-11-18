@@ -3,7 +3,7 @@ import { celebrate, Joi } from "celebrate";
 import { Request, Response, Router } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import passport from "passport";
-import { UserInput, UserDocument } from "../../model/user";
+import { UserDocument } from "../../model/user";
 import { userAuthenticationService, userService } from "../../service/user";
 import { CustomJoi } from "../utils/custom_joi";
 import { ParentInput } from "src/model/parent";
@@ -22,10 +22,10 @@ router.post(
         .required(),
       password: CustomJoi.RequiredString(),
       name: CustomJoi.RequiredString(),
-      relationship: CustomJoi.RequiredString(),
-      birth: Joi.date().required(),
-      region: CustomJoi.RequiredString(),
-      disabilities: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
+      relationship: CustomJoi.String(),
+      birth: Joi.date(),
+      region: CustomJoi.String(),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(1),
     },
   }),
   async (req: Request, res: Response) => {
@@ -46,9 +46,9 @@ router.post(
         .required(),
       password: CustomJoi.RequiredString(),
       name: CustomJoi.RequiredString(),
-      numberOfDisabledStudents: Joi.number().required(),
-      school: CustomJoi.RequiredString(),
-      disabilities: Joi.array().items(CustomJoi.ObjectId()).required().min(1),
+      numberOfDisabledStudents: Joi.number(),
+      school: CustomJoi.String(),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(1),
     },
   }),
   async (req: Request, res: Response) => {
