@@ -24,6 +24,16 @@ const Problems = styled.View`
   border: ${dp(2)}px #ff5f5f;
 `;
 
+function ProblemsComponent(problems: string[]) {
+  if (problems.length === 0) return null;
+
+  const texts = problems.map((p, index) => {
+    return <Text key={index}>- {errorTexts[p]}</Text>;
+  });
+
+  return <Problems>{texts}</Problems>;
+}
+
 const Text = styled(RawText)`
   font-family: ${(props) => props.theme.fontFamily.textSemiBold};
   margin-bottom: ${dp(4)}px;
@@ -33,7 +43,7 @@ const errorTexts: { [key: string]: string } = {
   name: "O nome precisa ser preenchido.",
   email: "E-mail inválido.",
   confirm: "As senhas digitadas não são iguais.",
-  password: "A senha precisa ter 8 caracteres ou mais.",
+  password: "A senha precisa ter 6 caracteres ou mais.",
   disabilities: "Por favor, selecione ao menos uma das deficiências.",
   tos: "Aceite os termos de uso e privacidade para continuar.",
   relationship: "Relação com a criança deve ser preenchida",
@@ -45,64 +55,101 @@ const errorTexts: { [key: string]: string } = {
 };
 
 const validators = {
-  name: isLongerThanTwo,
-  email: isEmail,
-  password: isPassword,
-  confirm: isLongerThanTwo,
-  disabilities: (arr: string[]) => arr.length >= 0,
-  tos: (accepted: boolean) => accepted,
+  name: {
+    required: true,
+    fun: (str: string) => str.length > 0,
+  },
+  email: {
+    required: true,
+    fun: isEmail,
+  },
+  password: {
+    required: true,
+    fun: isPassword,
+  },
+  confirm: {
+    required: true,
+    fun: (str: string, map: Map<string, any>) => str === map.get("password"),
+  },
+  disabilities: {
+    required: true,
+    fun: (arr: Array<string>) => arr.length >= 0,
+  },
+  tos: {
+    required: true,
+    fun: (accepted: boolean) => accepted,
+  },
 };
 
 const parentValidator = {
   ...validators,
-  relationship: isLongerThanTwo,
-  birth: (date: Date) => true,
-  region: isLongerThanTwo,
+  relationship: {
+    required: false,
+    fun: (str: string) => str.length > 0,
+  },
+  birth: {
+    required: false,
+    fun: (date: Date) => true,
+  },
+  region: {
+    required: false,
+    fun: (str: string) => str.length > 0,
+  },
 };
 
 const educatorValidator = {
   ...validators,
-  school: isLongerThanTwo,
-  numberOfDisabledStudents: (t: number) => !isNaN(t),
+  school: {
+    required: false,
+    fun: (str: string) => str.length > 0,
+  },
+  numberOfDisabledStudents: {
+    required: false,
+    fun: (str: string) => !isNaN(Number(str)),
+  },
 };
 
-const Register: React.VoidFunctionComponent = () => {
+function Register() {
   const authenticated = useAppSelector(
     (state) => state.auth.authentication.status
   );
   const navigation = useNavigation<AuthNavigatorProps>();
   const dispatch = useAppDispatch();
+  const [map, setMap] = useState(new Map<string, any>());
   const [validated, setValidated] = useState(false);
   const [isParent, setIsParent] = useState(true);
-  const [problems, setProblems] = useState<Array<string>>([]);
+  const [problems, setProblems] = useState<string[]>([]);
 
   const handleSelection = (state: string): void => {
     state == "parent" ? setIsParent(true) : setIsParent(false);
-    setProblems([]);
+    setMap(new Map<string, any>());
   };
 
-  const handleChange = (map: Map<string, any>) => {
-    const validator = isParent ? parentValidator : educatorValidator;
-    for (const key of Object.keys(validator)) {
-      if (key == "confirm" && map.get(key) != map.get("password")) {
-        if (!problems.includes(key)) {
-          setProblems([key, ...problems]);
-          setValidated(false);
-        }
-      } else if (!map.has(key) || !validator[key](map.get(key))) {
-        if (!problems.includes(key)) {
-          setProblems([key, ...problems]);
-          setValidated(false);
-        }
+  useEffect(() => {
+    const validators: {
+      [key: string]: {
+        required: boolean;
+        fun: (...args: any) => boolean;
+      };
+    } = isParent ? parentValidator : educatorValidator;
+
+    let newProblem = [...problems];
+
+    for (const key of Object.keys(validators)) {
+      const value = map.get(key);
+
+      if (validators[key].required && !value) {
+        if (!newProblem.includes(key)) newProblem.push(key);
+      } else if (value && !validators[key].fun(value, map)) {
+        if (!newProblem.includes(key)) newProblem.push(key);
       } else {
-        if (problems.includes(key)) {
-          setProblems(problems.filter((p) => p != key));
-        }
+        newProblem = newProblem.filter((p) => p !== key);
       }
     }
-    if (map.get("password") != map.get("confirm")) setValidated(false);
-    else setValidated(true);
-  };
+
+    setProblems(newProblem);
+    setValidated(newProblem.length === 0);
+  }, [map]);
 
   const handleSubmit = useCallback(
     (map: Map<string, string>) => {
@@ -152,24 +199,17 @@ const Register: React.VoidFunctionComponent = () => {
         {isParent ? (
           <ParentRegisterForm
             handleSubmit={handleSubmit}
-            handleChange={handleChange}
+            handleChange={setMap}
             validated={validated}
           />
         ) : (
           <EducatorRegisterForm
             handleSubmit={handleSubmit}
-            handleChange={handleChange}
+            handleChange={setMap}
             validated={validated}
           />
         )}
-        {problems.length > 0 && (
-          <Problems>
-            {problems.map((p) => {
-              return <Text key={p}>- {errorTexts[p]}</Text>;
-            })}
-          </Problems>
-        )}
-
+        {ProblemsComponent(problems)}
         <TextLink
           style={{ paddingTop: 0 }}
           text={"Já é usuário?" + " "}
@@ -179,6 +219,6 @@ const Register: React.VoidFunctionComponent = () => {
       </ContentContainer>
     </MainContainer>
   );
-};
+}
 
 export default Register;

@@ -11,5 +11,5 @@ export function isEmail(email: string): boolean {
  * Tests if a string is a valid password
  */
 export function isPassword(password: string): boolean {
-  return password.length >= 8;
+  return password.length > 5;
 }

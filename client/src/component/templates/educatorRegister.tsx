@@ -2,6 +2,7 @@ import { useState } from "react";
 import Form from "../organism/form";
 import useDisabilities from "../../hooks/useDisabilities";
 import { isEmail, isPassword } from "../../helper/validators";
+import ToS from "../molecule/tos";
 
 const isLongerThanTwo = (txt: string) => txt.length > 2;
 
@@ -19,9 +20,12 @@ function EducatorRegisterForm(props: props) {
       inputs={[
         {
           type: "text",
-          label: "Nome do educador",
+          label: "Nome do educador*",
           name: "name",
         },
+        { type: "text", label: "E-mail*", name: "email" },
+        { type: "password", label: "Senha*", name: "password" },
+        { type: "password", label: "Confirmar senha*", name: "confirm" },
         {
           type: "text",
           label: "Nome da escola que trabalha",
@@ -41,9 +45,12 @@ function EducatorRegisterForm(props: props) {
             value: el._id,
           })),
         },
-        { type: "text", label: "E-mail", name: "email" },
-        { type: "password", label: "Senha", name: "password" },
-        { type: "password", label: "Confirmar senha", name: "confirm" },
+        {
+          type: "checkbox",
+          label: "ToS",
+          customLabel: <ToS />,
+          name: "tos",
+        },
         {
           type: "submit",
           label: "Entrar",

@@ -17,9 +17,12 @@ function ParentRegisterForm(props: props) {
       inputs={[
         {
           type: "text",
-          label: "Nome do responsável",
+          label: "Nome do responsável*",
           name: "name",
         },
+        { type: "text", label: "E-mail*", name: "email" },
+        { type: "password", label: "Senha*", name: "password" },
+        { type: "password", label: "Confirmar senha*", name: "confirm" },
         {
           type: "text",
           label: "Relação com a criança (mãe, pai, tio...)",
@@ -36,9 +39,6 @@ function ParentRegisterForm(props: props) {
             value: el._id,
           })),
         },
-        { type: "text", label: "E-mail", name: "email" },
-        { type: "password", label: "Senha", name: "password" },
-        { type: "password", label: "Confirmar senha", name: "confirm" },
         {
           type: "checkbox",
           label: "ToS",

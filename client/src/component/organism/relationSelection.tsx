@@ -6,11 +6,12 @@ import { dp, sp } from "../../helper/resolution";
 const Container = styled.View``;
 
 const Label = styled.Text`
-  font-size: ${sp(15)}px;
+  font-size: ${sp(14)}px;
   font-family: ${(props) => props.theme.fontFamily.text};
 `;
 
 const PressableLabel = styled(Label)`
+  font-size: ${sp(14)}px;
   margin-left: ${dp(8)}px;
 `;
 
