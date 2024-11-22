@@ -25,7 +25,7 @@ router.post(
       relationship: CustomJoi.String(),
       birth: Joi.date(),
       region: CustomJoi.String(),
-      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(1),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(0),
     },
   }),
   async (req: Request, res: Response) => {
@@ -48,7 +48,7 @@ router.post(
       name: CustomJoi.RequiredString(),
       numberOfDisabledStudents: Joi.number(),
       school: CustomJoi.String(),
-      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(1),
+      disabilities: Joi.array().items(CustomJoi.ObjectId()).min(0),
     },
   }),
   async (req: Request, res: Response) => {
