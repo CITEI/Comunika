@@ -37,7 +37,7 @@ export const UserSchema = new mongoose.Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: "Disability",
-      required: true,
+      required: false,
       min: 1,
     },
   ],
@@ -49,7 +49,7 @@ export const UserSchema = new mongoose.Schema({
 
 // Hashes password before saving to db
 UserSchema.pre("save", async function (next) {
-  this.password = await hashPassword(this.password as string);
+  this.password = await hashPassword(this.password);
   next();
 });
 

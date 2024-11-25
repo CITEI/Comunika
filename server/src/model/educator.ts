@@ -10,12 +10,12 @@ export interface EducatorInput extends UserInput {
 const Educator = User.discriminator('Educator', new mongoose.Schema({
   school: {
     type: String,
-    required: true,
+    required: false,
     minlength: MIN_STRING_LENGTH,
   }, 
   numberOfDisabledStudents: {
     type: Number,
-    required: true,
+    required: false,
   }
 }));
 

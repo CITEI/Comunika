@@ -11,16 +11,16 @@ export interface ParentInput extends UserInput {
 const Parent = User.discriminator('Parent', new mongoose.Schema({
   relationship: {
     type: String,
-    required: true,
+    required: false,
     minlength: MIN_STRING_LENGTH,
   },
   birth: {
     type: Date,
-    required: true
+    required: false
   },
   region: {
     type: String,
-    required: true,
+    required: false,
     minlength: MIN_STRING_LENGTH
   },
 }));
